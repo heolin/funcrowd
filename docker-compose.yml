@@ -1,0 +1,31 @@
+version: '3.5'
+
+networks:
+  default:
+    external:
+      name: funcrowd-network
+
+services:
+  app:
+    build: .
+    container_name: funcrowd-app
+    ports:
+      - "8888:80"
+    depends_on:
+      - "db"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: >
+      bash -c "./bin/wait-for-it.sh -t 360 ${POSTGRES_HOST}:${POSTGRES_PORT}
+      && ./manage.py migrate --no-input
+      && gunicorn funcrowd.wsgi --bind 0.0.0.0:80 --workers 2 --worker-class gevent --reload --access-logfile=-"
+  db:
+    image: postgres
+    restart: always
+    container_name: funcrowd-db
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
