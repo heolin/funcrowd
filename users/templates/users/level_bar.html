@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-5 text-left">
+        <b>lvl. {{stats.level}}</b>
+    </div>
+    <div class="col-md-7 text-right">
+        {{stats.exp}}/{{stats.next_level_exp}} exp
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="progress bg-grey" style="height: 30px;">
+            <div class="progress-bar bg-warning fg-dark" role="progressbar" aria-valuenow="{% widthratio stats.next_level_percent 1 100%}" aria-valuemin="0" aria-valuemax="100" style="width:{% widthratio stats.next_level_percent 1 100%}%; height: 30px;">
+            </div>
+        </div>
+        <div class='text-center' style="margin-top:-27px;"><b>{% widthratio stats.next_level_percent 1 100%}%</b></div>
+    </div>
+</div>

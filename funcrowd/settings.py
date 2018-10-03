@@ -19,11 +19,28 @@ ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+] + [
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+    'rest_framework_swagger',
+    'suit_redactor',
+    'suit_ckeditor',
+    "sortedm2m",
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+] + [
+    'users',
+    'tasks',
+    'modules.order_strategy'
 ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,6 +93,12 @@ AUTH_PASSWORD_VALIDATORS = [
                 '.NumericPasswordValidator',
     },
 ]
+
+
+AUTH_USER_MODEL = 'users.EndWorker'
+SITE_ID = 1
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
 
 LANGUAGE_CODE = 'en-us'
 

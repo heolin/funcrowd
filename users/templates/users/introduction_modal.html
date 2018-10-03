@@ -1,0 +1,67 @@
+{% load static %}
+
+<div id="introductionModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-introduction">
+        <!-- Modal content-->
+        <div class="modal-content" >
+            <div id="introductionModalBody" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 style="text-align: center; padding: 10px; background-color: #5f7b8a; color: white;">Witaj!</h2>
+
+                        <div style="padding: 20px; text-align: justify">
+                            Witaj na platformie SpaceTag!
+                            <br/>
+                            <br/>
+                            SpacaTag to platforma na której badacze pomagają w badaniach naukowych. I to nie byle jakich!
+                            Dzięki naszej pomocy prowadzone są badania nad rozumieniem języka naturalnego i sztucznej inteligencji na Wydziale Matematyki i Informatyki w Uniwersytecie Adama Mickiewicza w Poznaniu.
+
+                            <br/>
+                            Platforma działa na zasadzie metody zwanej "crowdsourcing", w ktorych tłum ludzi, chętnych do pomocy, zbiera sie razem w słusznej sprawie.
+                            Każdy moze pomóc!
+                            <br/>
+                            <br/>
+                            Jednak ponieważ praca nad obróbką danych może być ciężka, SpaceTag został stworzony tak by bawic - jako gra przygodowa. Na platformie czeka Cię historia współpracy pomiędzy kosmiczną rasą ZOrianów i ludzimi w celu uratowania naszej planety. W SpaceTag znajdziesz również super ciekawe gry i wyzwania, które służą do zbierania danych - a tym samym bezpośrednio pomagają nam w badaniach.
+                            <br/>
+                            <br/>
+                            Za chwile po lewej stronie będziesz mógł wybrać swojego awatara, a na środku ekranu zobaczysz drzewo swoich zadań. Kliknij pierwszą misję i rozpocznij swoją przygodę jako SpaceTagger.
+                            <br/>
+                            <br/>
+                            Powodzenia!
+                            <br/>
+                            dr Tomasz Spec
+                        </div>
+                    </div>
+
+                    
+                </div>
+                <div class="row">
+                        <div class="col-md-12" style="margin-top: 20px; margin-bottom: 20px; text-align: center">
+                            <div class="btn btn-primary avatar-select-button" onclick="hideIntroductionModal()">Dobra</div>
+                        </div>
+                    </div>
+            </div>
+            <img onclick="hideIntroductionModal();" style="margin-right:15px" class="modal-close" src="{% static 'images/modal_close.png'%}"/>
+        </div>
+
+    </div>
+    <img class="d-inline {{style}}" src="{% static 'users/images/doctor_welcome.png' %}" style=" position: absolute; bottom: 0; left: 65%; height: 80%;" />
+</div>
+
+<script>
+
+
+    function showIntroductionModal() {
+        $("#introductionModal").modal("show");
+        localStorage.setItem("introductionModal_shown", "true");
+    }
+
+    function hideIntroductionModal() {
+        $("#introductionModal").modal("hide");
+    }
+
+    var introductionModal_shown = localStorage.getItem("introductionModal_shown");
+
+    if (introductionModal_shown != "true")
+        showIntroductionModal();
+</script>
