@@ -25,30 +25,30 @@ class Item(models.Model):
     class Meta:
         ordering = ['task_id', 'order']
 
-    def check_fields(self):
-        template_fields = {field.name for field in self.template.items_fields.all()}
-        item_fields = set(self.data.keys())
-        return len(item_fields - template_fields) == 0
-
     @property
     def index(self):
         return self.task.items.filter(order__lte=self.order).count()
 
     @property
     def next_item(self):
-        return self.task.get_next_item(self)
+        raise NotImplemented
 
     @property
     def previous_item(self):
-        return self.task.get_previous_item(self)
+        raise NotImplemented
+
+    def verify_fields(self):
+        items_fields = {field.name for field in self.template.items_fields.all()}
+        data_fields = set(self.data.keys())
+        return items_fields == data_fields
 
     def get_or_create_annotation(self, user):
-        annotation = self.annotations.filter(item=self, user=user)
-        annotation = annotation.first()
-        created = False
+        annotation, created = None, False
+        if not self.task.multiple_annotations:
+            annotation = self.annotations.filter(item=self, user=user)
+            annotation = annotation.first()
         if not annotation:
-            annotation = Annotation.objects.create(item=self,
-                                                   user=user,
-                                                   data={})
+            data = {field.name: "" for field in self.template.annotations_fields.all()}
+            annotation = Annotation.objects.create(item=self, user=user, data=data)
             created = True
         return annotation, created

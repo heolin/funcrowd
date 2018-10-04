@@ -17,13 +17,12 @@ class Annotation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
 
-    def check_fields(self):
-        for field in self.item.task.template.annotations_fields:
-            if field.name not in self.data:
-                return False
-        return True
+    def verify_fields(self):
+        annotations_fields = {field.name for field in self.item.template.annotations_fields.all()}
+        data_fields = set(self.data.keys())
+        return annotations_fields == data_fields
 
-    def check_done(self):
+    def verify_done(self):
         self.is_done = True
         for field in self.item.template.annotations_fields:
             if field.required and not self.data[field.name]:
@@ -31,16 +30,8 @@ class Annotation(models.Model):
                 break
         return self.is_done
 
-    def check_correct(self):
-        self.is_correct = True
-        reference = self.item.annotations.filter(user=None).first()
-        if reference:
-            for field, value in self.data.items():
-                if reference.data[field] != value:
-                    self.is_correct = False
-                    break
-
-        return self.is_correct
+    def verify_correct(self):
+        raise NotImplemented
 
     def __str__(self):
         TEMPLATE = "Task {} (#{}) - Item: {} (#{}) - Annotation: #{} - User: {}"

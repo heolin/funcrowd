@@ -26,6 +26,7 @@ class Task(models.Model):
     order = models.IntegerField(default=0)
 
     def get_next_item(self, item):
+        raise NotImplemented
         return self.items.filter(order__gt=item.order).first()
 
     def get_previous_item(self, item):

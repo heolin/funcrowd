@@ -3,9 +3,23 @@ import pytest
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
+from users.models import EndWorker
 
 from modules.order_strategy.models import Strategy
 
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_user():
+    user = EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_other_user():
+    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+    return user
 
 
 @pytest.fixture
@@ -30,12 +44,19 @@ def setup_task_with_items():
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
 
     template = ItemTemplate.objects.create(name="Adding two")
-
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
     template.fields.add(first_field)
-
     second_field = ItemTemplateField.objects.create(name="second", widget="TextLabel")
     template.fields.add(second_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
+                                                        required=True, editable=True)
+    template.fields.add(annotation_field)
+    optional_annotation_field = ItemTemplateField.objects.create(name="optional", widget="TextLabel",
+                                                                 required=False, editable=True)
 
-    Item.objects.create(task=task, data={first_field.name: 1, second_field.name: 2}, template=template)
-    Item.objects.create(task=task, data={first_field.name: 2, second_field.name: 2}, template=template)
+    template.fields.add(optional_annotation_field)
+
+    Item.objects.create(task=task, template=template, order=1,
+                        data={first_field.name: 1, second_field.name: 2})
+    Item.objects.create(task=task, template=template, order=2,
+                        data={first_field.name: 2, second_field.name: 2})
