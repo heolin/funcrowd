@@ -20,7 +20,7 @@ class Item(models.Model):
     def __str__(self):
         return "Task {} (#{}) - Item {} - {} (#{}) - {}".format(self.task.order, self.task.id,
                                                                 self.order, self.template.name,
-                                                                self.id, self.task.mission.title)
+                                                                self.id, self.task.mission.name)
 
     class Meta:
         ordering = ['task_id', 'order']

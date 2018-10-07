@@ -8,8 +8,14 @@ from .logic import STRATEGY_LOGICS
 class Strategy(models.Model):
     name = models.CharField(max_length=30)
 
-    def setup(self, task, user, item):
+    def _logic(self, task, user, item):
         return STRATEGY_LOGICS[self.name](task, user, item)
+
+    def next(self, task, user, item):
+        return self._logic(task, user, item).next()
+
+    def prev(self, task, user, item):
+        return self._logic(task, user, item).prev()
 
     class Meta:
         verbose_name_plural = "Strategies"

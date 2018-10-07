@@ -25,12 +25,11 @@ class Task(models.Model):
 
     order = models.IntegerField(default=0)
 
-    def get_next_item(self, item):
-        raise NotImplemented
-        return self.items.filter(order__gt=item.order).first()
+    def next_item(self, user, item):
+        return self.strategy.next(self, user, item)
 
-    def get_previous_item(self, item):
-        return self.items.filter(order__lt=item.order).last()
+    def prev_item(self, user, item):
+        return self.strategy.prev(self, user, item)
 
     class Meta:
         ordering = ['order']

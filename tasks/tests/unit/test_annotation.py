@@ -27,7 +27,7 @@ def test_create_annotations(setup_task_with_items, setup_user, setup_other_user)
 
     annotation.data = {"output": "", "optional": ""}
     annotation.data['optional'] = 1
-    print(annotation.data)
+
     assert annotation.verify_done() is False
 
     assert item.annotations.count() == 1
