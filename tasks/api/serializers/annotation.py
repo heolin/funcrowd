@@ -7,4 +7,4 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Annotation
-        fields = ('data',)
+        fields = ('item_id', 'data', 'is_done', 'is_skipped', )

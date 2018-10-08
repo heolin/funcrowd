@@ -2,7 +2,7 @@ import os
 import environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROOT = environ.Path(__file__) - 2  # two folders up (/a/b/c/ - 2 = /a/)
+ROOT = environ.Path(__file__) - 2
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(str,),

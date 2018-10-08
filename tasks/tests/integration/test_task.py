@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIRequestFactory
 from tasks.api.views.task import (
-    TaskList, TaskDetail
+    MissionTasksList, TaskDetail
 )
 
 
@@ -12,7 +12,7 @@ def test_task_list(setup_task):
     # Task list
     mission_id = 1
     request = factory.get('/api/v1/missions/{0}/tasks'.format(mission_id))
-    view = TaskList.as_view()
+    view = MissionTasksList.as_view()
     response = view(request, mission_id)
     assert response.status_code == 200
     assert response.data == [
@@ -22,7 +22,7 @@ def test_task_list(setup_task):
     # Task empty list
     mission_id = 2
     request = factory.get('/api/v1/missions/{0}/tasks'.format(mission_id))
-    view = TaskList.as_view()
+    view = MissionTasksList.as_view()
     response = view(request, mission_id)
     assert response.status_code == 200
     assert response.data == []

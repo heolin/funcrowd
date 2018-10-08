@@ -9,7 +9,7 @@ from tasks.models import Mission
 from tasks.api.serializers.task import TaskSerializer
 
 
-class TaskList(APIView):
+class MissionTasksList(APIView):
     serializer_class = TaskSerializer
 
     def get(self, request, mission_id, *args, **kwargs):
@@ -30,6 +30,6 @@ class TaskDetail(APIView):
             if task:
                 serializer = TaskSerializer(task)
                 return Response(serializer.data)
-            raise NotFound("No Task found in selected mission, for given id.")
+            raise NotFound("No Task with given id found in selected mission.")
         raise NotFound("No Mission found for given id.")
 
