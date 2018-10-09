@@ -30,7 +30,7 @@ def test_task_list(setup_task):
     # Task details
     mission_id = 1
     task_id = 1
-    request = factory.get('/api/v1/missions/{0}/tasks/{1}'.format(mission_id, task_id))
+    request = factory.get('/tasks/{1}'.format(mission_id, task_id))
     view = TaskDetail.as_view()
     response = view(request, mission_id, task_id)
     assert response.status_code == 200
@@ -39,7 +39,7 @@ def test_task_list(setup_task):
     # Task details, task not found
     mission_id = 1
     task_id = 2
-    request = factory.get('/api/v1/missions/{0}/tasks/{1}'.format(mission_id, task_id))
+    request = factory.get('/tasks/{1}'.format(mission_id, task_id))
     view = TaskDetail.as_view()
     response = view(request, mission_id, task_id)
     assert response.status_code == 404
