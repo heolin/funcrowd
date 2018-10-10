@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework import status
@@ -10,7 +10,7 @@ from tasks.models import Item, Task
 from tasks.api.serializers.item import ItemSerializer
 
 
-class TaskNextItem(APIView):
+class TaskNextItem(GenericAPIView):
     serializer_class = ItemSerializer
 
     def get(self, request, task_id, *args, **kwargs):
@@ -24,7 +24,7 @@ class TaskNextItem(APIView):
         raise NotFound("No Task found for given id.")
 
 
-class TaskNextItemWithPrevious(APIView):
+class TaskNextItemWithPrevious(GenericAPIView):
     serializer_class = ItemSerializer
 
     def get(self, request, item_id, *args, **kwargs):
