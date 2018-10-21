@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'users',
     'tasks',
     'modules.order_strategy',
-    'modules.quality_control'
+    'modules.quality_control',
+    'modules.packages'
 ]
 
 MIDDLEWARE = [
