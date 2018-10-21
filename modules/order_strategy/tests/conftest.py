@@ -6,6 +6,13 @@ from tasks.models import (
 
 from users.models import EndWorker
 from modules.order_strategy.models import Strategy
+from django.core.management import call_command
+
+
+@pytest.fixture(scope='session')
+def django_db_setup(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command('loaddata', 'initial_data')
 
 
 @pytest.fixture
@@ -33,7 +40,7 @@ def setup_other_user():
 @pytest.fixture
 @pytest.mark.django_db
 def setup_task_with_items():
-    Strategy.register_values()
+    #Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")

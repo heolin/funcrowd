@@ -17,6 +17,7 @@ python-dotenv==0.8.2
 gevent==1.3.5
 django-rest-swagger==2.2.0
 django-rest-auth[with_social]==0.9.3
+pandas==0.23.4
 
 
 # development requirements
@@ -26,4 +27,6 @@ pylint-mccabe==0.1.3
 pytest==3.6.3
 pytest-html==1.19.0
 pytest-django==3.3.2
+django-extensions==2.1.3
+notebook==5.7.0
 

@@ -1,0 +1,1 @@
+[{"model": "order_strategy.strategy", "pk": 1, "fields": {"name": "StaticStrategyLogic"}}, {"model": "order_strategy.strategy", "pk": 2, "fields": {"name": "BreadthFirstStrategyLogic"}}, {"model": "order_strategy.strategy", "pk": 3, "fields": {"name": "DepthFirstStrategyLogic"}}, {"model": "order_strategy.strategy", "pk": 4, "fields": {"name": "RandomStrategyLogic"}}]

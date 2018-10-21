@@ -35,10 +35,12 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
+    'django_extensions',
 ] + [
     'users',
     'tasks',
-    'modules.order_strategy'
+    'modules.order_strategy',
+    'modules.quality_control'
 ]
 
 MIDDLEWARE = [
@@ -113,4 +115,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
+]
+
+NOTEBOOK_ARGUMENTS = [
+    '--ip', '0.0.0.0',
+    '--port', '8080',
+    '--notebook-dir', 'notebooks',
+    '--allow-root'
 ]

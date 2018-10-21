@@ -1,0 +1,3 @@
+
+class MultipleTempaltesFound(Exception):
+    pass
