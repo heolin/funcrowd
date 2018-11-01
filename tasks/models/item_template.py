@@ -15,10 +15,16 @@ class ItemTemplateField(models.Model):
     required = models.BooleanField(default=True)
     data_source = models.ForeignKey("ItemTemplateField", on_delete=models.CASCADE, null=True, blank=True)
 
+    def __str__(self):
+        return "{}({})".format(self.name, self.widget)
+
 
 class ItemTemplate(models.Model):
     name = models.CharField(max_length=30)
     fields = SortedManyToManyField("ItemTemplateField", related_name="template")
+
+    def __str__(self):
+        return "{}".format(self.name)
 
     @property
     def annotations_fields(self):

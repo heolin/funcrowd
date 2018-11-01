@@ -7,7 +7,7 @@ class ItemTemplateFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemTemplateField
-        fields = ('id', 'name', 'editable', 'required')
+        fields = ('id', 'name', 'editable', 'required', 'data_source', "widget")
 
 
 class ItemTemplateSerializer(serializers.ModelSerializer):
