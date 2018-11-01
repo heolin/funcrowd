@@ -4,6 +4,7 @@ from tasks.models import ItemTemplate, ItemTemplateField
 
 
 class ItemTemplateFieldSerializer(serializers.ModelSerializer):
+    data_source = serializers.CharField(source='data_source.name', allow_null=True)
 
     class Meta:
         model = ItemTemplateField
