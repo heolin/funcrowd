@@ -24,6 +24,8 @@ services:
       && ./manage.py migrate --no-input
       && gunicorn funcrowd.wsgi --bind 0.0.0.0:80 --workers 2 --worker-class gevent --reload --access-logfile=-"
   db:
+    ports:
+      - "5432:5432"
     image: postgres
     restart: always
     container_name: funcrowd-db

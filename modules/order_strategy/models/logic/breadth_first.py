@@ -9,11 +9,11 @@ class BreadthFirstStrategyLogic(BaseStrategyLogic):
     def next(self):
         items = self.task.items
         if not self.task.multiple_annotations:
-            items = self.task.items.exclude(annotations__user=self.user)
-        items = items.annotate(annotations_done=Count("annotations"))
+            items = self.task.exclude_items_with_user_annotations(self.user)
+        items = self.task.annotate_annotations_done(items)
 
         if self.task.max_annotations:
-            items = items.filter(annotations_done__lt=self.task.max_annotations)
+            items = self.task.exclude_max_annotations(items)
         items = items.order_by("-annotations_done")
         return items.first()
 

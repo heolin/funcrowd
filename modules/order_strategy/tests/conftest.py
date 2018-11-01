@@ -40,8 +40,6 @@ def setup_other_user():
 @pytest.fixture
 @pytest.mark.django_db
 def setup_task_with_items():
-    #Strategy.register_values()
-
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)

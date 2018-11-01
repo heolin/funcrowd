@@ -31,6 +31,15 @@ class Task(models.Model):
     def prev_item(self, user, item):
         return self.strategy.prev(self, user, item)
 
+    def exclude_items_with_user_annotations(self, user):
+        return self.items.exclude(annotations__user=user)
+
+    def annotate_annotations_done(self, items):
+        return items.annotate(annotations_done=models.Count("annotations"))
+
+    def exclude_max_annotations(self, items):
+        return items.filter(annotations_done__lt=self.max_annotations)
+
     class Meta:
         ordering = ['order']
 
