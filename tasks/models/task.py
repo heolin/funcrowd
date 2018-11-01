@@ -17,11 +17,12 @@ class Task(models.Model):
 
     description = models.CharField(max_length=500, default="", blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    max_annotations = models.IntegerField(default=0)
-    multiple_annotations = models.BooleanField(default=False)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="tasks")
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
+
+    max_annotations = models.IntegerField(default=0)
+    multiple_annotations = models.BooleanField(default=False)
 
     order = models.IntegerField(default=0)
 

@@ -9,7 +9,7 @@ from modules.packages.models.utils.query import UNFINISHED_PACKAGES_QUERY
 
 
 class MissionPackages(models.Model, IStrategyClient):
-    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="packages")
+    mission = models.OneToOneField(Mission, on_delete=models.CASCADE, related_name="packages")
     max_annotations = models.IntegerField(default=0)
     multiple_annotations = models.BooleanField(default=False)
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)

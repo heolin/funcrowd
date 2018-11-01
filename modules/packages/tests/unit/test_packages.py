@@ -6,9 +6,9 @@ from tasks.models import Mission
 @pytest.mark.django_db
 def test_setup_tasks(setup_task_with_items):
     mission = Mission.objects.first()
-    assert mission.packages.count() == 1
+    assert mission.packages is not None
 
-    mp = mission.packages.first()
+    mp = mission.packages
     assert mp.packages.count() == 4
 
     package = mp.packages.all()[0]

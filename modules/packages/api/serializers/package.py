@@ -9,4 +9,4 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Package
-        fields = ('id', 'task', 'data', 'template')
+        fields = ('id', 'items', 'order')

@@ -42,7 +42,7 @@ def setup_task_with_items():
     template = ItemTemplate.objects.create(name="task1")
     field = ItemTemplateField.objects.create(name="value", widget="TextLabel")
     template.fields.add(field)
-    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel")
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel", editable=True)
     template.fields.add(annotation_field)
 
     task1 = Task.objects.create(mission=mission, name="task1", strategy=strategy)

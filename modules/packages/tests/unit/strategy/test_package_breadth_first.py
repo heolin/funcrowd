@@ -14,7 +14,7 @@ def test_setup_tasks_one_user(setup_task_with_items, setup_user):
     user1 = setup_user
 
     mission = Mission.objects.first()
-    mp = mission.packages.first()
+    mp = mission.packages
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
 
     package = mp.next_package(user1, None)
@@ -51,7 +51,7 @@ def test_setup_tasks_two_users(setup_task_with_items, setup_user, setup_other_us
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()
-    mp = mission.packages.first()
+    mp = mission.packages
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
 
     package = mp.next_package(user1, None)
@@ -85,7 +85,7 @@ def test_max_annotations(setup_task_with_items, setup_user, setup_other_user):
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()
-    mp = mission.packages.first()
+    mp = mission.packages
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     mp.max_annotations = 1
 
@@ -120,7 +120,7 @@ def test_multiple_annotations(setup_task_with_items, setup_user, setup_other_use
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()
-    mp = mission.packages.first()
+    mp = mission.packages
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     mp.max_annotations = 2
     mp.multiple_annotations = True
