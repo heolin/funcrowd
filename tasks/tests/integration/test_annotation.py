@@ -1,10 +1,7 @@
 import pytest, json
-from rest_framework.test import APIRequestFactory
-
-from tasks.api.serializers.dto.annotation_response import AnnotationResponseSerializer
-from tasks.models.dto.annotation_response import AnnotationResponse
+from rest_framework.test import APIRequestFactory, force_authenticate
 from tasks.models import (
-    Task, Item, Annotation
+    Task
 )
 
 from tasks.api.views.annotation import AnnotationDetail
@@ -19,7 +16,7 @@ def test_get_annotation(setup_task_with_items, setup_user):
 
     # get annotation
     request = factory.get('/api/v1/items/{0}/annotation'.format(item.id))
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200
@@ -35,7 +32,7 @@ def test_get_annotation(setup_task_with_items, setup_user):
 
     # annotation not found
     request = factory.get('/api/v1/items/{0}/annotation'.format(100))
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, 100)
     assert response.status_code == 404
@@ -51,7 +48,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
 
     payload = {}
     request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 400
@@ -60,7 +57,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
     # annotation not found
     payload = {}
     request = factory.post('/api/v1/items/{0}/annotation'.format(100), payload)
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, 100)
     assert response.status_code == 404
@@ -71,7 +68,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
         "data": json.dumps({})
     }
     request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200
@@ -82,7 +79,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
         'data': json.dumps({'output': '', 'optional': ''}),
     }
     request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200
@@ -94,7 +91,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
         'data': json.dumps({'output': '1', 'optional': ''}),
     }
     request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200
@@ -103,7 +100,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
 
     # get saved annotation
     request = factory.get('/api/v1/items/{0}/annotation'.format(item.id))
-    request.user = setup_user
+    force_authenticate(request, setup_user)
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200

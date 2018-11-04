@@ -32,9 +32,6 @@ INSTALLED_APPS = [
     'suit_redactor',
     'suit_ckeditor',
     "sortedm2m",
-    'allauth',
-    'allauth.account',
-    'rest_auth.registration',
     'django_extensions',
 ] + [
     'users',
@@ -124,3 +121,15 @@ NOTEBOOK_ARGUMENTS = [
     '--notebook-dir', 'notebooks',
     '--allow-root'
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}

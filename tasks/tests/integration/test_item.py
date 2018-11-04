@@ -1,5 +1,5 @@
 import pytest
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, force_authenticate
 from tasks.api.views.item import (
     TaskNextItem, TaskNextItemWithPrevious
 )
@@ -7,13 +7,14 @@ from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_next_item(setup_task_with_items):
+def test_next_item(setup_task_with_items, setup_user):
     factory = APIRequestFactory()
 
     task = Task.objects.first()
     item = task.items.first()
 
     request = factory.get('/api/v1/tasks/{0}/next_item'.format(task.id))
+    force_authenticate(request, setup_user)
     view = TaskNextItem.as_view()
     response = view(request, task.id)
     assert response.status_code == 200
@@ -25,6 +26,7 @@ def test_next_item(setup_task_with_items):
 
     # task not found
     request = factory.get('/api/v1/tasks/{0}/next_item'.format(100))
+    force_authenticate(request, setup_user)
     view = TaskNextItem.as_view()
     response = view(request, 100)
     assert response.status_code == 404
@@ -41,6 +43,7 @@ def test_next_item_with_previous(setup_task_with_items, setup_user):
     # next item with previous given
     request = factory.get('/api/v1/items/{0}/next_item'.format(item.id))
     request.user = setup_user
+    force_authenticate(request, setup_user)
     next_item = item.task.next_item(request.user, item)
 
     view = TaskNextItemWithPrevious.as_view()
@@ -54,7 +57,7 @@ def test_next_item_with_previous(setup_task_with_items, setup_user):
 
     # no next item
     request = factory.get('/api/v1/items/{0}/next_item'.format(next_item.id))
-    request.user = setup_user
+    force_authenticate(request, setup_user)
 
     view = TaskNextItemWithPrevious.as_view()
     response = view(request, next_item.id)
@@ -63,6 +66,7 @@ def test_next_item_with_previous(setup_task_with_items, setup_user):
 
     # item not found
     request = factory.get('/api/v1/items/{0}/next_item'.format(100))
+    force_authenticate(request, setup_user)
     view = TaskNextItemWithPrevious.as_view()
     response = view(request, 100)
     assert response.status_code == 404

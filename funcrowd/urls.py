@@ -13,4 +13,5 @@ urlpatterns += [
     path('api/v1/', include('tasks.api.urls')),
     path('api/v1/', include('modules.packages.api.urls')),
     path('api/v1/', include('users.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]

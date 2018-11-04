@@ -4,5 +4,7 @@ from rest_framework.authtoken.models import Token
 
 
 class EndWorker(AbstractUser):
-    pass
-
+    @property
+    def token(self):
+        result, _ = Token.objects.get_or_create(user=self)
+        return result
