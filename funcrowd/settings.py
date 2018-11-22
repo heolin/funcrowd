@@ -16,9 +16,10 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
-CORS_ORIGIN_WHITELIST = env('ALLOWED_HOSTS')
+
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sites',
@@ -29,7 +30,6 @@ INSTALLED_APPS = [
 ] + [
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
     'rest_framework_swagger',
     'suit_redactor',
     'suit_ckeditor',
@@ -40,16 +40,16 @@ INSTALLED_APPS = [
     'tasks',
     'modules.order_strategy',
     'modules.quality_control',
-    'modules.packages'
+    'modules.packages',
+    'modules.feedback'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -137,3 +137,28 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
 }
+
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = default_headers + (
+    'cache-control',
+    'x-requested-with',
+    'content-disposition',
+    'handle-errors-generically',
+    'authorization',
+    'backendauth'
+)
+
+"""
+CORS_ORIGIN_WHITELIST = (
+    u'localhost',
+    u'127.0.0.1',
+    u'78.8.194.28'
+    u'62.181.9.75',
+    u'http://www.test-cors.org',
+    u'test-cors.org'
+)
+"""
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL=True
+#CORS_ORIGIN_WHITELIST = (u"*", )
+

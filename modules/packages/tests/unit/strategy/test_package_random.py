@@ -10,7 +10,7 @@ def add_annotation(package, item, user):
 
 
 @pytest.mark.django_db
-def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user):
+def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()
@@ -41,7 +41,7 @@ def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user):
 
 
 @pytest.mark.django_db
-def test_max_annotations(setup_task_with_items, setup_user, setup_other_user):
+def test_max_annotations(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()
@@ -73,7 +73,7 @@ def test_max_annotations(setup_task_with_items, setup_user, setup_other_user):
 
 
 @pytest.mark.django_db
-def test_multiple_annotations(setup_task_with_items, setup_user, setup_other_user):
+def test_multiple_annotations(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
     user1, user2 = setup_user, setup_other_user
 
     mission = Mission.objects.first()

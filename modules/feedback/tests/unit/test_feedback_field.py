@@ -1,0 +1,85 @@
+import pytest
+
+from tasks.models import Task
+
+from modules.feedback.models.fields import (
+    VoteRanking, AnnotationsCount
+)
+
+
+@pytest.mark.django_db
+def test_vote_ranking(setup_task_with_items, setup_users):
+    user1, user2, user3 = setup_users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    field = VoteRanking(annotation_field.name)
+
+    item = task.items.get(order=0)
+    votes = {
+        user1: {1: 0.5, 2: 0.5},
+        user2: {1: 0.5, 2: 0.5},
+        user3: {2: 1.0}
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=1)
+    votes = {
+        user1: {4: 1.0},
+        user2: {4: 1.0},
+        user3: {4: 1.0}
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=2)
+    votes = {
+        user1: {3: 0.5, 9: 0.5},
+        user2: {6: 0.5, 9: 0.5},
+        user3: {3: 0.5, 6: 0.5}
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=3)
+    votes = {
+        user1: {9: 0.5, 12: 0.5},
+        user2: {9: 0.5, 12: 0.5},
+        user3: {12: 1.0}
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+
+@pytest.mark.django_db
+def test_annotations_count(setup_task_with_items, setup_users):
+    user1, user2, user3 = setup_users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    field = AnnotationsCount(annotation_field.name)
+
+    item = task.items.get(order=0)
+    votes = {
+        user1: 2,
+        user2: 2,
+        user3: 2,
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=1)
+    votes = {
+        user1: 2,
+        user2: 2,
+        user3: 2,
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]

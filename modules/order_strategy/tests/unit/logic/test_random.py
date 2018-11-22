@@ -12,9 +12,9 @@ def test_empty_items(setup_task_with_items, setup_user, setup_db_random):
     task.strategy = Strategy.objects.get(name="RandomStrategyLogic")
 
     item = task.next_item(user, None)
-    assert item.order == 1
-    item = task.next_item(user, None)
     assert item.order == 2
+    item = task.next_item(user, None)
+    assert item.order == 1
 
     with pytest.raises(ActionNotSupported):
         task.prev_item(user, item)
