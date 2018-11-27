@@ -13,8 +13,8 @@ from modules.feedback.models.annotation_feedback import AnnotationFeedback
 class Feedback(models.Model):
     task = models.OneToOneField(Task, on_delete=models.CASCADE,
                                 null=True, related_name="feedback")
-    score_fields = models.ManyToManyField(FeedbackScoreField)
-    fields = models.ManyToManyField(FeedbackField)
+    score_fields = models.ManyToManyField(FeedbackScoreField, blank=True, null=True)
+    fields = models.ManyToManyField(FeedbackField, blank=True, null=True)
 
     def __str__(self):
         return "Feedback(#{} - {})".format(self.task.id, self.task.name)
