@@ -35,7 +35,6 @@ def test_setup_tasks(setup_task_with_items, setup_user):
         response = view(request, item['id'])
         assert response.status_code == 200
         assert response.data["is_verified"] is True
-        assert response.data['annotation']['is_done'] is True
 
     view = NextPackage.as_view()
     request = factory.get('/api/v1/missions/{0}/next_package'.format(mission.id))

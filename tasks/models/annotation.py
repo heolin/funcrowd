@@ -12,7 +12,6 @@ class Annotation(models.Model):
     data = JSONField()
     item = models.ForeignKey("Item", on_delete=models.CASCADE, related_name="annotations")
     user = models.ForeignKey(EndWorker, blank=True, null=True, on_delete=models.CASCADE)
-    is_done = models.BooleanField(default=False)
     is_skipped = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
@@ -20,22 +19,6 @@ class Annotation(models.Model):
     def save(self, *args, **kwargs):
         self.updated = timezone.now()
         super(Annotation, self).save(*args, **kwargs)
-
-    def verify_fields(self):
-        annotations_fields = {field.name for field in self.item.template.annotations_fields.all()}
-        data_fields = set(self.data.keys())
-        return annotations_fields == data_fields
-
-    def verify_done(self):
-        self.is_done = True
-        for field in self.item.template.annotations_fields:
-            if field.required and not self.data[field.name]:
-                self.is_done = False
-                break
-        return self.is_done
-
-    def verify_correct(self):
-        raise NotImplemented
 
     def __str__(self):
         TEMPLATE = "Task {} (#{}) - Item: {} (#{}) - Annotation: #{} - User: {}"

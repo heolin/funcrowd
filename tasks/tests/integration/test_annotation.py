@@ -24,10 +24,17 @@ def test_get_annotation(setup_task_with_items, setup_user):
         "annotation": {
             'item_id': item.id,
             'data': {'output': '', 'optional': ''},
-            'is_done': False,
-            'is_skipped': False
+            'is_skipped': False,
+            'feedback': None
         },
-        'is_verified': True
+        'is_verified': False,
+        'errors': [
+            {
+                'name': 'RequiredFieldEmptyError',
+                'field': 'output',
+                'message': 'Required field was empty.'
+            }
+        ]
     }
 
     # annotation not found
@@ -83,8 +90,10 @@ def test_post_annotation(setup_task_with_items, setup_user):
     view = AnnotationDetail.as_view()
     response = view(request, item.id)
     assert response.status_code == 200
-    assert response.data["is_verified"] is True
-    assert response.data['annotation']['is_done'] is False
+    assert response.data["is_verified"] is False
+    assert len(response.data['errors']) == 1
+    assert response.data['errors'][0]['name'] == "RequiredFieldEmptyError"
+    assert response.data['errors'][0]['field'] == "output"
 
     # posting correct payload
     payload = {
@@ -96,7 +105,6 @@ def test_post_annotation(setup_task_with_items, setup_user):
     response = view(request, item.id)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
-    assert response.data['annotation']['is_done'] is True
 
     # get saved annotation
     request = factory.get('/api/v1/items/{0}/annotation'.format(item.id))
@@ -108,8 +116,9 @@ def test_post_annotation(setup_task_with_items, setup_user):
         "annotation": {
             'item_id': item.id,
             'data': {'output': '1', 'optional': ''},
-            'is_done': True,
-            'is_skipped': False
+            'is_skipped': False,
+            'feedback': None
         },
-        'is_verified': True
+        'is_verified': True,
+        'errors': []
     }

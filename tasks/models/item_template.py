@@ -13,6 +13,7 @@ class ItemTemplateField(models.Model):
     widget = models.CharField(max_length=30)
     editable = models.BooleanField(default=False)
     required = models.BooleanField(default=True)
+    feedback = models.BooleanField(default=False)
     data_source = models.ForeignKey("ItemTemplateField", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -29,6 +30,10 @@ class ItemTemplate(models.Model):
     @property
     def annotations_fields(self):
         return self.fields.filter(editable=True)
+
+    @property
+    def feedback_fields(self):
+        return self.fields.filter(feedback=True, editable=True)
 
     @property
     def items_fields(self):

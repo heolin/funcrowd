@@ -13,6 +13,9 @@ class FeedbackScoreField(models.Model):
     def _logic(self):
         return SCORE_FIELDS[self.name]
 
+    def score(self, field_name, annotation):
+        return self._logic(field_name).score(annotation)
+
     def __str__(self):
         return "{}({})".format(
             self.__class__.__name__,

@@ -1,13 +1,36 @@
 from tasks.models.dto.annotation_response import AnnotationResponse
+from tasks.controllers.validators.annotation import (
+    AnnotationFieldsValidator,
+    SourceFieldValuesValidator,
+    AnnotationDoneValidator
+)
 
 
 class AnnotationController(object):
+    validators = [
+        AnnotationFieldsValidator(),
+        AnnotationDoneValidator(),
+        SourceFieldValuesValidator()
+    ]
 
     def process(self, annotation):
-        is_verified = annotation.verify_fields()
+        # processing validators
+        is_verified, errors = True, []
+        for validator in AnnotationController.validators:
+            _is_verified, _errors = validator.verify(annotation)
+            is_verified = is_verified and _is_verified
+            errors.extend(_errors)
+
+        # no error found
         if is_verified:
-            annotation.verify_done()
+            # saving annotation
             annotation.save()
 
-        response = AnnotationResponse(annotation, is_verified)
+            # adding feedback
+            task = annotation.item.task
+            if hasattr(task, "feedback"):
+                task.feedback.create_feedback(annotation)
+
+        response = AnnotationResponse(annotation, is_verified, errors)
         return response
+

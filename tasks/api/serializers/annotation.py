@@ -1,13 +1,15 @@
 from rest_framework import serializers
 
 from tasks.models import Annotation
+from modules.feedback.api.serializers.feedback import AnnotationFeedbackSerializer
 
 
 class AnnotationSerializer(serializers.ModelSerializer):
+    feedback = AnnotationFeedbackSerializer()
 
     class Meta:
         model = Annotation
-        fields = ('item_id', 'data', 'is_done', 'is_skipped', )
+        fields = ('item_id', 'data', 'is_skipped', 'feedback')
 
 
 class AnnotationDataSerializer(serializers.ModelSerializer):

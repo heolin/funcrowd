@@ -7,9 +7,11 @@ from tasks.models.task import Task
 from .feedback_field import FeedbackField
 from .feedback_score_field import FeedbackScoreField
 
+from modules.feedback.models.annotation_feedback import AnnotationFeedback
+
 
 class Feedback(models.Model):
-    task = models.OneToOneField(Task, on_delete=models.SET_NULL,
+    task = models.OneToOneField(Task, on_delete=models.CASCADE,
                                 null=True, related_name="feedback")
     score_fields = models.ManyToManyField(FeedbackScoreField)
     fields = models.ManyToManyField(FeedbackField)
@@ -17,14 +19,36 @@ class Feedback(models.Model):
     def __str__(self):
         return "Feedback(#{} - {})".format(self.task.id, self.task.name)
 
+    def score_field(self, field_name, annotation):
+        result = {}
+        for field in self.score_fields.all():
+            result[field.name] = field.score(field_name, annotation)
+        return result
+
     def score(self, annotation):
         result = {}
-        for field in self.score_fields:
-            result[field.name] = field.score(annotation)
+        for field in annotation.item.template.feedback_fields:
+            result[field.name] = self.score_field(field.name, annotation)
+        return result
+
+    def evaluate_field(self, field_name, annotation):
+        result = {}
+        for field in self.fields.all():
+            result[field.name] = field.evaluate(field_name, annotation)
         return result
 
     def evaluate(self, annotation):
         result = {}
-        for field in self.fields:
-            result[field.name] = field.evaluate(annotation)
+        for field in annotation.item.template.feedback_fields:
+            result[field.name] = self.evaluate_field(field.name, annotation)
         return result
+
+    def create_feedback(self, annotation):
+        scores = self.score(annotation)
+        values = self.evaluate(annotation)
+
+        feedback, _ = AnnotationFeedback.objects.get_or_create(annotation=annotation)
+        feedback.scores = scores
+        feedback.values = values
+        feedback.save()
+        return feedback

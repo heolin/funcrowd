@@ -17,6 +17,7 @@ class AnnotationDetail(GenericAPIView):
     def get(self, request, item_id):
         item = Item.objects.filter(id=item_id).first()
         if item:
+            # it won't work for multiple annotations
             annotation, created = item.get_or_create_annotation(request.user)
             response = AnnotationController().process(annotation)
             serializer = AnnotationResponseSerializer(response)

@@ -64,7 +64,7 @@ def setup_task_with_items(setup_users):
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
     template.fields.add(first_field)
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
-                                                        required=True, editable=True)
+                                                        required=True, editable=True, feedback=True)
     template.fields.add(annotation_field)
 
     item = Item.objects.create(task=task, template=template, data={first_field.name: 1}, order=0)

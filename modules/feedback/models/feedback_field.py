@@ -13,6 +13,9 @@ class FeedbackField(models.Model):
     def _logic(self):
         return FIELDS[self.name]
 
+    def evaluate(self, field_name, annotation):
+        return self._logic(field_name).evaluate(annotation)
+
     def __str__(self):
         return "{}({})".format(
             self.__class__.__name__,
