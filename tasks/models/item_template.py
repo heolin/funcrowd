@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django.db import models
+from tasks.field_types import TYPES, STR
 from sortedm2m.fields import SortedManyToManyField
 
 """
@@ -14,6 +15,7 @@ class ItemTemplateField(models.Model):
     editable = models.BooleanField(default=False)
     required = models.BooleanField(default=True)
     feedback = models.BooleanField(default=False)
+    type = models.CharField(max_length=10, choices=TYPES, default=STR)
     data_source = models.ForeignKey("ItemTemplateField", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

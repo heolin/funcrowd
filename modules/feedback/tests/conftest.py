@@ -6,6 +6,7 @@ from tasks.models import (
 from modules.feedback.models.feedback import (
     Feedback, FeedbackScoreField, FeedbackField
 )
+from tasks.field_types import LIST
 
 from users.models import EndWorker
 from modules.order_strategy.models import Strategy
@@ -90,3 +91,55 @@ def setup_task_with_items(setup_users):
     add_annotation(item, annotation_field.name, 12, user1)
     add_annotation(item, annotation_field.name, 12, user2)
     add_annotation(item, annotation_field.name, 9, user3)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_task_with_items_multiple_choice(setup_users):
+    FeedbackScoreField.register_values()
+    FeedbackField.register_values()
+
+    user1, user2, user3 = setup_users
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    task.multiple_annotations = True
+    task.save()
+
+    feedback = Feedback.objects.create(task=task)
+    feedback.fields.add(FeedbackField.objects.get(name="VoteRanking"))
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="ReferenceScore"))
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="VotingScore"))
+
+    template = ItemTemplate.objects.create(name="Adding two")
+    first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
+    template.fields.add(first_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="MultipleChoiceField",
+                                                        required=True, editable=True, feedback=True,
+                                                        type=LIST)
+    template.fields.add(annotation_field)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 1}, order=0)
+    add_annotation(item, annotation_field.name, [2], user1)
+    add_annotation(item, annotation_field.name, [2, 1], user2)
+    add_annotation(item, annotation_field.name, [1], user3)
+    add_annotation(item, annotation_field.name, [2], None)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 2}, order=1)
+    add_annotation(item, annotation_field.name, [4], user1)
+    add_annotation(item, annotation_field.name, [4], user2)
+    add_annotation(item, annotation_field.name, [4], user3)
+    add_annotation(item, annotation_field.name, [4], None)
+
+    item =Item.objects.create(task=task, template=template, data={first_field.name: 3}, order=2)
+    add_annotation(item, annotation_field.name, [6, 3], user1)
+    add_annotation(item, annotation_field.name, [3], user2)
+    add_annotation(item, annotation_field.name, [9, 12], user3)
+    add_annotation(item, annotation_field.name, [9], None)
+    add_annotation(item, annotation_field.name, [3], None)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 4}, order=3)
+    add_annotation(item, annotation_field.name, [12], user1)
+    add_annotation(item, annotation_field.name, [12], user2)
+    add_annotation(item, annotation_field.name, [9], user3)

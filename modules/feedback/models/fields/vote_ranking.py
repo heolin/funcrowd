@@ -1,16 +1,15 @@
 from .base import FeedbackField
-import pandas as pd
+from modules.feedback.models.utils.voting import get_votings
 
 
 class VoteRanking(FeedbackField):
 
     def evaluate(self, annotation):
         item = annotation.item
+        field = item.template.fields.get(name=self.name)
         other_annotations = item.annotations.exclude(user=None).exclude(user=annotation.user)
         if other_annotations:
-            other_values = other_annotations.values_list("data", flat=True)
-            df_other = pd.DataFrame(list(other_values))
-            df_probs = df_other[self.field].value_counts() / len(df_other)
+            df_probs = get_votings(other_annotations, field)
             scores = df_probs.to_dict()
             return scores
         return None

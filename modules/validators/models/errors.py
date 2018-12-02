@@ -24,3 +24,8 @@ class RequiredFieldEmptyError(AnnotationFormValidationError):
 class FieldNotInTemplateError(AnnotationFormValidationError):
     def __init__(self, field):
         super().__init__(field, "Field not found in template")
+
+
+class FieldTypeError(AnnotationFormValidationError):
+    def __init__(self, field, type):
+        super().__init__(field, "Type error. Expected type is \"{}\"".format(type))

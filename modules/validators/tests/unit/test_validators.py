@@ -1,9 +1,9 @@
 import pytest
 
 from tasks.models import (
-    Task, Item, Annotation
+    Task
 )
-from tasks.controllers.validators.annotation import (
+from modules.validators.models.annotation import (
     AnnotationDoneValidator,
     SourceFieldValuesValidator,
     AnnotationFieldsValidator

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from tasks.api.serializers.annotation import AnnotationSerializer
-from tasks.api.serializers.validators.errors import AnnotationFormErrorSerializers
+from modules.validators.api.serializers.errors import AnnotationFormErrorSerializers
 
 
 class AnnotationResponseSerializer(serializers.Serializer):

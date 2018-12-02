@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'modules.order_strategy',
     'modules.quality_control',
     'modules.packages',
-    'modules.feedback'
+    'modules.feedback',
+    'modules.validators'
 ]
 
 MIDDLEWARE = [

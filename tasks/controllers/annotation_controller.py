@@ -1,5 +1,5 @@
 from tasks.models.dto.annotation_response import AnnotationResponse
-from tasks.controllers.validators.annotation import (
+from modules.validators.models.annotation import (
     AnnotationFieldsValidator,
     SourceFieldValuesValidator,
     AnnotationDoneValidator
