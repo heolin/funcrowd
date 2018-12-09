@@ -3,7 +3,7 @@ import pytest
 from tasks.models import Task
 
 from modules.feedback.models.fields import (
-    VoteRanking, AnnotationsCount
+    VoteRanking, AnnotationsCount, ReferenceValue
 )
 
 
@@ -83,3 +83,42 @@ def test_annotations_count(setup_task_with_items, setup_users):
     }
     for annotation in item.annotations.exclude(user=None):
         assert field.evaluate(annotation) == votes[annotation.user]
+
+
+@pytest.mark.django_db
+def test_reference_value(setup_task_with_items, setup_users):
+    user1, user2, user3 = setup_users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    field = ReferenceValue(annotation_field.name)
+
+    item = task.items.get(order=0)
+    votes = {
+        user1: [2],
+        user2: [2],
+        user3: [2],
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=1)
+    votes = {
+        user1: [4],
+        user2: [4],
+        user3: [4],
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert field.evaluate(annotation) == votes[annotation.user]
+
+    item = task.items.get(order=2)
+    votes = {
+        user1: set([3, 9]),
+        user2: set([3, 9]),
+        user3: set([3, 9]),
+    }
+    for annotation in item.annotations.exclude(user=None):
+        assert set(field.evaluate(annotation)) == votes[annotation.user]

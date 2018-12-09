@@ -4,5 +4,5 @@ from modules.packages.api.views.package import NextPackage
 
 
 urlpatterns = [
-    path('missions/<int:mission_id>/next_package', NextPackage.as_view(), name='mission_next_packaeg'),
+    path('missions/<int:mission_id>/next_package', NextPackage.as_view(), name='mission_next_package'),
 ]

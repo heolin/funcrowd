@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'modules.quality_control',
     'modules.packages',
     'modules.feedback',
-    'modules.validators'
+    'modules.validators',
+    'modules.bounty'
 ]
 
 MIDDLEWARE = [
