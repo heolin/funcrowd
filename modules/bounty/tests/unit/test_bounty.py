@@ -6,6 +6,7 @@ from tasks.models import (
 
 from modules.bounty.models import Bounty, UserBounty
 from modules.bounty.consts import NEW, IN_PROGRESS, CLOSED, FINISHED
+from modules.bounty.exceptions import OnlyOneActiveBountyPerTask
 
 
 def add_annotation(item, user, value):
@@ -84,3 +85,26 @@ def test_bounty_pre_annotations(setup_task_with_items, setup_user):
     user_bounty.update()
     assert user_bounty.status == FINISHED
 
+
+@pytest.mark.django_db
+def test_one_active_bounty_per_task(setup_task_with_items, setup_user):
+    user = setup_user
+    task = Task.objects.first()
+
+    bounty1 = Bounty.objects.create(task=task, annotations_target=5)
+    bounty2 = Bounty.objects.create(task=task, annotations_target=3)
+
+    user_bounty, created = UserBounty.get_or_create(bounty1, user)
+    assert created
+
+    with pytest.raises(OnlyOneActiveBountyPerTask):
+        UserBounty.get_or_create(bounty2, user)
+
+    item = None
+    for i in range(5):
+        item = task.next_item(user, item)
+        add_annotation(item, user, "A")
+    user_bounty.update()
+
+    _, created = UserBounty.get_or_create(bounty2, user)
+    assert created

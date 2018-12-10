@@ -1,0 +1,3 @@
+
+class OnlyOneActiveBountyPerTask(Exception):
+    pass

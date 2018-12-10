@@ -4,7 +4,7 @@ from modules.bounty.models import UserBounty
 
 
 class UserBountySerializer(serializers.ModelSerializer):
-    annotations_target = serializers.IntegerField('bounty.annotations_target')
+    annotations_target = serializers.IntegerField(source='bounty.annotations_target')
 
     class Meta:
         model = UserBounty

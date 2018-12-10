@@ -7,6 +7,7 @@ from users.models.end_workers import EndWorker
 from modules.bounty.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, CLOSED
 from modules.bounty.models.bounty import Bounty
 from modules.bounty.models.utils import get_reward_token
+from modules.bounty.exceptions import OnlyOneActiveBountyPerTask
 import tasks.models as m
 
 
@@ -22,6 +23,13 @@ class UserBounty(models.Model):
 
     @staticmethod
     def get_or_create(bounty: Bounty, user: EndWorker):
+        if UserBounty.objects.exclude(bounty=bounty
+                                      ).filter(user=user,
+                                               bounty__task=bounty.task,
+                                               status__in=[NEW, IN_PROGRESS]).first():
+            raise OnlyOneActiveBountyPerTask("This user has already an active bounty for Task {}".format(
+                bounty.task.id))
+
         bounty, created = UserBounty.objects.get_or_create(user=user, bounty=bounty)
         if created:
             bounty.annotations_initial = bounty._get_annotations()
