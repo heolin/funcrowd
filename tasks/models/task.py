@@ -16,6 +16,7 @@ class Task(models.Model):
     name = models.CharField(max_length=300)
 
     description = models.CharField(max_length=500, default="", blank=True)
+    instruction = models.TextField(default="", blank="")
     created = models.DateTimeField(auto_now_add=True)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="tasks")

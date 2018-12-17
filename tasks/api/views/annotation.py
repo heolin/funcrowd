@@ -31,6 +31,7 @@ class AnnotationDetail(GenericAPIView):
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 annotation.data = serializer.data['data']
+                annotation.skipped = serializer.data.get('skipped', False)
                 response = AnnotationController().process(annotation)
                 serializer = AnnotationResponseSerializer(response)
             else:

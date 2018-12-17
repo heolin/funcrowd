@@ -7,7 +7,7 @@ from users.models.end_workers import EndWorker
 from modules.bounty.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, CLOSED
 from modules.bounty.models.bounty import Bounty
 from modules.bounty.models.utils import get_reward_token
-from modules.bounty.exceptions import OnlyOneActiveBountyPerTask
+from modules.bounty.exceptions import OnlyOneActiveBountyPerTask, BountyFinished
 import tasks.models as m
 
 
@@ -23,18 +23,17 @@ class UserBounty(models.Model):
 
     @staticmethod
     def get_or_create(bounty: Bounty, user: EndWorker):
-        if UserBounty.objects.exclude(bounty=bounty
-                                      ).filter(user=user,
-                                               bounty__task=bounty.task,
-                                               status__in=[NEW, IN_PROGRESS]).first():
-            raise OnlyOneActiveBountyPerTask("This user has already an active bounty for Task {}".format(
-                bounty.task.id))
+        user_bounty = UserBounty.objects.filter(user=user, bounty=bounty).first()
+        created = False
 
-        bounty, created = UserBounty.objects.get_or_create(user=user, bounty=bounty)
-        if created:
-            bounty.annotations_initial = bounty._get_annotations()
-            bounty.save()
-        return bounty, created
+        if not UserBounty.objects.exclude(bounty=bounty).filter(
+                user=user, bounty__task=bounty.task, status__in=[NEW, IN_PROGRESS]).first():
+            if not user_bounty and not bounty.closed:
+                user_bounty = UserBounty.objects.create(user=user, bounty=bounty)
+                user_bounty.annotations_initial = user_bounty._get_annotations()
+                user_bounty.save()
+                created = True
+        return user_bounty, created
 
     def __str__(self):
         return "UserBounty (#{}): Bounty: {} - User: {}".format(
@@ -43,11 +42,15 @@ class UserBounty(models.Model):
     def _get_annotations(self):
         return m.annotation.Annotation.objects.filter(
             item__task=self.bounty.task,
+            skipped=False,
             user=self.user).count()
 
     def update(self):
+        if self.bounty.closed:
+            return
+
         annotations_count = self._get_annotations()
-        self.annotations_done = annotations_count - self.annotations_initial
+        self.annotations_done = min(annotations_count - self.annotations_initial, self.bounty.annotations_target)
 
         if self.status == NEW and self.annotations_done > 0:
             self.status = IN_PROGRESS
@@ -56,13 +59,18 @@ class UserBounty(models.Model):
 
         self.save()
 
+    def finish(self):
+        if self.status != CLOSED:
+            self.status = FINISHED
+            self.save()
+
     def close(self):
         self.status = CLOSED
         self.save()
 
     @property
     def progress(self):
-        return self.annotations_done / self.bounty.annotations_target
+        return min(self.annotations_done / self.bounty.annotations_target, 1.0)
 
     @property
     def reward(self):

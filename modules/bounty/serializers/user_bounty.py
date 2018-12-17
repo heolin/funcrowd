@@ -10,3 +10,10 @@ class UserBountySerializer(serializers.ModelSerializer):
         model = UserBounty
         fields = ('id', 'bounty', 'status', 'progress', 'reward',
                   'annotations_done', 'annotations_target')
+
+
+class UserBountyElementSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserBounty
+        fields = ('id', 'bounty', 'progress', 'status', 'annotations_done')

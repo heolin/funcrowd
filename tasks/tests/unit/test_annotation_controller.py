@@ -41,3 +41,9 @@ def test_annotation_controller(setup_task_with_items_data_source, setup_user):
     annotation.data = {"output": "A"}
     response = controller.process(annotation)
     assert response.is_verified is True
+
+    # test skipped
+    annotation.data = {}
+    annotation.skipped = True
+    response = controller.process(annotation)
+    assert response.is_verified is True

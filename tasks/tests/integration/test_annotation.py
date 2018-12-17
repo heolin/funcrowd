@@ -24,7 +24,7 @@ def test_get_annotation(setup_task_with_items, setup_user):
         "annotation": {
             'item_id': item.id,
             'data': {'output': '', 'optional': ''},
-            'is_skipped': False,
+            'skipped': False,
             'feedback': None
         },
         'is_verified': False,
@@ -116,9 +116,22 @@ def test_post_annotation(setup_task_with_items, setup_user):
         "annotation": {
             'item_id': item.id,
             'data': {'output': '1', 'optional': ''},
-            'is_skipped': False,
+            'skipped': False,
             'feedback': None
         },
         'is_verified': True,
         'errors': []
     }
+
+    # posting correct skipped annotation
+    payload = {
+        'data': json.dumps({'output': '', 'optional': ''}),
+        'skipped': True
+    }
+    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    force_authenticate(request, setup_user)
+    view = AnnotationDetail.as_view()
+    response = view(request, item.id)
+    assert response.status_code == 200
+    assert response.data["is_verified"] is True
+    assert response.data["annotation"]["skipped"] is True

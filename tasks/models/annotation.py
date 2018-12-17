@@ -11,7 +11,7 @@ class Annotation(models.Model):
     data = JSONField()
     item = models.ForeignKey("Item", on_delete=models.CASCADE, related_name="annotations")
     user = models.ForeignKey(EndWorker, blank=True, null=True, on_delete=models.CASCADE)
-    is_skipped = models.BooleanField(default=False)
+    skipped = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

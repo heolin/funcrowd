@@ -15,8 +15,8 @@ class BountyStatusView(GenericAPIView):
         bounty = Bounty.objects.get(id=bounty_id)
         if bounty:
             user_bounty, _ = UserBounty.get_or_create(bounty, request.user)
-            user_bounty.update()
+            if user_bounty:
+                user_bounty.update()
             serializer = self.serializer_class(user_bounty)
             return Response(serializer.data)
         raise NotFound("No Bounty found for given id.")
-
