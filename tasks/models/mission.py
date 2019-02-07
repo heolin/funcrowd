@@ -3,6 +3,8 @@
 from __future__ import unicode_literals
 from django.db import models
 
+import modules.statistics as s
+
 """
 Mission are the base object used for story logic.
 Each mission can store multiple tasks.
@@ -20,6 +22,12 @@ class Mission(models.Model):
 
     def get_next_task(self, task):
         return self.tasks.filter(order__gt=task.order).first()
+
+    @property
+    def stats(self):
+        cls = s.models.MissionStats
+        stats, _ = cls.objects.get_or_create(mission=self)
+        return stats
 
     def __str__(self):
         return "{}({})".format(

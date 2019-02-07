@@ -14,6 +14,8 @@ import json
 class Item(models.Model):
     data = JSONField()
     task = models.ForeignKey("Task", on_delete=models.CASCADE, related_name="items")
+    document = models.ForeignKey("Document", null=True, blank=True,
+                                 on_delete=models.CASCADE, related_name="items")
     template = models.ForeignKey("ItemTemplate", on_delete=models.CASCADE)
     order = models.IntegerField(default=0)
 
