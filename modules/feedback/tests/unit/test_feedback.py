@@ -16,9 +16,10 @@ def test_feedback(setup_task_with_items, setup_users):
 
     assert len(feedback.values) == 1
     assert "output" in feedback.values
-    assert feedback.values['output']['VoteRanking'] == {2: 0.5, 1: 0.5}
+    assert round(feedback.values['output']['VoteRanking'][1], 2) == 0.33
+    assert round(feedback.values['output']['VoteRanking'][2], 2) == 0.67
 
     assert len(feedback.scores) == 1
     assert "output" in feedback.scores
     assert feedback.scores['output']['ReferenceScore'] == 1.0
-    assert feedback.scores['output']['VotingScore'] == 0.5
+    assert round(feedback.scores['output']['VotingScore'], 2) == 0.67

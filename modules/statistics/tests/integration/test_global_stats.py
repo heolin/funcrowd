@@ -5,7 +5,7 @@ from modules.statistics.api.views import GlobalStatsView
 
 
 @pytest.mark.django_db
-def test_global_stats_view_tassk(setup_user, setup_tasks):
+def test_global_stats_view_tasks_data(setup_user, setup_tasks):
     factory = APIRequestFactory()
 
     # Global stats

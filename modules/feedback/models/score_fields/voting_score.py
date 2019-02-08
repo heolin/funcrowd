@@ -9,7 +9,7 @@ class VotingScore(FeedbackScore):
     def score(self, annotation):
         item = annotation.item
         field = item.template.fields.get(name=self.field)
-        other_annotations = item.annotations.exclude(user=None).exclude(user=annotation.user)
+        other_annotations = item.annotations.exclude(user=None)  # .exclude(user=annotation.user)
         if other_annotations:
             df_probs = get_votings(other_annotations, field)
             if field.type == LIST:

@@ -20,12 +20,13 @@ def test_vote_ranking(setup_task_with_items, setup_users):
 
     item = task.items.get(order=0)
     votes = {
-        user1: {1: 0.5, 2: 0.5},
-        user2: {1: 0.5, 2: 0.5},
-        user3: {2: 1.0}
+        user1: {1: 0.33, 2: 0.67},
+        user2: {1: 0.33, 2: 0.67},
+        user3: {1: 0.33, 2: 0.67}
     }
     for annotation in item.annotations.exclude(user=None):
-        assert field.evaluate(annotation) == votes[annotation.user]
+        for key, value in field.evaluate(annotation).items():
+            assert round(value, 2) == votes[annotation.user][key]
 
     item = task.items.get(order=1)
     votes = {
@@ -34,25 +35,28 @@ def test_vote_ranking(setup_task_with_items, setup_users):
         user3: {4: 1.0}
     }
     for annotation in item.annotations.exclude(user=None):
-        assert field.evaluate(annotation) == votes[annotation.user]
+        for key, value in field.evaluate(annotation).items():
+            assert round(value, 2) == votes[annotation.user][key]
 
     item = task.items.get(order=2)
     votes = {
-        user1: {3: 0.5, 9: 0.5},
-        user2: {6: 0.5, 9: 0.5},
-        user3: {3: 0.5, 6: 0.5}
+        user1: {3: 0.33, 6: 0.33, 9: 0.33},
+        user2: {3: 0.33, 6: 0.33, 9: 0.33},
+        user3: {3: 0.33, 6: 0.33, 9: 0.33},
     }
     for annotation in item.annotations.exclude(user=None):
-        assert field.evaluate(annotation) == votes[annotation.user]
+        for key, value in field.evaluate(annotation).items():
+            assert round(value, 2) == votes[annotation.user][key]
 
     item = task.items.get(order=3)
     votes = {
-        user1: {9: 0.5, 12: 0.5},
-        user2: {9: 0.5, 12: 0.5},
-        user3: {12: 1.0}
+        user1: {9: 0.33, 12: 0.67},
+        user2: {9: 0.33, 12: 0.67},
+        user3: {9: 0.33, 12: 0.67},
     }
     for annotation in item.annotations.exclude(user=None):
-        assert field.evaluate(annotation) == votes[annotation.user]
+        for key, value in field.evaluate(annotation).items():
+            assert round(value, 2) == votes[annotation.user][key]
 
 
 @pytest.mark.django_db
