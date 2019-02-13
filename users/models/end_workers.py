@@ -16,12 +16,9 @@ class EndWorker(AbstractUser):
 
     @property
     def stats(self):
-        if not self.my_stats:
-            UserStats.objects.create(mission=self)
-        return self.my_stats
+        stats, _ = UserStats.objects.get_or_create(user=self)
+        return stats
 
     def get_mission_stats(self, mission_id):
-        stats = self.my_mission_stats.filter(mission_id=mission_id).first()
-        if not stats:
-            stats, _ = UserMissionStats.objects.get_or_create(user=self, mission_id=mission_id)
+        stats, _ = UserMissionStats.objects.get_or_create(user=self, mission_id=mission_id)
         return stats

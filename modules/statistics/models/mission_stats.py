@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 from django.db import models
-import tasks as t
 from tasks.consts import VERIFICATION, FINISHED
+import tasks as t
 
 
 class MissionStats(models.Model):

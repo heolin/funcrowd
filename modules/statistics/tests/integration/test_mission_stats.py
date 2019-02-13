@@ -13,7 +13,6 @@ def test_mission_stats_view_tasks_data(setup_user, setup_tasks):
 
     # Mission stats
     request = factory.get('/api/v1/stats/missions/{}'.format(mission.id))
-    force_authenticate(request, setup_user)
     view = MissionStatsView.as_view()
     response = view(request, mission.id)
 

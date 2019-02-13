@@ -26,7 +26,7 @@ def test_mission_stats_no_data(setup_tasks):
 
 
 @pytest.mark.django_db
-def test_global_stats_no_data(setup_tasks_annotations):
+def test_mission_stats_task_data(setup_tasks_annotations):
     mission = Mission.objects.first()
     stats = mission.stats
 

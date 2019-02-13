@@ -17,7 +17,8 @@ class UserMissionStatsView(GenericAPIView):
         if user:
             mission = Mission.objects.filter(id=mission_id).first()
             if mission:
-                serializer = self.serializer_class(mission.stats)
+                stats = user.get_mission_stats(mission.id)
+                serializer = self.serializer_class(stats)
                 return Response(serializer.data)
             return NotFound("No Mission find for given id.")
         return NotFound("No User find for given id.")

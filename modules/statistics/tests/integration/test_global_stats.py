@@ -10,7 +10,6 @@ def test_global_stats_view_tasks_data(setup_user, setup_tasks):
 
     # Global stats
     request = factory.get('/api/v1/stats')
-    force_authenticate(request, setup_user)
     view = GlobalStatsView.as_view()
     response = view(request)
 

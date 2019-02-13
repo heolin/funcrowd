@@ -2,10 +2,9 @@
 
 from __future__ import unicode_literals
 from django.db import models
-
+from tasks.consts import FINISHED, VERIFICATION
 import tasks as t
 import users as u
-from tasks.consts import FINISHED, VERIFICATION
 
 
 class GlobalStats(models.Model):

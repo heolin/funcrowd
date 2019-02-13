@@ -77,12 +77,13 @@ def setup_tasks_items(setup_tasks):
                                                         required=True, editable=True)
     template.fields.add(annotation_field)
 
-    for i in range(10):
+    for i, document in enumerate(task1.mission.documents.all()):
         Item.objects.create(task=task1, template=template, order=i,
-                            data={first_field.name: i})
+                            data={first_field.name: i}, document=document)
 
+    for i, document in enumerate(task4.mission.documents.all()):
         Item.objects.create(task=task4, template=template, order=i,
-                            data={first_field.name: i})
+                            data={first_field.name: i}, document=document)
 
 
 @pytest.fixture
@@ -96,6 +97,6 @@ def setup_tasks_annotations(setup_user, setup_other_user, setup_tasks_items):
         add_annotation(item, user1, "1")
         add_annotation(item, user2, "1")
 
-    task2 = Task.objects.get(name="Task 1")
-    for item in task2.items.all():
+    task4 = Task.objects.get(name="Task 4")
+    for item in task4.items.all():
         add_annotation(item, user1, "1")

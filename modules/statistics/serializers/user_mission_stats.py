@@ -6,4 +6,5 @@ class UserMissionStatsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMissionStats
-        fields = ("mission_id", 'user_id')
+        fields = ("mission_id", 'user_id', 'annotated_documents', 'high_agreement_count',
+                  'agreement_ranking_position', 'agreement_ranking_percentage')
