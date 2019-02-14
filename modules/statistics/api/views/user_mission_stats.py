@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 
@@ -11,6 +12,8 @@ from users.models import EndWorker
 
 class UserMissionStatsView(GenericAPIView):
     serializer_class = UserMissionStatsSerializer
+    authentication_classes = []
+    permission_classes = (AllowAny,)
 
     def get(self, request, user_id, mission_id,  *args, **kwargs):
         user = EndWorker.objects.filter(id=user_id).first()
