@@ -6,10 +6,10 @@ import tasks as t
 
 
 class UserMissionStats(models.Model):
-    user = models.OneToOneField("users.EndWorker", on_delete=models.CASCADE, null=True,
-                                related_name="+")
-    mission = models.OneToOneField("tasks.Mission", on_delete=models.CASCADE, null=True,
-                                   related_name='+')
+    user = models.ForeignKey("users.EndWorker", on_delete=models.CASCADE, null=True,
+                             related_name="+")
+    mission = models.ForeignKey("tasks.Mission", on_delete=models.CASCADE, null=True,
+                                related_name='+')
     high_agreement_count = models.IntegerField(default=0)
     agreement_ranking_position = models.IntegerField(default=0)
     agreement_ranking_percentage = models.FloatField(default=0)
