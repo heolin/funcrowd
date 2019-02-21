@@ -1,6 +1,9 @@
 import pytest
 
+from modules.feedback.models import Feedback, FeedbackScoreField, FeedbackField
+from modules.statistics.models.utils.update_users_statistics import update_user_stats
 from tasks.consts import IN_PROGRESS, VERIFICATION, FINISHED
+from tasks.controllers.annotation_controller import AnnotationController
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation,
     Document)
@@ -88,15 +91,59 @@ def setup_tasks_items(setup_tasks):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_tasks_annotations(setup_user, setup_other_user, setup_tasks_items):
+def setup_tasks_annotations():
+    data = [[0, 0, 0, 0, 14],
+            [0, 0, 0, 12, 2],
+            [0, 0, 0, 8, 6],
+            [0, 3, 9, 2, 0],
+            [0, 0, 12, 1, 1],
+            [12, 2, 0, 0, 0],
+            [3, 10, 1, 0, 0],
+            [14, 0, 0, 0, 0],
+            [10, 0, 2, 2, 0],
+            [0, 0, 13, 0, 1]]
 
-    user1, user2 = setup_user, setup_other_user
+    Strategy.register_values()
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    mission = Mission.objects.create(name="Test mission 1")
+    task = Task.objects.create(mission=mission, name="Task 1", strategy=strategy)
+    template = ItemTemplate.objects.create(name="Test template")
+    first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
+    template.fields.add(first_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
+                                                        required=True, editable=True, feedback=True)
+    template.fields.add(annotation_field)
 
-    task1 = Task.objects.get(name="Task 1")
-    for item in task1.items.all():
-        add_annotation(item, user1, "1")
-        add_annotation(item, user2, "1")
+    FeedbackScoreField.register_values()
+    FeedbackField.register_values()
+    feedback = Feedback.objects.create(task=task)
+    feedback.fields.add(FeedbackField.objects.get(name="VoteRanking"))
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="VotingScore"))
 
-    task4 = Task.objects.get(name="Task 4")
-    for item in task4.items.all():
-        add_annotation(item, user1, "1")
+    documents = {}
+    for i in range(len(data)):
+        documents[i] = Document.objects.create(name="Doc{}".format(i), mission=mission)
+
+    users = {}
+    for i in range(14):
+        users[i] = EndWorker.objects.create_user("user{}".format(i),
+                                                 "user{}@mail.com".format(i),
+                                                 "password")
+        users[i].stats
+        users[i].get_mission_stats(mission.id)
+
+    for i, row in enumerate(data):
+        item = Item.objects.create(task=task, template=template, document=documents[i],
+                                   data={first_field.name: i}, order=i)
+        counter = 0
+        for j, count in enumerate(row):
+            for _ in range(count):
+                Annotation.objects.create(item=item,
+                                          user=users[counter],
+                                          data={annotation_field.name: j})
+                counter += 1
+
+    for annotation in Annotation.objects.all():
+        AnnotationController().process(annotation)
+
+    update_user_stats()

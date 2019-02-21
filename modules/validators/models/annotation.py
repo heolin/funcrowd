@@ -47,7 +47,7 @@ class AnnotationDoneValidator(FieldValidator):
 
         for field in annotation.item.template.annotations_fields:
             if field.required and field.name in annotation.data:
-                if not annotation.data[field.name]:
+                if not annotation.data[field.name] and annotation.data[field.name] != 0:
                     errors.append(RequiredFieldEmptyError(field.name))
 
         return errors
