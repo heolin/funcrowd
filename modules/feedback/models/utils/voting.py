@@ -13,6 +13,5 @@ def get_votings(annotations, field):
                     results.append({key: value})
         other_values = results
     df_other = pd.DataFrame(other_values)
-    print(df_other[field.name].value_counts())
     df_probs = df_other[field.name].value_counts() / len(df_other)
     return df_probs

@@ -19,3 +19,7 @@ class Annotation(models.Model):
         TEMPLATE = "Task {} (#{}) - Item: {} (#{}) - Annotation: #{} - User: {}"
         return TEMPLATE.format(self.item.task.order, self.item.task.id,
                                self.item.order, self.item.id, self.id, self.user)
+
+    def get_feedback(self):
+        if hasattr(self, "feedback"):
+            return self.feedback
