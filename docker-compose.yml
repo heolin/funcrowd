@@ -29,7 +29,14 @@ services:
     image: postgres:10.0
     restart: always
     container_name: funcrowd-db
+    volumes:
+      - funcrowd_db:/var/lib/postgresql/data
+      - ./backups:/var/lib/backups
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+
+volumes:
+    funcrowd_db:
+
