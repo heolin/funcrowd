@@ -105,7 +105,7 @@ def setup_tasks_annotations():
 
     Strategy.register_values()
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    mission = Mission.objects.create(name="Test mission 1")
+    mission = Mission.objects.create(name="Test mission 4")
     task = Task.objects.create(mission=mission, name="Task 1", strategy=strategy)
     template = ItemTemplate.objects.create(name="Test template")
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
@@ -129,7 +129,7 @@ def setup_tasks_annotations():
         users[i] = EndWorker.objects.create_user("user{}".format(i),
                                                  "user{}@mail.com".format(i),
                                                  "password")
-        users[i].stats
+        users[i].stats  # creates user stast
         users[i].get_mission_stats(mission.id)
 
     for i, row in enumerate(data):
@@ -147,3 +147,14 @@ def setup_tasks_annotations():
         AnnotationController().process(annotation)
 
     update_user_stats()
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_two_missions(setup_tasks_items, setup_user):
+
+    item1 = Item.objects.filter(task__name="Task 1").first()
+    item4 = Item.objects.filter(task__name="Task 4").first()
+
+    add_annotation(item1, setup_user, "A")
+    add_annotation(item4, setup_user, "A")

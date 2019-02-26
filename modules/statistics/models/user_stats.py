@@ -24,6 +24,11 @@ class UserStats(models.Model):
         return t.models.Annotation.objects.filter(user=self.user).\
             values("item__document").distinct().count()
 
+    @property
+    def annotated_missions(self):
+        return t.models.Annotation.objects.filter(user=self.user). \
+            values("item__task__mission").distinct().count()
+
     def update_high_agreement_count(self):
         self.high_agreement_count = get_high_agreement_count(self.user)
         self.save()
