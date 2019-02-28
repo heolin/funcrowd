@@ -25,5 +25,6 @@ def test_user_mission_stats_view_tasks_data(setup_tasks_annotations):
         'annotated_documents': 10,
         'high_agreement_count': 8,
         'agreement_ranking_position': 7,
-        'agreement_ranking_percentage': 0.5
+        'agreement_ranking_percentage': 0.5,
+        'high_agreement_percentage': 0.8
     }

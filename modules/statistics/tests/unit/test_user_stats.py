@@ -34,6 +34,7 @@ def test_user_stats_annotation_data(setup_tasks_annotations):
 def test_user_stats_annotation_data(setup_two_missions, setup_user):
     user = setup_user
     stats = user.stats
+    stats.update()
 
     assert stats.annotated_documents == 2
     assert stats.annotated_missions == 2

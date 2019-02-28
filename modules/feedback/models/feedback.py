@@ -9,6 +9,8 @@ from .feedback_score_field import FeedbackScoreField
 
 from modules.feedback.models.annotation_feedback import AnnotationFeedback
 
+import numpy as np
+
 
 class Feedback(models.Model):
     task = models.OneToOneField(Task, on_delete=models.CASCADE,
@@ -43,12 +45,22 @@ class Feedback(models.Model):
             result[field.name] = self.evaluate_field(field.name, annotation)
         return result
 
+    def aggregate_scores(self, scores):
+        score_values = []
+        for field_values in scores.values():
+            for value in field_values.values():
+                score_values.append(value)
+        score_value = np.average(score_values)
+        return score_value
+
     def create_feedback(self, annotation):
         scores = self.score(annotation)
         values = self.evaluate(annotation)
+        score_value = self.aggregate_scores(scores)
 
         feedback, _ = AnnotationFeedback.objects.get_or_create(annotation=annotation)
         feedback.scores = scores
         feedback.values = values
+        feedback.score = score_value
         feedback.save()
         return feedback

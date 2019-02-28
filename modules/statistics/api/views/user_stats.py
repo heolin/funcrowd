@@ -17,6 +17,8 @@ class UserStatsView(GenericAPIView):
     def get(self, request, user_id,  *args, **kwargs):
         user = EndWorker.objects.filter(id=user_id).first()
         if user:
+            user.stats.update()
+            user.stats.update_agreement_ranking()
             serializer = self.serializer_class(user.stats)
             return Response(serializer.data)
         return NotFound("No User find for given id.")
