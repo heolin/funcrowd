@@ -32,7 +32,7 @@ class UserStats(models.Model):
             values("item__task__mission").distinct().count()
 
         self.annotated_items = t.models.Annotation.objects.filter(user=self.user).values(
-            "item__document").distinct().count()
+            "item").distinct().count()
 
         self.annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).values("item__document").distinct().count()

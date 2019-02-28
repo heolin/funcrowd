@@ -31,7 +31,7 @@ class UserMissionStats(models.Model):
     def update(self):
         self.annotated_items = t.models.Annotation.objects.filter(
             user=self.user).filter(item__task__mission=self.mission).values(
-            "item__document").distinct().count()
+            "item").distinct().count()
 
         self.annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).filter(item__task__mission=self.mission).values(
