@@ -41,7 +41,8 @@ class UserStats(models.Model):
             annotation__user=self.user).filter(
             score__gte=HIGH_AGREEMENT_THRESHOLD).count()
 
-        self.high_agreement_percentage = self.high_agreement_count / self.annotated_items
+        if self.annotated_items:
+            self.high_agreement_percentage = self.high_agreement_count / self.annotated_items
 
         self.save()
 
