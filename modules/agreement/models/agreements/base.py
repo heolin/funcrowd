@@ -1,6 +1,6 @@
 import pandas as pd
 from abc import ABC, abstractmethod
-from modules.quality_control.exceptions import MultipleTempaltesFound
+from modules.agreement.exceptions import MultipleTempaltesFound
 from tasks.models import Annotation
 
 

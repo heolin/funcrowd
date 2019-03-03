@@ -1,5 +1,5 @@
 #!/bin/bash
 
 source .env
-docker-compose exec db psql funcrowd -U $POSTGRES_USER -f "/var/lib/backups/$1"
+docker-compose exec db pg_restore -Fc --dbname=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/funcrowd "/var/lib/backups/$1"
 
