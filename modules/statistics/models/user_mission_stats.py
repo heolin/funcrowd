@@ -35,7 +35,7 @@ class UserMissionStats(models.Model):
 
         self.annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).filter(item__task__mission=self.mission).values(
-            "item__document").distinct().count()
+            "item__package").distinct().count()
 
         self.high_agreement_count = f.models.annotation_feedback.AnnotationFeedback.objects.filter(
             annotation__item__task__mission=self.mission).filter(

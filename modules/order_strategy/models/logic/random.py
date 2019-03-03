@@ -1,3 +1,4 @@
+from tasks.consts import VERIFICATION, FINISHED
 from .base import BaseStrategyLogic
 from modules.order_strategy.exceptions import ActionNotSupported
 
@@ -12,6 +13,8 @@ class RandomStrategyLogic(BaseStrategyLogic):
 
         if self.task.max_annotations:
             items = self.task.exclude_max_annotations(items)
+
+        items = items.exclude(status__in=[FINISHED, VERIFICATION])
         items = items.order_by("?")
         return items.first()
 

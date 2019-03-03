@@ -9,7 +9,7 @@ def test_setup_tasks(setup_task_with_items):
     assert mission.packages is not None
 
     mp = mission.packages
-    assert mp.packages.count() == 4
+    assert mp.packages.count() == 5
 
     package = mp.packages.all()[0]
     assert package.items.count() == 2

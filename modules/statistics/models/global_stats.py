@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from tasks.consts import FINISHED, VERIFICATION
+import modules.packages as p
 import tasks as t
 import users as u
 
@@ -24,11 +25,11 @@ class GlobalStats(models.Model):
 
     @property
     def total_documents(self):
-        return t.models.document.Document.objects.count()
+        return p.models.package.Package.objects.count()
 
     @property
     def total_finished_documents(self):
-        return t.models.document.Document.objects.filter(status__in=[VERIFICATION, FINISHED]).count()
+        return p.models.package.Package.objects.filter(status__in=[VERIFICATION, FINISHED]).count()
 
     @property
     def total_tasks(self):

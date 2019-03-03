@@ -2,8 +2,9 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.db.models import F, Avg
+from django.db.models import Avg
 from tasks.consts import VERIFICATION, FINISHED
+import modules.packages as p
 import tasks as t
 import modules.statistics as s
 
@@ -22,11 +23,11 @@ class MissionStats(models.Model):
 
     @property
     def total_documents(self):
-        return t.models.document.Document.objects.filter(mission=self.mission).count()
+        return p.models.package.Package.objects.filter(parent__mission=self.mission).count()
 
     @property
     def total_finished_documents(self):
-        return t.models.document.Document.objects.filter(mission=self.mission).filter(
+        return p.models.package.Package.objects.filter(parent__mission=self.mission).filter(
             status__in=[VERIFICATION, FINISHED]).count()
 
     @property

@@ -20,6 +20,8 @@ def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user):
     package = mp.next_package(user1, package)
     assert package.order == 4
     package = mp.next_package(user1, package)
+    assert package.order == 5
+    package = mp.next_package(user1, package)
     assert package is None
 
     package = mp.next_package(user2, None)
