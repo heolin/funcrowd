@@ -1,5 +1,6 @@
 import pytest
 
+from tasks.consts import FINISHED
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
@@ -45,43 +46,34 @@ def setup_task_with_items():
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel", editable=True)
     template.fields.add(annotation_field)
 
+    packages = MissionPackages.objects.create(mission=mission, strategy=strategy)
+    package1 = Package.objects.create(parent=packages, order=1)
+    package2 = Package.objects.create(parent=packages, order=2)
+    package3 = Package.objects.create(parent=packages, order=3)
+    package4 = Package.objects.create(parent=packages, order=4)
+    package5 = Package.objects.create(parent=packages, order=5, status=FINISHED)
+
     task1 = Task.objects.create(mission=mission, name="task1", strategy=strategy)
     task1_item1 = Item.objects.create(task=task1, template=template, order=1,
-                    data={field.name: "task1 item1"})
+                    data={field.name: "task1 item1"}, package=package1)
     task1_item2 = Item.objects.create(task=task1, template=template, order=2,
-                    data={field.name: "task1 item2"})
+                    data={field.name: "task1 item2"}, package=package2)
     task1_item3 = Item.objects.create(task=task1, template=template, order=3,
-                    data={field.name: "task1 item3"})
+                    data={field.name: "task1 item3"}, package=package3)
     task1_item4 = Item.objects.create(task=task1, template=template, order=4,
-                    data={field.name: "task1 item4"})
+                    data={field.name: "task1 item4"}, package=package4)
+    task1_item5 = Item.objects.create(task=task1, template=template, order=5,
+                    data={field.name: "task1 item4"}, package=package5)
 
     task2 = Task.objects.create(mission=mission, name="task2", strategy=strategy)
     task2_item1 = Item.objects.create(task=task2, template=template, order=1,
-                    data={field.name: "task2 item1"})
+                    data={field.name: "task2 item1"}, package=package1)
     task2_item2 = Item.objects.create(task=task2, template=template, order=2,
-                    data={field.name: "task2 item2"})
+                    data={field.name: "task2 item2"}, package=package2)
     task2_item3 = Item.objects.create(task=task2, template=template, order=3,
-                    data={field.name: "task2 item3"})
+                    data={field.name: "task2 item3"}, package=package3)
     task2_item4 = Item.objects.create(task=task2, template=template, order=4,
-                    data={field.name: "task2 item4"})
-
-    packages = MissionPackages.objects.create(mission=mission, strategy=strategy)
-
-    package = Package.objects.create(parent=packages, order=1)
-    package.items.add(task1_item1)
-    package.items.add(task2_item1)
-
-    package = Package.objects.create(parent=packages, order=2)
-    package.items.add(task1_item2)
-    package.items.add(task2_item2)
-
-    package = Package.objects.create(parent=packages, order=3)
-    package.items.add(task1_item3)
-    package.items.add(task2_item3)
-
-    package = Package.objects.create(parent=packages, order=4)
-    package.items.add(task1_item4)
-    package.items.add(task2_item4)
+                    data={field.name: "task2 item4"}, package=package4)
 
 
 @pytest.fixture

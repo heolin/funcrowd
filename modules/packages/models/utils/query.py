@@ -15,8 +15,7 @@ from (
         from
             "packages_missionpackages"
             LEFT OUTER JOIN "packages_package" ON ("packages_missionpackages"."id" = "packages_package"."parent_id")
-            LEFT OUTER JOIN "packages_package_items" ON ("packages_package"."id" = "packages_package_items"."package_id")
-            LEFT OUTER JOIN "tasks_item" ON ("packages_package_items"."item_id" = "tasks_item"."id")
+            LEFT OUTER JOIN "tasks_item" ON ("packages_package"."id" = "tasks_item"."package_id")
             LEFT OUTER JOIN "tasks_annotation" ON ("tasks_item"."id" = "tasks_annotation"."item_id")
         where
             "packages_missionpackages"."id" = %s

@@ -35,7 +35,7 @@ class UserStats(models.Model):
             "item").distinct().count()
 
         self.annotated_documents = t.models.Annotation.objects.filter(
-            user=self.user).values("item__document").distinct().count()
+            user=self.user).values("item__package").distinct().count()
 
         self.high_agreement_count = f.models.annotation_feedback.AnnotationFeedback.objects.filter(
             annotation__user=self.user).filter(

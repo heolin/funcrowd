@@ -2,11 +2,11 @@ import pytest
 
 from modules.feedback.models import Feedback, FeedbackScoreField, FeedbackField
 from modules.statistics.models.utils.update_users_statistics import update_user_stats
+from modules.packages.models import Package, MissionPackages
 from tasks.consts import IN_PROGRESS, VERIFICATION, FINISHED
 from tasks.controllers.annotation_controller import AnnotationController
 from tasks.models import (
-    Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation,
-    Document)
+    Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation)
 from users.models import EndWorker
 
 from modules.order_strategy.models import Strategy
@@ -41,6 +41,10 @@ def setup_tasks():
     mission2 = Mission.objects.create(name="Test mission 2")
     mission3 = Mission.objects.create(name="Test mission 2")
 
+    mission1_package = MissionPackages.objects.create(mission=mission1, strategy=strategy)
+    mission2_package = MissionPackages.objects.create(mission=mission2, strategy=strategy)
+    mission3_package = MissionPackages.objects.create(mission=mission3, strategy=strategy)
+
     Task.objects.create(mission=mission1, name="Task 1", strategy=strategy)
     Task.objects.create(mission=mission1, name="Task 2", strategy=strategy)
     Task.objects.create(mission=mission1, name="Task 3", strategy=strategy)
@@ -50,21 +54,21 @@ def setup_tasks():
 
     Task.objects.create(mission=mission3, name="Task 6", strategy=strategy)
 
-    Document.objects.create(name="Document 1", mission=mission1)
-    Document.objects.create(name="Document 2", mission=mission1)
-    Document.objects.create(name="Document 3", mission=mission1, status=IN_PROGRESS)
-    Document.objects.create(name="Document 4", mission=mission1, status=VERIFICATION)
-    Document.objects.create(name="Document 5", mission=mission1, status=FINISHED)
-    Document.objects.create(name="Document 6", mission=mission1, status=FINISHED)
+    Package.objects.create(name="Package 1", parent=mission1_package)
+    Package.objects.create(name="Package 2", parent=mission1_package)
+    Package.objects.create(name="Package 3", parent=mission1_package, status=IN_PROGRESS)
+    Package.objects.create(name="Package 4", parent=mission1_package, status=VERIFICATION)
+    Package.objects.create(name="Package 5", parent=mission1_package, status=FINISHED)
+    Package.objects.create(name="Package 6", parent=mission1_package, status=FINISHED)
 
-    Document.objects.create(name="Document 7", mission=mission2)
-    Document.objects.create(name="Document 8", mission=mission2)
-    Document.objects.create(name="Document 9", mission=mission2)
-    Document.objects.create(name="Document 10", mission=mission2, status=IN_PROGRESS)
+    Package.objects.create(name="Package 7", parent=mission2_package)
+    Package.objects.create(name="Package 8", parent=mission2_package)
+    Package.objects.create(name="Package 9", parent=mission2_package)
+    Package.objects.create(name="Package 10", parent=mission2_package, status=IN_PROGRESS)
 
-    Document.objects.create(name="Document 11", mission=mission3, status=VERIFICATION)
-    Document.objects.create(name="Document 12", mission=mission3, status=FINISHED)
-    Document.objects.create(name="Document 13", mission=mission3, status=FINISHED)
+    Package.objects.create(name="Package 11", parent=mission3_package, status=VERIFICATION)
+    Package.objects.create(name="Package 12", parent=mission3_package, status=FINISHED)
+    Package.objects.create(name="Package 13", parent=mission3_package, status=FINISHED)
 
 
 @pytest.fixture
@@ -80,13 +84,13 @@ def setup_tasks_items(setup_tasks):
                                                         required=True, editable=True)
     template.fields.add(annotation_field)
 
-    for i, document in enumerate(task1.mission.documents.all()):
+    for i, document in enumerate(task1.mission.packages.packages.all()):
         Item.objects.create(task=task1, template=template, order=i,
-                            data={first_field.name: i}, document=document)
+                            data={first_field.name: i}, package=document)
 
-    for i, document in enumerate(task4.mission.documents.all()):
+    for i, document in enumerate(task4.mission.packages.packages.all()):
         Item.objects.create(task=task4, template=template, order=i,
-                            data={first_field.name: i}, document=document)
+                            data={first_field.name: i}, package=document)
 
 
 @pytest.fixture
@@ -106,6 +110,7 @@ def setup_tasks_annotations():
     Strategy.register_values()
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mission = Mission.objects.create(name="Test mission 4")
+    mission_package = MissionPackages.objects.create(mission=mission, strategy=strategy)
     task = Task.objects.create(mission=mission, name="Task 1", strategy=strategy)
     template = ItemTemplate.objects.create(name="Test template")
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
@@ -122,7 +127,7 @@ def setup_tasks_annotations():
 
     documents = {}
     for i in range(len(data)):
-        documents[i] = Document.objects.create(name="Doc{}".format(i), mission=mission)
+        documents[i] = Package.objects.create(name="Doc{}".format(i), parent=mission_package)
 
     users = {}
     for i in range(14):
@@ -133,7 +138,7 @@ def setup_tasks_annotations():
         users[i].get_mission_stats(mission.id)
 
     for i, row in enumerate(data):
-        item = Item.objects.create(task=task, template=template, document=documents[i],
+        item = Item.objects.create(task=task, template=template, package=documents[i],
                                    data={first_field.name: i}, order=i)
         counter = 0
         for j, count in enumerate(row):

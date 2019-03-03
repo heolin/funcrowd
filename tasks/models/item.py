@@ -7,6 +7,8 @@ from django.contrib.postgres.fields import ArrayField
 
 from tasks.models.annotation import Annotation
 from tasks.models.item_template import ItemTemplate
+from modules.packages.models.package import Package
+from tasks.consts import STATUSES, NEW
 
 import json
 
@@ -14,9 +16,10 @@ import json
 class Item(models.Model):
     data = JSONField()
     task = models.ForeignKey("Task", on_delete=models.CASCADE, related_name="items")
-    document = models.ForeignKey("Document", null=True, blank=True,
+    package = models.ForeignKey(Package, null=True, blank=True,
                                  on_delete=models.CASCADE, related_name="items")
     template = models.ForeignKey("ItemTemplate", on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
     order = models.IntegerField(default=0)
 
     def __str__(self):

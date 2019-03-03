@@ -1,3 +1,4 @@
+from tasks.consts import FINISHED, VERIFICATION
 from .base import BaseStrategyLogic
 from modules.order_strategy.exceptions import ActionNotSupported
 
@@ -12,7 +13,9 @@ class DepthFirstStrategyLogic(BaseStrategyLogic):
 
         if self.task.max_annotations:
             items = self.task.exclude_max_annotations(items)
-        items = items.order_by("annotations_done")
+
+        items = items.exclude(status__in=[FINISHED, VERIFICATION])
+        items = items.order_by("annotations_done", "order")
         return items.first()
 
     def prev(self):
