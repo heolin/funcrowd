@@ -1,8 +1,8 @@
 import pytest
 
 from tasks.models import Task
-from modules.quality_control.models import AgreementMetric
-from modules.quality_control.exceptions import MultipleTempaltesFound
+from modules.agreement.models import AgreementMetric
+from modules.agreement.exceptions import MultipleTempaltesFound
 
 
 @pytest.mark.django_db

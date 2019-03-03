@@ -4,5 +4,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class QualityControlConfig(AppConfig):
-    name = 'quality_control'
+class AggregationConfig(AppConfig):
+    name = 'aggregation'

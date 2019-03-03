@@ -2,6 +2,5 @@
 
 TIMESTAMP=`date +"%Y%m%d%H%M%S"`
 source .env
-PGPASSWORD=$POSTGRES_PASSOWRD
-docker-compose exec db pg_dump funcrowd -U $POSTGRES_USER -W > "./backups/funcrowd-db.$TIMESTAMP.bak.sql"
+docker-compose exec db pg_dump -Fc --dbname=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/funcrowd -f "/var/lib/backups/funcrowd-db.$TIMESTAMP.bak.sql"
 
