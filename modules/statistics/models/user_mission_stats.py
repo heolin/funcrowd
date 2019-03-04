@@ -30,12 +30,12 @@ class UserMissionStats(models.Model):
 
     def update(self):
         self.annotated_items = t.models.Annotation.objects.filter(
-            user=self.user).filter(item__task__mission=self.mission).values(
-            "item").distinct().count()
+            user=self.user).filter(item__task__mission=self.mission).filter(
+            skipped=False).values("item").distinct().count()
 
         self.annotated_documents = t.models.Annotation.objects.filter(
-            user=self.user).filter(item__task__mission=self.mission).values(
-            "item__package").distinct().count()
+            user=self.user).filter(item__task__mission=self.mission).filter(
+            skipped=False).values("item__package").distinct().count()
 
         self.high_agreement_count = f.models.annotation_feedback.AnnotationFeedback.objects.filter(
             annotation__item__task__mission=self.mission).filter(

@@ -2,15 +2,6 @@ import pandas as pd
 from modules.aggregation.models.aggregations.base import BaseAggregation, AggregationResult
 
 
-def get_votes(group, column):
-    print(group)
-    counts = group[column].value_counts()
-    item_id = group['item'].iloc[0]
-    answer = counts.index[0]
-    probability = counts[0] / counts.sum()
-    return item_id, answer, probability
-
-
 class VotingAggregation(BaseAggregation):
 
     def _logic(self, df):
@@ -23,6 +14,7 @@ class VotingAggregation(BaseAggregation):
                 probability = counts.iloc[0] / counts.sum()
                 df_results.loc[index, column] = answer
                 df_results.loc[index, column + '_prob'] = probability
+                df_results.loc[index, column + '_support'] = len(counts)
 
         results = []
         for item_id, row in df_results.iterrows():
