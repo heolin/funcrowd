@@ -23,10 +23,10 @@ def get_column_values(group, column):
 def get_list_column_values(group, column):
     group = preprocess_list_column(group, column)
     counts = group[column].value_counts()
-    counts = counts[counts/counts.sum() >= MIN_PROBABILITY_THRESHOLD]
-    answer = ", ".join(map(str, counts.index))
-    probability = ", ".join(map(str, counts / counts.sum()))
-    support = ", ".join(map(str, counts))
+    top_counts = counts[counts/counts.sum() >= MIN_PROBABILITY_THRESHOLD]
+    answer = ", ".join(map(str, top_counts.index))
+    probability = ", ".join(map(str, top_counts / counts.sum()))
+    support = ", ".join(map(str, top_counts))
     return answer, probability, support
   
 
