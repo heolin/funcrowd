@@ -12,8 +12,9 @@ class AggregationResult(object):
 
 
 class BaseAggregation(ABC):
-    def __init__(self, task):
+    def __init__(self, task, item=None):
         self.task = task
+        self.item = item
 
     @abstractmethod
     def _logic(self, df) -> [AggregationResult]:
@@ -21,7 +22,10 @@ class BaseAggregation(ABC):
 
     def _get_annotations_table(self):
         result = []
-        annotations = Annotation.objects.filter(item__task=self.task).exclude(user=None)
+        annotations = Annotation.objects.filter(
+            item__task=self.task).exclude(user=None).exclude(skipped=True)
+        if self.item:
+            annotations = annotations.filter(item_id=self.item)
         for data, item, user in annotations.values_list("data", "item", "user__username"):
             data['item'] = item
             data['user'] = user
