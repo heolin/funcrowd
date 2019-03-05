@@ -28,11 +28,11 @@ class UserStats(models.Model):
             self.id, self.user)
 
     def update(self):
-        self.annotated_missions = t.models.Annotation.objects.filter(user=self.user). \
-            values("item__task__mission").distinct().count()
+        self.annotated_missions = t.models.Annotation.objects.filter(user=self.user).filter(
+            skipped=False).values("item__task__mission").distinct().count()
 
-        self.annotated_items = t.models.Annotation.objects.filter(user=self.user).values(
-            "item").distinct().count()
+        self.annotated_items = t.models.Annotation.objects.filter(user=self.user).filter(
+            skipped=False).values("item").distinct().count()
 
         self.annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).values("item__package").distinct().count()

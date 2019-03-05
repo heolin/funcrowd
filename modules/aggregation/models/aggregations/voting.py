@@ -28,15 +28,7 @@ def get_list_column_values(group, column):
     probability = ", ".join(map(str, counts / counts.sum()))
     support = ", ".join(map(str, counts))
     return answer, probability, support
-
-
-def get_votes(group, column):
-    counts = group[column].value_counts()
-    item_id = group['item'].iloc[0]
-    answer = counts.index[0]
-    probability = counts[0] / counts.sum()
-    return item_id, answer, probability
-
+  
 
 class VotingAggregation(BaseAggregation):
 
