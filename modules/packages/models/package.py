@@ -5,8 +5,10 @@ from django.db import models
 
 from django.contrib.postgres.fields import JSONField
 
-from tasks.consts import STATUSES, NEW
+import modules.aggregation as a
+from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
 from modules.packages.models.mission_packages import MissionPackages
+import numpy as np
 
 
 class Package(models.Model):
@@ -21,3 +23,20 @@ class Package(models.Model):
 
     class Meta:
         ordering = ['order']
+
+    def update_status(self):
+        aggregations = a.models.ItemAggregation.objects.filter(item__package=self)
+
+        probability = np.min([a.get_probability() for a in aggregations])
+        support = np.max([a.get_support() for a in aggregations])
+
+        if self.status in [NEW, IN_PROGRESS]:
+            if support >= 4 and probability > 0.7:
+                self.status = FINISHED
+                self.save()
+            elif support >= 7:
+                self.status = VERIFICATION
+                self.save()
+            elif support >= 1:
+                self.status = IN_PROGRESS
+                self.save()

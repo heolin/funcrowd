@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 from tasks.models.item import Item
+import numpy as np
 
 
 class ItemAggregation(models.Model):
@@ -22,3 +23,27 @@ class ItemAggregation(models.Model):
             self.item
             )
 
+    def get_probability(self):
+        values = []
+        for key, value in self.data.items():
+            if not key.endswith("_prob"):
+                continue
+            if type(value) is str:
+                values.extend(map(float, value.split(',')))
+            else:
+                values.append(value)
+
+        if values:
+            return np.average(values)
+
+    def get_support(self):
+        values = []
+        for key, value in self.data.items():
+            if not key.endswith("_support"):
+                continue
+            if type(value) is str:
+                values.extend(map(int, value.split(',')))
+            else:
+                values.append(value)
+        if values:
+            return np.max(values)

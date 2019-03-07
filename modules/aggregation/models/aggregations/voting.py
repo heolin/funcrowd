@@ -16,7 +16,7 @@ def get_column_values(group, column):
     counts = group[column].value_counts()
     support = counts.iloc[0]
     answer = counts.index[0]
-    probability = support / counts.sum()
+    probability = (support / counts.sum()).round(2)
     return answer, probability, support
 
 
@@ -24,8 +24,10 @@ def get_list_column_values(group, column):
     group = preprocess_list_column(group, column)
     counts = group[column].value_counts()
     top_counts = counts[counts/counts.sum() >= MIN_PROBABILITY_THRESHOLD]
+    if not len(top_counts):
+        top_counts = counts
     answer = ", ".join(map(str, top_counts.index))
-    probability = ", ".join(map(str, top_counts / counts.sum()))
+    probability = ", ".join(map(str, (top_counts / counts.sum()).round(2)))
     support = ", ".join(map(str, top_counts))
     return answer, probability, support
   

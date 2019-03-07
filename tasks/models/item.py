@@ -3,14 +3,12 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.fields import ArrayField
 
 from tasks.models.annotation import Annotation
 from tasks.models.item_template import ItemTemplate
 from modules.packages.models.package import Package
-from tasks.consts import STATUSES, NEW
-
-import json
+from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
+import modules.aggregation as a
 
 
 class Item(models.Model):
@@ -57,3 +55,27 @@ class Item(models.Model):
             annotation = Annotation.objects.create(item=self, user=user, data=data)
             created = True
         return annotation, created
+
+    def update_status(self):
+        if not self.annotations.count():
+            return
+
+        a.models.VotingAggregation(self.task, self).aggregate()
+        aggregation = a.models.ItemAggregation.objects.filter(item=self).first()
+
+        probability = aggregation.get_probability()
+        support = aggregation.get_probability()
+
+        if self.status in [NEW, IN_PROGRESS]:
+            if support >= 4 and probability > 0.7:
+                self.status = FINISHED
+                self.save()
+            elif support >= 7:
+                self.status = VERIFICATION
+                self.save()
+            elif support >= 1:
+                self.status = IN_PROGRESS
+                self.save()
+
+        if self.package:
+            self.package.update_status()

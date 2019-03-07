@@ -33,6 +33,9 @@ class AnnotationController(object):
             if hasattr(task, "feedback") and not annotation.skipped:
                 task.feedback.create_feedback(annotation)
 
+            # update item status
+            item.update_status()
+
         response = AnnotationResponse(annotation, is_verified, errors)
         return response
 
