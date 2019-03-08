@@ -33,6 +33,9 @@ class BaseAggregation(ABC):
         for data, item, user in annotations.values_list("data", "item", "user__username"):
             data['item'] = item
             data['user'] = user
+            for field in self.item.template.annotations_fields:
+                if field.name not in data:
+                    data[field.name] = None
             result.append(data)
         return pd.DataFrame(result).fillna("<EMPTY>")
 
@@ -45,4 +48,3 @@ class BaseAggregation(ABC):
             aggregation.save()
             aggregations.append(aggregation)
         return aggregations
-
