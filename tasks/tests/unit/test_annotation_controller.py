@@ -47,3 +47,28 @@ def test_annotation_controller(setup_task_with_items_data_source, setup_user):
     annotation.skipped = True
     response = controller.process(annotation)
     assert response.is_verified is True
+
+
+@pytest.mark.django_db
+def test_annotation_controller_data_source(setup_task_with_items_data_source, setup_user):
+    user = setup_user
+    task = Task.objects.first()
+    item = task.items.first()
+    controller = AnnotationController()
+
+    annotation, _ = item.get_or_create_annotation(user)
+    annotation.data = {"output": "C"}
+    response = controller.process(annotation)
+    assert response.is_verified is False
+    assert len(response.errors) == 1
+    assert response.errors[0].name == "ValueNotInDataSourceError"
+    assert response.errors[0].field == "output"
+
+    field = item.template.fields.get(name="output")
+    field.validate_data_source = False
+    field.save()
+
+    annotation, _ = item.get_or_create_annotation(user)
+    annotation.data = {"output": "C"}
+    response = controller.process(annotation)
+    assert response.is_verified is True

@@ -36,5 +36,15 @@ class GlobalStats(models.Model):
         return t.models.task.Task.objects.count()
 
     @property
+    def total_finished_items(self):
+        packages = p.models.package.Package.objects.filter(status__in=[VERIFICATION, FINISHED])
+        return t.models.item.Item.objects.filter(package__in=packages).count()
+
+    @property
+    def total_finished_items(self):
+        packages = p.models.package.Package.objects.filter(status__in=[VERIFICATION, FINISHED])
+        return t.models.item.Item.objects.filter(package__in=packages).count()
+
+    @property
     def total_missions(self):
         return t.models.mission.Mission.objects.count()

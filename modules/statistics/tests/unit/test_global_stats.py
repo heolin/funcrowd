@@ -16,6 +16,7 @@ def test_multiple_create():
 def test_global_stats_no_data():
     stats = GlobalStats.objects.create()
     assert stats.total_finished_documents == 0
+    assert stats.total_finished_items == 0
     assert stats.total_documents == 0
     assert stats.total_missions == 0
     assert stats.total_users == 0
@@ -26,6 +27,7 @@ def test_global_stats_no_data():
 def test_global_stats_tasks_data(setup_user, setup_tasks):
     stats = GlobalStats.objects.create()
     assert stats.total_finished_documents == 6
+    assert stats.total_finished_items == 0
     assert stats.total_documents == 13
     assert stats.total_missions == 3
     assert stats.total_users == 1

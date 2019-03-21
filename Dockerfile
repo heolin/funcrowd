@@ -12,3 +12,6 @@ ENV DJANGO_SETTINGS_MODULE funcrowd.settings
 COPY . /app
 
 CMD ["gunicorn", "funcrowd.wsgi", "--bind", "0.0.0.0:80", "--workers", "2", "--worker-class", "gevent", "--access-logfile=-"]
+
+EXPOSE 80
+

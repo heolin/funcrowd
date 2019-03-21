@@ -31,6 +31,12 @@ class MissionStats(models.Model):
             status__in=[VERIFICATION, FINISHED]).count()
 
     @property
+    def total_finished_items(self):
+        packages = p.models.package.Package.objects.filter(parent__mission=self.mission).filter(
+            status__in=[VERIFICATION, FINISHED])
+        return t.models.item.Item.objects.filter(package__in=packages).count()
+
+    @property
     def total_tasks(self):
         return self.mission.tasks.count()
 
