@@ -15,6 +15,9 @@ class SourceFieldValuesValidator(FieldValidator):
         item = annotation.item
         template = item.template
         for field in template.annotations_fields:
+            if not field.validate_data_source:
+                continue
+
             if field.data_source and field.name in annotation.data:
                 if annotation.data[field.name] not in item.data[field.data_source.name]:
                     errors.append(ValueNotInDataSourceError(field.name))

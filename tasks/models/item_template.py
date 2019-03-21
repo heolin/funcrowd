@@ -16,6 +16,7 @@ class ItemTemplateField(models.Model):
     required = models.BooleanField(default=True)
     feedback = models.BooleanField(default=False)
     type = models.CharField(max_length=10, choices=TYPES, default=STR)
+    validate_data_source = models.BooleanField(default=True)
     data_source = models.ForeignKey("ItemTemplateField", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

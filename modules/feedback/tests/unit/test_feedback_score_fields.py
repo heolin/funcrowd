@@ -71,6 +71,23 @@ def test_voting_score(setup_task_with_items, setup_users):
 
 
 @pytest.mark.django_db
+def test_vote_ranking(setup_task_with_items_data_source, setup_users):
+    user1, user2, user3 = setup_users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    scorer = VotingScore(annotation_field.name)
+
+    item = task.items.get(order=0)
+    scores = {user1: 0.33, user2: 0.33, user3: 0.33}
+    for annotation in item.annotations.exclude(user=None):
+        assert round(scorer.score(annotation), 2) == scores[annotation.user]
+
+
+@pytest.mark.django_db
 def test_voting_score_list(setup_task_with_items_multiple_choice, setup_users):
     user1, user2, user3 = setup_users
 

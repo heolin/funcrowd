@@ -21,6 +21,7 @@ def test_mission_stats_no_data(setup_tasks):
 
     assert stats.total_finished_documents == 3
     assert stats.total_documents == 6
+    assert stats.total_finished_items == 0
     assert stats.total_users == 0
     assert stats.total_tasks == 3
 
@@ -30,7 +31,8 @@ def test_mission_stats_task_data(setup_tasks_annotations):
     mission = Mission.objects.get(name="Test mission 4")
     stats = mission.stats
 
-    assert stats.total_finished_documents == 0
+    assert stats.total_finished_documents == 10
+    assert stats.total_finished_items == 10
     assert stats.total_documents == 10
     assert stats.total_users == 14
     assert stats.total_tasks == 1
