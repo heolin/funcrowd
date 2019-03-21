@@ -18,9 +18,10 @@ class ItemTemplateField(models.Model):
     type = models.CharField(max_length=10, choices=TYPES, default=STR)
     validate_data_source = models.BooleanField(default=True)
     data_source = models.ForeignKey("ItemTemplateField", on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.CharField(max_length=30, default="", blank=True, null=True)
 
     def __str__(self):
-        return "{}({})".format(self.name, self.widget)
+        return "{}({}, {})".format(self.name, self.widget, self.comment)
 
 
 class ItemTemplate(models.Model):
