@@ -25,7 +25,7 @@ class ItemTemplateField(models.Model):
 
 
 class ItemTemplate(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
     fields = SortedManyToManyField("ItemTemplateField", related_name="template")
 
     def __str__(self):
