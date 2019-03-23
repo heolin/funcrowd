@@ -1,3 +1,4 @@
+from tasks.field_types import LIST
 from .errors import (
     ValueNotInDataSourceError,
     RequiredFieldEmptyError,
@@ -19,7 +20,16 @@ class SourceFieldValuesValidator(FieldValidator):
                 continue
 
             if field.data_source and field.name in annotation.data:
-                if annotation.data[field.name] not in item.data[field.data_source.name]:
+                values = annotation.data[field.name]
+                if field.type != LIST:
+                    values = [values]
+
+                value_not_found = False
+                for value in values:
+                    if value not in item.data[field.data_source.name]:
+                        value_not_found = True
+
+                if value_not_found:
                     errors.append(ValueNotInDataSourceError(field.name))
         return errors
 

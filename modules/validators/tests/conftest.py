@@ -1,5 +1,6 @@
 import pytest
 
+from tasks.field_types import LIST
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
@@ -61,6 +62,7 @@ def setup_task_with_items():
     Item.objects.create(task=task, template=template, order=2,
                         data={first_field.name: 2, second_field.name: 2})
 
+
 @pytest.fixture
 @pytest.mark.django_db
 def setup_task_with_items_data_source():
@@ -77,6 +79,29 @@ def setup_task_with_items_data_source():
     template.fields.add(source_field)
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
                                                         required=True, editable=True,
+                                                        data_source=source_field)
+    template.fields.add(annotation_field)
+
+    Item.objects.create(task=task, template=template, order=1,
+                        data={first_field.name: 1, source_field.name: ["A", "B"]})
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_task_with_items_data_source_type_list():
+    Strategy.register_values()
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+
+    template = ItemTemplate.objects.create(name="Adding two")
+    first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
+    template.fields.add(first_field)
+    source_field = ItemTemplateField.objects.create(name="ALL_VALUES", widget="Hidden")
+    template.fields.add(source_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
+                                                        required=True, editable=True, type=LIST,
                                                         data_source=source_field)
     template.fields.add(annotation_field)
 
