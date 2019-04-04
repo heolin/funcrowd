@@ -14,24 +14,26 @@ def _filter_other_values(row, field_name, data_source_field_name):
 
 
 def get_votings(annotations, field):
-    other_values = list(annotations.values_list("data", flat=True))
+    df_values = pd.DataFrame(list(annotations.values("item_id", "data"))).set_index("item_id")
+    s_values = df_values['data'].apply(lambda x: x[field.name])
+
     if field.type == LIST:
-        results = []
-        for row in other_values:
-            for key, values in row.items():
-                for value in values:
-                    results.append({key: value})
-        other_values = results
-    df_other = pd.DataFrame(other_values)
+        s_values = s_values.apply(pd.Series).stack().reset_index(level=-1, drop=True)
+    df_values = s_values.to_frame(field.name)
 
     if field.data_source:
-        items_values = list(annotations.values_list("item__data", flat=True))
-        df_other[field.data_source.name] = [row[field.data_source.name] for row in items_values]
-        df_other[field.name] = df_other.apply(_filter_other_values,
-                                              field_name=field.name,
-                                              data_source_field_name=field.data_source.name,
-                                              axis=1)
-        df_other = df_other.drop(field.data_source.name, axis=1)
+        df_source_values = pd.DataFrame(list(annotations.values("item_id", "item__data").distinct()))\
+            .set_index("item_id")
+        df_source_values = df_source_values['item__data']\
+            .apply(lambda x: x[field.data_source.name])\
+            .to_frame(name=field.data_source.name)
+        df_values = df_values.join(df_source_values)
 
-    df_probs = df_other[field.name].value_counts() / len(df_other)
+        df_values[field.name] = df_values.apply(_filter_other_values,
+                                                field_name=field.name,
+                                                data_source_field_name=field.data_source.name,
+                                                axis=1)
+        df_values.drop(field.data_source.name, axis=1, inplace=True)
+
+    df_probs = df_values[field.name].value_counts() / len(df_values)
     return df_probs
