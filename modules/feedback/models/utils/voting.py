@@ -15,7 +15,8 @@ def _filter_other_values(row, field_name, data_source_field_name):
 
 def get_votings(annotations, field):
     df_values = pd.DataFrame(list(annotations.values("item_id", "data"))).set_index("item_id")
-    s_values = df_values['data'].apply(lambda x: x[field.name])
+    s_values = df_values['data'].apply(lambda x: x.get(field.name))
+    s_values = s_values[s_values.notnull()]
 
     if field.type == LIST:
         s_values = s_values.apply(pd.Series).stack().reset_index(level=-1, drop=True)
