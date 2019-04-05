@@ -223,6 +223,8 @@ def setup_task_with_items_multiple_choice_data_source(setup_users):
 
     item = Item.objects.create(task=task, template=template,
                                data={first_field.name: 1, values_field.name: ["1", "2"]}, order=1)
-    add_annotation(item, annotation_field.name, ["1"], user1)
+    annotation, _ = item.get_or_create_annotation(user1)
+    annotation.data = {}
+    annotation.save()
     add_annotation(item, annotation_field.name, ["1", "2"], user2)
     add_annotation(item, annotation_field.name, ["1", "3"], user3)

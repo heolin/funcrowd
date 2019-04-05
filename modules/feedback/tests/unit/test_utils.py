@@ -21,9 +21,9 @@ def test_feedback(setup_task_with_items_multiple_choice_data_source, setup_users
         assert value == reference[key]
 
     reference = {
-        "2": 0.2,
-        "1": 0.6,
-        '<OTHER>': 0.2
+        "2": 0.25,
+        "1": 0.5,
+        '<OTHER>': 0.25
     }
     item = task.items.last()
     df_probs = get_votings(item.annotations.all(), field)
