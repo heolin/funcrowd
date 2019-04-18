@@ -20,6 +20,7 @@ django-rest-auth[with_social]==0.9.3
 pandas==0.23.4
 rest-pandas==1.0.0
 openpyxl==2.6.1
+raven==6.10.0
 
 
 # development requirements

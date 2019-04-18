@@ -1,5 +1,8 @@
 import os
 import environ
+import raven
+from corsheaders.defaults import default_headers
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = environ.Path(__file__) - 2
@@ -28,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ] + [
+    'raven.contrib.django.raven_compat',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
@@ -142,7 +146,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = default_headers + (
     'cache-control',
     'x-requested-with',
@@ -165,4 +168,11 @@ CORS_ORIGIN_WHITELIST = (
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL=True
 #CORS_ORIGIN_WHITELIST = (u"*", )
+
+
+RAVEN_CONFIG = {}
+if 'SENTRY_DNS' in env:
+    RAVEN_CONFIG = {
+        'dsn': env('SENTRY_DNS'),
+    }
 
