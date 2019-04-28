@@ -41,6 +41,11 @@ class MissionStats(models.Model):
         return self.mission.tasks.count()
 
     @property
+    def total_annotations(self):
+        return t.models.annotation.Annotation.objects.filter(
+            item__task__mission_id=self.mission).count()
+
+    @property
     def agreement_mean(self):
         return s.models.user_mission_stats.UserMissionStats.objects.filter(
             mission=self.mission).aggregate(Avg('high_agreement_percentage'))['high_agreement_percentage__avg']
