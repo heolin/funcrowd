@@ -14,7 +14,7 @@ Tasks are the base object for core logic of the platform
 
 class Task(models.Model):
     name = models.CharField(max_length=300)
-    keywords = models.CharField(max_length=100, default="")
+    keywords = models.CharField(max_length=100, default="", blank=True)
     description = models.CharField(max_length=500, default="", blank=True)
     instruction = models.TextField(default="", blank="")
     created = models.DateTimeField(auto_now_add=True)
