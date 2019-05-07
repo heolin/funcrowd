@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ] + [
     'users',
     'tasks',
+    'resources',
     'modules.order_strategy',
     'modules.agreement',
     'modules.aggregation',
@@ -155,19 +156,8 @@ CORS_ALLOW_HEADERS = default_headers + (
     'backendauth'
 )
 
-"""
-CORS_ORIGIN_WHITELIST = (
-    u'localhost',
-    u'127.0.0.1',
-    u'78.8.194.28'
-    u'62.181.9.75',
-    u'http://www.test-cors.org',
-    u'test-cors.org'
-)
-"""
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL=True
-#CORS_ORIGIN_WHITELIST = (u"*", )
 
 
 RAVEN_CONFIG = {}
@@ -176,3 +166,13 @@ if 'SENTRY_DNS' in env:
         'dsn': env('SENTRY_DNS'),
     }
 
+
+# File storage
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', '')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
+AWS_QUERYSTRING_AUTH = False

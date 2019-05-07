@@ -1,6 +1,7 @@
 from django.db import models
 from resources.models_utils import GalleryFactory
 
+
 class ExcelFile(models.Model):
     name = models.CharField(max_length=100, unique=True)
     file = models.FileField(upload_to='ExcelFile_file')

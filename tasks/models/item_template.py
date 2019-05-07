@@ -11,6 +11,7 @@ from sortedm2m.fields import SortedManyToManyField
 
 class ItemTemplateField(models.Model):
     name = models.CharField(max_length=30)
+    label = models.CharField(max_length=100, default="", blank=True)
     widget = models.CharField(max_length=30)
     editable = models.BooleanField(default=False)
     required = models.BooleanField(default=True)
