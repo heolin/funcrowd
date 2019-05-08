@@ -25,6 +25,8 @@ class ItemAggregation(models.Model):
 
     def get_probability(self):
         values = []
+        if not self.data:
+            return 0
         for key, value in self.data.items():
             if not key.endswith("_prob"):
                 continue
@@ -38,6 +40,8 @@ class ItemAggregation(models.Model):
 
     def get_support(self):
         values = []
+        if not self.data:
+            return 0
         for key, value in self.data.items():
             if not key.endswith("_support"):
                 continue
