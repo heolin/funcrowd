@@ -17,7 +17,7 @@ class MissionStats(models.Model):
             self.id, self.mission)
 
     @property
-    def total_users(self):
+    def total_active_users(self):
         return t.models.annotation.Annotation.objects.filter(
             item__task__mission_id=self.mission).values('user').distinct().count()
 
@@ -35,6 +35,11 @@ class MissionStats(models.Model):
         packages = p.models.package.Package.objects.filter(parent__mission=self.mission).filter(
             status__in=[VERIFICATION, FINISHED])
         return t.models.item.Item.objects.filter(package__in=packages).count()
+
+    @property
+    def total_finished_packages(self):
+        return p.models.package.Package.objects.filter(parent__mission=self.mission).filter(
+            status__in=[VERIFICATION, FINISHED]).count()
 
     @property
     def total_tasks(self):

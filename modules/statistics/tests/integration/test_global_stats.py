@@ -20,6 +20,8 @@ def test_global_stats_view_tasks_data(setup_user, setup_tasks):
         'total_finished_items': 0,
         'total_missions': 3,
         'total_tasks': 6,
+        'total_active_users': 0,
+        'total_annotations': 0,
         'total_users': 1
     }
 
@@ -40,5 +42,7 @@ def test_global_stats_view_tasks_data_annotations(setup_user, setup_tasks_annota
         'total_finished_items': 10,
         'total_missions': 1,
         'total_tasks': 1,
+        'total_active_users': 14,
+        'total_annotations': 140,
         'total_users': 15
     }

@@ -24,6 +24,10 @@ class GlobalStats(models.Model):
         return u.models.end_workers.EndWorker.objects.count()
 
     @property
+    def total_active_users(self):
+        return t.models.annotation.Annotation.objects.values_list("user").distinct().count()
+
+    @property
     def total_documents(self):
         return p.models.package.Package.objects.count()
 
@@ -44,6 +48,14 @@ class GlobalStats(models.Model):
     def total_finished_items(self):
         packages = p.models.package.Package.objects.filter(status__in=[VERIFICATION, FINISHED])
         return t.models.item.Item.objects.filter(package__in=packages).count()
+
+    @property
+    def total_finished_documents(self):
+        return p.models.package.Package.objects.filter(status__in=[VERIFICATION, FINISHED]).count()
+
+    @property
+    def total_annotations(self):
+        return t.models.annotation.Annotation.objects.count()
 
     @property
     def total_missions(self):
