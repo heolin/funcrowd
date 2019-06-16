@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 
+from modules.aggregation.consts import SEPARATOR
 from tasks.models.item import Item
 import numpy as np
 
@@ -31,7 +32,7 @@ class ItemAggregation(models.Model):
             if not key.endswith("_prob"):
                 continue
             if type(value) is str:
-                values.extend(map(float, value.split(',')))
+                values.extend(map(float, value.split(SEPARATOR)))
             else:
                 values.append(value)
 
@@ -46,7 +47,7 @@ class ItemAggregation(models.Model):
             if not key.endswith("_support"):
                 continue
             if type(value) is str:
-                values.extend(map(int, value.split(',')))
+                values.extend(map(int, value.split(SEPARATOR)))
             else:
                 values.append(value)
         if values:

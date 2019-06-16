@@ -1,4 +1,6 @@
 import pandas as pd
+
+from modules.aggregation.consts import SEPARATOR
 from modules.aggregation.models.aggregations.base import BaseAggregation, AggregationResult
 from tasks.models import Item
 
@@ -26,9 +28,9 @@ def get_list_column_values(group, column):
     top_counts = counts[counts/counts.sum() >= MIN_PROBABILITY_THRESHOLD]
     if not len(top_counts):
         top_counts = counts
-    answer = ", ".join(map(str, top_counts.index))
-    probability = ", ".join(map(str, (top_counts / counts.sum()).round(2)))
-    support = ", ".join(map(str, top_counts))
+    answer = SEPARATOR.join(map(str, top_counts.index))
+    probability = SEPARATOR.join(map(str, (top_counts / counts.sum()).round(2)))
+    support = SEPARATOR.join(map(str, top_counts))
     return answer, probability, support
   
 
