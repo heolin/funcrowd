@@ -11,6 +11,7 @@ def get_data_dump(mission):
                 for key, value in aggregation.data.items():
                     row["{}_{}".format(item.order, key)] = value
         if row:
+            row['index'] = package.name
             row['status'] = package.status
             data.append(row)
     return data
