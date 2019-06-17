@@ -31,7 +31,7 @@ class Package(models.Model):
         support = np.max([a.get_support() for a in aggregations])
 
         if self.status in [NEW, IN_PROGRESS]:
-            if support >= 4 and probability > 0.7:
+            if support >= 4 and probability > 0.5:
                 self.status = FINISHED
                 self.save()
             elif support >= 7:
