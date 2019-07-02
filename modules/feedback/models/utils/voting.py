@@ -36,5 +36,5 @@ def get_votings(annotations, field):
                                                 axis=1)
         df_values.drop(field.data_source.name, axis=1, inplace=True)
 
-    df_probs = df_values[field.name].value_counts() / len(annotations)
+    df_probs = df_values[field.name].value_counts() / len(df_values)
     return df_probs
