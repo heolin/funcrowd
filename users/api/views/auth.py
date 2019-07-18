@@ -15,7 +15,10 @@ from users.api.serializers import (
     EndWorkerLoginSerializer,
     EndWorkerSerializer,
     EndWorkerEmailInfoSerializer,
-    EndWorkerSimpleSerializer)
+    EndWorkerUsernameInfoSerializer,
+    EndWorkerSimpleSerializer
+)
+
 
 
 class EndWorkerRegistrationView(GenericAPIView):
@@ -93,4 +96,19 @@ class EndWorkerEmailInfoView(GenericAPIView):
                 serializer = EndWorkerSimpleSerializer(end_worker)
                 return Response(serializer.data)
             raise NotFound("No EndWorker found for given email.")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EndWorkerUsernameInfoView(GenericAPIView):
+    serializer_class = EndWorkerUsernameInfoSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            username = serializer.data['username']
+            end_worker = EndWorker.objects.filter(username=username).first()
+            if end_worker:
+                serializer = EndWorkerSimpleSerializer(end_worker)
+                return Response(serializer.data)
+            raise NotFound("No EndWorker found for given username.")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -18,4 +18,8 @@ class EndWorkerTokenLoginSerializer(serializers.Serializer):
 
 
 class EndWorkerEmailInfoSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+    email = serializers.EmailField()
+
+
+class EndWorkerUsernameInfoSerializer(serializers.Serializer):
+    username = serializers.CharField()

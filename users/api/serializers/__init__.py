@@ -8,7 +8,8 @@ from users.api.serializers.auth import (
     EndWorkerLoginSerializer,
     EndWorkerRegistrationSerializer,
     EndWorkerTokenLoginSerializer,
-    EndWorkerEmailInfoSerializer
+    EndWorkerEmailInfoSerializer,
+    EndWorkerUsernameInfoSerializer
 )
 
 from users.api.serializers.mturk import MturkRegistrationSerializer
