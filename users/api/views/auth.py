@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 
@@ -13,8 +13,9 @@ from users.models.end_workers import EndWorker
 from users.api.serializers import (
     EndWorkerRegistrationSerializer,
     EndWorkerLoginSerializer,
-    EndWorkerSerializer
-)
+    EndWorkerSerializer,
+    EndWorkerEmailInfoSerializer,
+    EndWorkerSimpleSerializer)
 
 
 class EndWorkerRegistrationView(GenericAPIView):
@@ -79,3 +80,17 @@ class EndWorkerLogoutView(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)  # need to figure out correct error here
 
+
+class EndWorkerEmailInfoView(GenericAPIView):
+    serializer_class = EndWorkerEmailInfoSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            email = serializer.data['email']
+            end_worker = EndWorker.objects.filter(email=email).first()
+            if end_worker:
+                serializer = EndWorkerSimpleSerializer(end_worker)
+                return Response(serializer.data)
+            raise NotFound("No EndWorker found for given email.")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

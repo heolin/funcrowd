@@ -1,12 +1,14 @@
 
 from users.api.serializers.end_worker import (
-    EndWorkerSerializer
+    EndWorkerSerializer,
+    EndWorkerSimpleSerializer
 )
 
 from users.api.serializers.auth import (
     EndWorkerLoginSerializer,
     EndWorkerRegistrationSerializer,
-    EndWorkerTokenLoginSerializer
+    EndWorkerTokenLoginSerializer,
+    EndWorkerEmailInfoSerializer
 )
 
 from users.api.serializers.mturk import MturkRegistrationSerializer
