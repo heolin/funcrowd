@@ -7,5 +7,5 @@ class MissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mission
-        fields = ('id', 'name', 'description', 'metadata')
+        fields = ('id', 'name', 'description', 'tasks_count', 'metadata')
 

@@ -30,6 +30,10 @@ class Mission(models.Model):
         stats, _ = cls.objects.get_or_create(mission=self)
         return stats
 
+    @property
+    def tasks_count(self):
+        return self.tasks.count()
+
     def __str__(self):
         return "{}({})".format(
             self.__class__.__name__,
