@@ -50,8 +50,15 @@ class Item(models.Model):
         if not self.task.multiple_annotations:
             annotation = self.annotations.filter(item=self, user=user)
             annotation = annotation.first()
+
         if not annotation:
-            data = {field.name: "" for field in self.template.annotations_fields.all()}
+            data = {}
+            for field in self.template.annotations_fields.all():
+                default_value = ""
+                if field.default_value:
+                    default_value = self.data.get(field.default_value.name, "")
+                data[field.name] = default_value
+
             annotation = Annotation.objects.create(item=self, user=user, data=data)
             created = True
         return annotation, created
