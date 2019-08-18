@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from tasks.models.mission import Mission
 
 from modules.order_strategy.models import Strategy
@@ -18,6 +19,8 @@ class Task(models.Model):
     description = models.CharField(max_length=500, default="", blank=True)
     instruction = models.TextField(default="", blank="")
     created = models.DateTimeField(auto_now_add=True)
+
+    metadata = JSONField(blank=True, default={})
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="tasks")
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
