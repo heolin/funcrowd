@@ -45,6 +45,15 @@ class Item(models.Model):
         data_fields = set(self.data.keys())
         return items_fields == data_fields
 
+    def get_default_annotation_data(self):
+        data = {}
+        for field in self.template.annotations_fields.all():
+            default_value = ""
+            if field.default_value:
+                default_value = self.data.get(field.default_value.name, "")
+            data[field.name] = default_value
+        return data
+
     def get_or_create_annotation(self, user):
         annotation, created = None, False
         if not self.task.multiple_annotations:
@@ -52,15 +61,10 @@ class Item(models.Model):
             annotation = annotation.first()
 
         if not annotation:
-            data = {}
-            for field in self.template.annotations_fields.all():
-                default_value = ""
-                if field.default_value:
-                    default_value = self.data.get(field.default_value.name, "")
-                data[field.name] = default_value
-
+            data = self.get_default_annotation_data()
             annotation = Annotation.objects.create(item=self, user=user, data=data)
             created = True
+
         return annotation, created
 
     def update_status(self):
