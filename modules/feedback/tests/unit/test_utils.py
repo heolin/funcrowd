@@ -14,19 +14,19 @@ def test_feedback(setup_task_with_items_multiple_choice_data_source, setup_users
     item = task.items.first()
     df_probs = get_votings(item.annotations.all(), field)
     reference = {
-        "2": 0.6,
-        "1": 0.4
+        "2": 0.75,
+        "1": 0.5
     }
     for key, value in df_probs.to_dict().items():
-        assert value == reference[key]
+        assert round(value, 2) == reference[key]
 
     reference = {
-        "2": 0.25,
-        "1": 0.5,
-        '<OTHER>': 0.25
+        "2": 0.33,
+        "1": 0.67,
+        '<OTHER>': 0.33
     }
     item = task.items.last()
     df_probs = get_votings(item.annotations.all(), field)
     for key, value in df_probs.to_dict().items():
-        assert value == reference[key]
+        assert round(value, 2) == reference[key]
 

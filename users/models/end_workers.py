@@ -6,6 +6,8 @@ from modules.statistics.models import UserStats, UserMissionStats
 from users.models.storage import Storage
 from users.models.utils.utils import get_group_number
 
+import tasks as t
+
 
 class EndWorker(AbstractUser):
     group = models.IntegerField(default=get_group_number)
@@ -34,3 +36,17 @@ class EndWorker(AbstractUser):
         storage = self.get_storage(key)
         storage.data = data
         storage.save()
+
+    def get_task_progress(self, task):
+        progress, _ = t.models.task_progress.UserTaskProgress.objects.get_or_create(task=task, user=self)
+        return progress
+
+    def get_mission_progress(self, mission):
+        progress, _ = t.models.mission_progress.UserMissionProgress.objects.get_or_create(mission=mission, user=self)
+        return progress
+
+    def on_annotation(self, annotation):
+        task_progress = self.get_task_progress(annotation.item.task)
+        task_progress.update()
+        mission_progress = self.get_mission_progress(annotation.item.task.mission)
+        mission_progress.update()

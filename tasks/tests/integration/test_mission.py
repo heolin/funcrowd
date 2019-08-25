@@ -16,8 +16,8 @@ def test_mission_list(setup_task, setup_user):
     response = view(request)
     assert response.status_code == 200
     assert response.data == [
-        {'id': 1, 'name': 'Test mission'},
-        {'id': 2, 'name': 'Test mission other'}
+        {'id': 1, 'name': 'Test mission', 'description': '', 'tasks_count': 1, 'metadata': {}},
+        {'id': 2, 'name': 'Test mission other', 'description': '', 'tasks_count': 0, 'metadata': {}},
     ]
 
     # Mission detail, mission found
@@ -27,7 +27,7 @@ def test_mission_list(setup_task, setup_user):
     view = MissionDetail.as_view()
     response = view(request, mission_id)
     assert response.status_code == 200
-    assert response.data == {'id': 1, 'name': 'Test mission'}
+    assert response.data == {'id': 1, 'name': 'Test mission', 'description': '', 'tasks_count': 1, 'metadata': {}}
 
     # Mission detail, mission not found
     mission_id = 3

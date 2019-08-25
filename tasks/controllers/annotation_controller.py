@@ -16,6 +16,7 @@ class AnnotationController(object):
     def process(self, annotation):
         # processing validators
         is_verified, errors = True, []
+        user = annotation.user
 
         if not annotation.skipped:
             for validator in AnnotationController.validators:
@@ -35,6 +36,7 @@ class AnnotationController(object):
 
             # update item status
             annotation.item.update_status()
+            user.on_annotation(annotation)
 
         response = AnnotationResponse(annotation, is_verified, errors)
         return response

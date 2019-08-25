@@ -17,7 +17,8 @@ def test_task_list(setup_task, setup_user):
     response = view(request, mission_id)
     assert response.status_code == 200
     assert response.data == [
-        {'id': 1, 'name': 'Add two digits', 'description': '', 'instruction': '', 'keywords': ''}
+        {'id': 1, 'name': 'Add two digits', 'description': '',
+         'instruction': '', 'keywords': '', 'metadata': {}}
     ]
 
     # Task empty list
@@ -49,7 +50,10 @@ def test_task_details(setup_task, setup_user):
     response = view(request, task_id)
     force_authenticate(request, setup_user)
     assert response.status_code == 200
-    assert response.data == {'id': 1, 'name': 'Add two digits', 'description': '', 'instruction': '', 'keywords': ''}
+    assert response.data == {
+        'id': 1, 'name': 'Add two digits', 'description': '',
+        'instruction': '', 'keywords': '', 'metadata': {}
+    }
 
     # Task details, task not found
     request = factory.get('/tasks/{0}'.format(100))

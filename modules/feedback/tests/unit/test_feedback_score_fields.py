@@ -99,7 +99,7 @@ def test_voting_score_list(setup_task_with_items_multiple_choice, setup_users):
     scorer = VotingScore(annotation_field.name)
 
     item = task.items.get(order=0)
-    scores = {user1: 0.5, user2: 0.5, user3: 0.5}
+    scores = {user1: 0.67, user2: 0.67, user3: 0.67}
     for annotation in item.annotations.exclude(user=None):
         assert round(scorer.score(annotation), 2) == round(scores[annotation.user], 2)
 
@@ -109,7 +109,7 @@ def test_voting_score_list(setup_task_with_items_multiple_choice, setup_users):
         assert round(scorer.score(annotation), 2) == round(scores[annotation.user], 2)
 
     item = task.items.get(order=2)
-    scores = {user1: 0.3, user2: 0.4, user3: 0.2}
+    scores = {user1: 0.5, user2: 0.67, user3: 0.33}
     for annotation in item.annotations.exclude(user=None):
         assert round(scorer.score(annotation), 2) == round(scores[annotation.user], 2)
 
