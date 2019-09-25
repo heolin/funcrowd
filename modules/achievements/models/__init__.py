@@ -1,2 +1,8 @@
-from modules.aggregation.models.item_aggregation import ItemAggregation
-from modules.aggregation.models.aggregations.voting import VotingAggregation
+from modules.achievements.models.achievement import Achievement
+from modules.achievements.models.item_done import ItemDoneAchievement
+from modules.achievements.models.login_count import LoginCountAchievement
+from modules.achievements.models.user_achievement import UserAchievement
+
+from funcrowd.settings import events_manager
+events_manager.register_achievements(ItemDoneAchievement)
+events_manager.register_achievements(LoginCountAchievement)

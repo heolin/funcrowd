@@ -3,6 +3,7 @@ import environ
 import raven
 from corsheaders.defaults import default_headers
 
+from modules.achievements.events_manager import EventsManager
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = environ.Path(__file__) - 2
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'modules.validators',
     'modules.bounty',
     'modules.statistics',
+    'modules.achievements'
 ]
 
 MIDDLEWARE = [
@@ -176,3 +178,6 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
 AWS_QUERYSTRING_AUTH = False
+
+
+events_manager = EventsManager()

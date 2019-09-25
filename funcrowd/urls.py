@@ -14,6 +14,7 @@ urlpatterns += [
     path('api/v1/', include('modules.packages.api.urls')),
     path('api/v1/', include('modules.statistics.api.urls')),
     path('api/v1/', include('modules.bounty.api.urls')),
+    path('api/v1/', include('modules.achievements.api.urls')),
     path('api/v1/', include('users.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]

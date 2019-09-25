@@ -1,0 +1,57 @@
+import pytest
+
+from modules.achievements.models import ItemDoneAchievement, LoginCountAchievement
+from tasks.models import (
+    Mission, Task, Item, ItemTemplate, ItemTemplateField
+)
+from users.models import EndWorker
+
+from modules.order_strategy.models import Strategy
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_user1():
+    return EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_user2():
+    return EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_task_with_items():
+    Strategy.register_values()
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+
+    task = Task.objects.create(id=1, mission=mission, name="Test", strategy=strategy)
+
+    template = ItemTemplate.objects.create(name="Template")
+    input_field = ItemTemplateField.objects.create(name="input", widget="TextLabel")
+    template.fields.add(input_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
+                                                        required=True, editable=True)
+    template.fields.add(annotation_field)
+
+    Item.objects.create(task=task, template=template, order=1,
+                        data={input_field.name: 1})
+    Item.objects.create(task=task, template=template, order=2,
+                        data={input_field.name: 2})
+
+    task = Task.objects.create(id=2, mission=mission, name="Test", strategy=strategy)
+    Item.objects.create(task=task, template=template, order=1,
+                        data={input_field.name: 1})
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_achievements(setup_task_with_items):
+    LoginCountAchievement.objects.create(order=0)
+    ItemDoneAchievement.objects.create(order=1)
+    ItemDoneAchievement.objects.create(order=2, mission_id=1, target=2)
+    ItemDoneAchievement.objects.create(order=3, task_id=2)

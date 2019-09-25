@@ -9,6 +9,8 @@ from rest_framework import status
 
 from django.contrib.auth import authenticate, login, logout
 
+from funcrowd.settings import events_manager
+from modules.achievements.events import Events
 from users.models.end_workers import EndWorker
 from users.api.serializers import (
     EndWorkerRegistrationSerializer,
@@ -18,7 +20,6 @@ from users.api.serializers import (
     EndWorkerUsernameInfoSerializer,
     EndWorkerSimpleSerializer
 )
-
 
 
 class EndWorkerRegistrationView(GenericAPIView):
@@ -61,6 +62,8 @@ class EndWorkerLoginView(GenericAPIView):
             end_worker = authenticate(username=username, password=password)
             if end_worker is not None:
                 login(request, end_worker)
+                end_worker.on_login()
+                events_manager.on_event(Events.ON_LOGIN)
                 serializer = EndWorkerSerializer(end_worker)
                 return Response(serializer.data)
             raise ValidationError("Username or password is not correct")

@@ -4,12 +4,25 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 
+from tasks.models import Mission, Task
+
 
 class Achievement(models.Model):
+    trigger_events = []
+
+    order = models.IntegerField(default=0)
     metadata = JSONField(blank=True, default={})
-    created = models.DateTimeField(auto_now_add=True)
-    target = models.FloatField()
-    value = models.CharField(default="", max_length=20)
+    target = models.IntegerField(default=1)
+
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, null=True, blank=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Achievements"
+        ordering = ('order',)
+
+    def update(self, user_achievement):
+        pass
+
+    def on_close(self, user_achievement):
+        pass
