@@ -2,12 +2,13 @@
 
 from __future__ import unicode_literals
 from django.db import models
+from polymorphic.models import PolymorphicModel
 from django.contrib.postgres.fields import JSONField
 
 from tasks.models import Mission, Task
 
 
-class Achievement(models.Model):
+class Achievement(PolymorphicModel):
     trigger_events = []
 
     order = models.IntegerField(default=0)

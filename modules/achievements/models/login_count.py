@@ -6,3 +6,6 @@ class LoginCountAchievement(Achievement):
     trigger_events = [
         Events.ON_LOGIN
     ]
+
+    def update(self, user_achievement):
+        user_achievement.value = user_achievement.user.login_count

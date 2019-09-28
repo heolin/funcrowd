@@ -43,3 +43,7 @@ class UserAchievement(models.Model):
             ])
         user_achievements = UserAchievement.objects.filter(user=user)
         return user_achievements
+
+    @property
+    def progress(self):
+        return self.value / self.achievement.target

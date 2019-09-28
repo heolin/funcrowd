@@ -1,8 +1,13 @@
 from modules.achievements.models.achievement import Achievement
-from modules.achievements.models.item_done import ItemDoneAchievement
-from modules.achievements.models.login_count import LoginCountAchievement
 from modules.achievements.models.user_achievement import UserAchievement
 
+from modules.achievements.models.item_done import ItemDoneAchievement
+from modules.achievements.models.login_count import LoginCountAchievement
+from modules.achievements.models.progress import ProgressAchievement
+
+
 from funcrowd.settings import events_manager
+
 events_manager.register_achievements(ItemDoneAchievement)
 events_manager.register_achievements(LoginCountAchievement)
+events_manager.register_achievements(ProgressAchievement)

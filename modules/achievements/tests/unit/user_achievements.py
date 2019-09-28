@@ -12,7 +12,7 @@ def test_creating_achievements(setup_user1, setup_achievements):
 
     user_achievements = UserAchievement.get_user_achievements(user)
     assert user_achievements.count() == 4
-    assert UserAchievement.objects.filter(user=user).count() == 4
+    assert UserAchievement.objects.filter(user=user).count() == Achievement.objects.count()
 
 
 @pytest.mark.django_db
@@ -25,7 +25,7 @@ def test_creating_missing_achievements(setup_user1, setup_achievements):
     UserAchievement.objects.create(user=user, achievement=achievement)
     assert UserAchievement.objects.filter(user=user).count() == 1
 
-    assert UserAchievement.get_user_achievements(user).count() == 4
+    assert UserAchievement.get_user_achievements(user).count() == Achievement.objects.count()
 
 
 @pytest.mark.django_db

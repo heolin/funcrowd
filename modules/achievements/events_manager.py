@@ -13,9 +13,11 @@ class EventsManager:
             self._achievements[event_type].append(achievement)
 
     @transaction.atomic
-    def on_event(self, event):
+    def on_event(self, user, event):
         for A in self._achievements[event]:
-            for user_achievement in a.models.UserAchievement.objects.filter(achievement__in=A.objects.all()):
+            achievements_ids = A.objects.values("achievement_ptr_id")
+            for user_achievement in a.models.UserAchievement.objects.filter(user=user,
+                                                                            achievement__in=achievements_ids):
                 current = user_achievement.value
                 user_achievement.update()
                 if current != user_achievement.value:

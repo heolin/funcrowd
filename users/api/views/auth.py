@@ -63,7 +63,6 @@ class EndWorkerLoginView(GenericAPIView):
             if end_worker is not None:
                 login(request, end_worker)
                 end_worker.on_login()
-                events_manager.on_event(Events.ON_LOGIN)
                 serializer = EndWorkerSerializer(end_worker)
                 return Response(serializer.data)
             raise ValidationError("Username or password is not correct")

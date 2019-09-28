@@ -1,6 +1,7 @@
 import pytest
 
 from modules.achievements.models import ItemDoneAchievement, LoginCountAchievement
+from modules.achievements.models.progress import ProgressAchievement
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField
 )
@@ -51,7 +52,10 @@ def setup_task_with_items():
 @pytest.fixture
 @pytest.mark.django_db
 def setup_achievements(setup_task_with_items):
-    LoginCountAchievement.objects.create(order=0)
     ItemDoneAchievement.objects.create(order=1)
     ItemDoneAchievement.objects.create(order=2, mission_id=1, target=2)
     ItemDoneAchievement.objects.create(order=3, task_id=2)
+    ProgressAchievement.objects.create(order=4)
+    ProgressAchievement.objects.create(order=5, task_id=1)
+    ProgressAchievement.objects.create(order=6, mission_id=1)
+    LoginCountAchievement.objects.create(order=0)
