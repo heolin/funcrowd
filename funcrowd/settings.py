@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sites',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -40,6 +39,8 @@ INSTALLED_APPS = [
     'suit_ckeditor',
     "sortedm2m",
     'django_extensions',
+    'polymorphic',
+    'django.contrib.contenttypes',
 ] + [
     'users',
     'tasks',
