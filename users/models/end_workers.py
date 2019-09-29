@@ -57,7 +57,7 @@ class EndWorker(AbstractUser):
     def on_login(self):
         self.login_count += 1
         self.save()
-        events_manager.on_event(self, Events.ON_LOGIN)
+        events_manager.update_all(self)
 
     def on_annotation(self, annotation):
         task_progress = self.get_task_progress(annotation.item.task)

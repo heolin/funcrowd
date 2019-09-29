@@ -22,3 +22,11 @@ class EventsManager:
                 user_achievement.update()
                 if current != user_achievement.value:
                     user_achievement.save()
+
+    @transaction.atomic
+    def update_all(self, user):
+        for user_achievement in a.models.UserAchievement.objects.filter(user=user):
+            current = user_achievement.value
+            user_achievement.update()
+            if current != user_achievement.value:
+                user_achievement.save()
