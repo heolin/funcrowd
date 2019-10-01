@@ -13,7 +13,7 @@ class Achievement(PolymorphicModel):
 
     order = models.IntegerField(default=0)
     metadata = JSONField(blank=True, default={})
-    target = models.IntegerField(default=1)
+    target = models.FloatField(default=1)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)

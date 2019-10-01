@@ -47,3 +47,11 @@ class UserAchievement(models.Model):
     @property
     def progress(self):
         return self.value / self.achievement.target
+
+    @property
+    def target(self):
+        return self.achievement.target
+
+    @property
+    def order(self):
+        return self.achievement.order

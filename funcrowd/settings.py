@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'modules.validators',
     'modules.bounty',
     'modules.statistics',
-    'modules.achievements'
+    'modules.achievements',
+    'modules.sender'
 ]
 
 MIDDLEWARE = [
@@ -179,6 +180,12 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
 AWS_QUERYSTRING_AUTH = False
+
+
+# Sendgrid
+SENDGRID_API_KEY = env("SENDGRID_API_KEY")
+SENDGRID_USERNAME = env("SENDGRID_USERNAME")
+SENDGRID_PASSWORD = env("SENDGRID_PASSWORD")
 
 
 events_manager = EventsManager()
