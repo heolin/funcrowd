@@ -21,7 +21,6 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 
-
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
@@ -35,8 +34,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
-    'suit_redactor',
-    'suit_ckeditor',
     "sortedm2m",
     'django_extensions',
     'polymorphic',
@@ -54,7 +51,7 @@ INSTALLED_APPS = [
     'modules.bounty',
     'modules.statistics',
     'modules.achievements',
-    'modules.sender'
+    'modules.communication'
 ]
 
 MIDDLEWARE = [

@@ -37,7 +37,9 @@ class EndWorkerRegistrationView(GenericAPIView):
             email = data.get('email')
 
             if EndWorker.objects.filter(username=username).first():
-                raise ValidationError("EndWorker will given username already exists")
+                raise ValidationError("Username already used")
+            if EndWorker.objects.filter(email=email).first():
+                raise ValidationError("Email already used")
             if password1 != password2:
                 raise ValidationError("Passwords don't match")
 
