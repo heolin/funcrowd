@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.utils.timezone import now
 
 from users.models.end_workers import EndWorker
 
@@ -23,3 +24,7 @@ class Annotation(models.Model):
     def get_feedback(self):
         if hasattr(self, "feedback"):
             return self.feedback
+
+    def reset_created(self):
+        self.created = now()
+        self.save()
