@@ -24,7 +24,6 @@ class EndWorkerStorageView(GenericAPIView):
         if serializer.is_valid():
             storage = request.user.get_storage(key)
             storage.data = serializer.data['data']
-            print(storage.__dict__)
             storage.save()
             serializer = StorageSerializer(storage)
             return Response(serializer.data, status=status.HTTP_200_OK)

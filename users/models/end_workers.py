@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from funcrowd.settings import events_manager
 from modules.achievements.events import Events
 from modules.statistics.models import UserStats, UserMissionStats
+from users.consts import ProfileType
 from users.models.storage import Storage
 from users.models.utils.utils import get_group_number
 
@@ -13,6 +14,7 @@ import tasks as t
 
 class EndWorker(AbstractUser):
     group = models.IntegerField(default=get_group_number)
+    profile = models.IntegerField(default=ProfileType.NORMAL)
 
     login_count = models.IntegerField(default=0)
     experience = models.IntegerField(default=0)

@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.contrib.auth import login
 
+from users.consts import ProfileType
 from users.models.utils.mturk import verify_worker_id
 
 from users.models.end_workers import EndWorker
@@ -35,6 +36,8 @@ class MturkRegisterLoginView(GenericAPIView):
             if not end_worker:
                 password = EndWorker.objects.make_random_password()
                 end_worker = EndWorker.objects.create_user(worker_id, "{}@mturk".format(worker_id), password)
+                end_worker.profile = ProfileType.MTURK
+                end_worker.save()
             login(request, end_worker)
             serializer = EndWorkerSerializer(end_worker)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

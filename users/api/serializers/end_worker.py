@@ -8,11 +8,11 @@ class EndWorkerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EndWorker
-        fields = ('id', 'username', 'token', 'email', 'group')
+        fields = ('id', 'username', 'token', 'email', 'group', 'profile')
 
 
 class EndWorkerSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EndWorker
-        fields = ('id', 'username', 'email', 'group')
+        fields = ('id', 'username', 'email', 'group', 'profile')
