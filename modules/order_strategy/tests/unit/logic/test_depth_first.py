@@ -1,5 +1,6 @@
 import pytest
 
+from modules.order_strategy.tests.conftest import add_annotation
 from tasks.models import Task
 from modules.order_strategy.models import Strategy
 from modules.order_strategy.exceptions import ActionNotSupported
@@ -16,23 +17,17 @@ def test_empty_items(setup_task_with_items, setup_user):
     item = task.next_item(user, item)
     assert item.order == 0
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 1
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 2
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item is None
@@ -52,9 +47,7 @@ def test_items_with_annotations(setup_task_with_annotations, setup_user, setup_o
     item = task.next_item(user, item)
     assert item.order == 1
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 2
@@ -62,9 +55,7 @@ def test_items_with_annotations(setup_task_with_annotations, setup_user, setup_o
     item = task.next_item(other_user, item)
     assert item.order == 2
 
-    annotation, _ = item.get_or_create_annotation(other_user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 0
@@ -83,16 +74,12 @@ def test_max_annotations(setup_task_with_annotations, setup_user, setup_other_us
     item = task.next_item(user, None)
     assert item.order == 1
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(other_user, item)
     assert item.order == 2
 
-    annotation, _ = item.get_or_create_annotation(other_user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, other_user)
 
     item = task.next_item(user, item)
     assert item is None
@@ -114,16 +101,12 @@ def test_multiple_annotations(setup_task_with_annotations, setup_user, setup_oth
     item = task.next_item(user, None)
     assert item.order == 1
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 2
 
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data["output"] = 1
-    annotation.save()
+    annotation, _ = add_annotation(item, user)
 
     item = task.next_item(user, item)
     assert item.order == 0

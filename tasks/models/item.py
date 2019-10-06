@@ -57,8 +57,9 @@ class Item(models.Model):
     def get_or_create_annotation(self, user):
         annotation, created = None, False
         if not self.task.multiple_annotations:
-            annotation = self.annotations.filter(item=self, user=user)
-            annotation = annotation.first()
+            annotation = self.annotations.filter(item=self, user=user).first()
+        else:
+            annotation = self.annotations.filter(item=self, user=user, annotated=False).first()
 
         if not annotation:
             data = self.get_default_annotation_data()

@@ -18,6 +18,7 @@ class TaskNextItem(GenericAPIView):
         if task:
             next_item = task.next_item(request.user, None)
             if next_item:
+                next_item.get_or_create_annotation(request.user)
                 serializer = self.serializer_class(next_item)
                 return Response(serializer.data)
             return Response(None, status.HTTP_204_NO_CONTENT)
@@ -32,6 +33,7 @@ class TaskNextItemWithPrevious(GenericAPIView):
         if item:
             next_item = item.task.next_item(request.user, item)
             if next_item:
+                next_item.get_or_create_annotation(request.user)
                 serializer = self.serializer_class(next_item)
                 return Response(serializer.data)
             return Response(None, status.HTTP_204_NO_CONTENT)

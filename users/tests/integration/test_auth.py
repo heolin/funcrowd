@@ -84,7 +84,7 @@ def test_end_worker_registration():
     request = factory.post('/api/v1/users/register', payload)
     view = EndWorkerRegistrationView.as_view()
     response = view(request)
-    assert response.data[0] == "EndWorker will given username already exists"
+    assert response.data[0] == "Username already used"
     assert response.status_code == 400
 
     # register passwords not match

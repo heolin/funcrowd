@@ -80,3 +80,11 @@ def setup_task_with_annotations(setup_other_user):
 
     Item.objects.create(task=task, template=template, data={first_field.name: 2}, order=1)
     Item.objects.create(task=task, template=template, data={first_field.name: 3}, order=2)
+
+
+def add_annotation(item, user):
+    annotation, created = item.get_or_create_annotation(user)
+    annotation.data = {"output": "1"}
+    annotation.annotated = True
+    annotation.save()
+    return annotation, created

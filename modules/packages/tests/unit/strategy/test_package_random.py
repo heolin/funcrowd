@@ -1,12 +1,8 @@
 import pytest
+
+from modules.packages.tests.conftest import add_annotation
 from tasks.models import Mission
 from modules.order_strategy.models import Strategy
-
-
-def add_annotation(package, item, user):
-    annotation, created = item.get_or_create_annotation(user)
-    annotation.data = {"output": "1"}
-    annotation.save()
 
 
 @pytest.mark.django_db

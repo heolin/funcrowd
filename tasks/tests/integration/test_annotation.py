@@ -1,8 +1,10 @@
-import pytest, json
+import pytest, json, time
 from rest_framework.test import APIRequestFactory, force_authenticate
+
+from tasks.api.views.item import TaskNextItem
 from tasks.models import (
-    Task
-)
+    Task,
+    Item)
 
 from tasks.api.views.annotation import AnnotationDetail
 
@@ -135,3 +137,36 @@ def test_post_annotation(setup_task_with_items, setup_user):
     assert response.status_code == 200
     assert response.data["is_verified"] is True
     assert response.data["annotation"]["skipped"] is True
+
+
+@pytest.mark.django_db
+def test_annotation_time(setup_task_with_items, setup_user):
+    factory = APIRequestFactory()
+
+    task = Task.objects.first()
+
+    request = factory.get('/api/v1/tasks/{0}/next_item'.format(task.id))
+    force_authenticate(request, setup_user)
+    view = TaskNextItem.as_view()
+    response = view(request, task.id)
+
+    item_id = response.data['id']
+
+    time.sleep(1)
+
+    # posting correct payload
+    payload = {
+        'data': json.dumps({'output': '1', 'optional': ''}),
+    }
+    request = factory.post('/api/v1/items/{0}/annotation'.format(item_id), payload)
+    force_authenticate(request, setup_user)
+    view = AnnotationDetail.as_view()
+    response = view(request, item_id)
+    assert response.status_code == 200
+    assert response.data["is_verified"] is True
+
+    item = Item.objects.get(id=item_id)
+    annotation, _ = item.get_or_create_annotation(setup_user)
+    annotation_time = annotation.updated - annotation.created
+    assert annotation_time.total_seconds() > 1
+    assert annotation.annotated

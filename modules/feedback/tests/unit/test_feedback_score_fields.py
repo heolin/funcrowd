@@ -29,7 +29,7 @@ def test_reference_score(setup_task_with_items, setup_users):
         assert scorer.score(annotation) == scores[annotation.user]
 
     item = task.items.get(order=2)
-    scores = {user1: 0, user2: 0.5, user3: 0.5}
+    scores = {user1: 0, user2: 1, user3: 0}
     for annotation in item.annotations.exclude(user=None):
         assert scorer.score(annotation) == scores[annotation.user]
 

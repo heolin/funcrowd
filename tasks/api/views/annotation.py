@@ -19,8 +19,8 @@ class AnnotationDetail(GenericAPIView):
         if item:
             # it won't work for multiple annotations
             annotation, created = item.get_or_create_annotation(request.user)
-            annotation.reset_created()
-            serializer = self.serializer_class(annotation)
+            response = AnnotationController().process(annotation)
+            serializer = AnnotationResponseSerializer(response)
             return Response(serializer.data)
         raise NotFound("No Item found for given id.")
 

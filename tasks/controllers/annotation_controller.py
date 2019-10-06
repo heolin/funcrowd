@@ -27,6 +27,7 @@ class AnnotationController(object):
         # no error found
         if is_verified:
             # saving annotation
+            annotation.annotated = True
             annotation.save()
 
             # adding feedback

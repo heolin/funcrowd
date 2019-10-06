@@ -15,6 +15,7 @@ class Annotation(models.Model):
     skipped = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    annotated = models.BooleanField(default=False)
 
     def __str__(self):
         TEMPLATE = "Task {} (#{}) - Item: {} (#{}) - Annotation: #{} - User: {}"
@@ -24,7 +25,3 @@ class Annotation(models.Model):
     def get_feedback(self):
         if hasattr(self, "feedback"):
             return self.feedback
-
-    def reset_created(self):
-        self.created = now()
-        self.save()

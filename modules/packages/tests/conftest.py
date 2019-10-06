@@ -126,4 +126,9 @@ def setup_annotations(setup_task_with_items, setup_user, setup_other_user):
     annotation.data = {"output": "1"}
     annotation.save()
 
-    # paczka bez anotacji
+
+def add_annotation(package, item, user):
+    annotation, created = item.get_or_create_annotation(user)
+    annotation.data = {"output": "1"}
+    annotation.annotated = True
+    annotation.save()
