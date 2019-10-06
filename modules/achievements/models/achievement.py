@@ -18,6 +18,8 @@ class Achievement(PolymorphicModel):
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
 
+    updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name_plural = "Achievements"
         ordering = ('order',)
