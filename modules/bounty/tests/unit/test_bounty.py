@@ -10,8 +10,11 @@ from modules.bounty.exceptions import OnlyOneActiveBountyPerTask
 
 
 def add_annotation(item, user, value):
-    return Annotation.objects.create(item=item, user=user,
-                                     data={"output": value})
+    annotation = Annotation.objects.create(item=item, user=user,
+                                           data={"output": value})
+    annotation.annotated = True
+    annotation.save()
+    return annotation
 
 
 @pytest.mark.django_db
@@ -31,7 +34,16 @@ def test_bounty(setup_task_with_items, setup_user):
     assert created is False
 
     item = task.next_item(user, None)
-    add_annotation(item, user, "A")
+    annotation = add_annotation(item, user, "A")
+
+    # annotation created but annotated=False
+    annotation.annotated = False
+    annotation.save()
+    assert user_bounty._get_annotations() == 0
+
+    # annotation created and annotated=True
+    annotation.annotated = True
+    annotation.save()
 
     assert user_bounty._get_annotations() == 1
     assert user_bounty.annotations_done == 0

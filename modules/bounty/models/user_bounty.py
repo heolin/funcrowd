@@ -42,6 +42,7 @@ class UserBounty(models.Model):
     def _get_annotations(self):
         return m.annotation.Annotation.objects.filter(
             item__task=self.bounty.task,
+            annotated=True,
             skipped=False,
             user=self.user).count()
 
