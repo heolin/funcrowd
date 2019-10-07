@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import JSONField
 from tasks.models.mission import Mission
 
 from modules.order_strategy.models import Strategy
+import modules.achievements as a
 
 
 """
@@ -44,6 +45,11 @@ class Task(models.Model):
 
     def exclude_max_annotations(self, items):
         return items.filter(annotations_done__lt=self.max_annotations)
+
+    @property
+    def achievements_count(self):
+        cls = a.models.Achievement
+        return cls.objects.filter(task=self).count()
 
     class Meta:
         ordering = ['order']

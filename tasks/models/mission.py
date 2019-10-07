@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 import modules.statistics as s
+import modules.achievements as a
 
 """
 Mission are the base object used for story logic.
@@ -33,6 +34,11 @@ class Mission(models.Model):
     @property
     def tasks_count(self):
         return self.tasks.count()
+
+    @property
+    def achievements_count(self):
+        cls = a.models.Achievement
+        return cls.objects.filter(mission=self).count()
 
     def __str__(self):
         return "{}({})".format(

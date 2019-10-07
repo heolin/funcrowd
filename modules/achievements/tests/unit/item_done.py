@@ -1,12 +1,13 @@
 import pytest
 
 from modules.achievements.consts import Status
-from modules.achievements.models import UserAchievement, Achievement, ItemDoneAchievement
+from modules.achievements.models import UserAchievement, ItemDoneAchievement
 from tasks.models import Item
 
 
 @pytest.mark.django_db
 def test_item_done_logic(setup_user1, setup_achievements):
+
     user = setup_user1
 
     achievement = ItemDoneAchievement.objects.filter(order=1).first()
