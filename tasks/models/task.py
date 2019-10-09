@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 from django.db import models
+from django.db.models import IntegerField
+from django.db.models.functions import Cast, Coalesce
 from django.contrib.postgres.fields import JSONField
 from tasks.models.mission import Mission
 
@@ -38,10 +40,11 @@ class Task(models.Model):
         return self.strategy.prev(self, user, item)
 
     def exclude_items_with_user_annotations(self, user):
-        return self.items.exclude(annotations__user=user)
+        return self.items.exclude(annotations__user=user, annotations__annotated=True)
 
     def annotate_annotations_done(self, items):
-        return items.annotate(annotations_done=models.Count("annotations"))
+        return items.annotate(annotations_done=models.Sum(
+            Coalesce(Cast('annotations__annotated', IntegerField()), 0)))
 
     def exclude_max_annotations(self, items):
         return items.filter(annotations_done__lt=self.max_annotations)

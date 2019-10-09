@@ -5,8 +5,11 @@ from tasks.models import (
 )
 
 from users.models import EndWorker
-from modules.order_strategy.models import Strategy
 from django.core.management import call_command
+
+from rest_framework.test import APIRequestFactory, force_authenticate
+from tasks.api.views.item import TaskNextItem
+from modules.order_strategy.models import Strategy
 
 
 @pytest.fixture(scope='session')
@@ -40,6 +43,8 @@ def setup_other_user():
 @pytest.fixture
 @pytest.mark.django_db
 def setup_task_with_items():
+    Strategy.register_values()
+
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
@@ -74,9 +79,7 @@ def setup_task_with_annotations(setup_other_user):
     template.fields.add(annotation_field)
 
     item = Item.objects.create(task=task, template=template, data={first_field.name: 1}, order=0)
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data[annotation_field.name] = 1
-    annotation.save()
+    add_annotation(item, user)
 
     Item.objects.create(task=task, template=template, data={first_field.name: 2}, order=1)
     Item.objects.create(task=task, template=template, data={first_field.name: 3}, order=2)
@@ -88,3 +91,13 @@ def add_annotation(item, user):
     annotation.annotated = True
     annotation.save()
     return annotation, created
+
+
+def get_next_item(task, user):
+    factory = APIRequestFactory()
+    request = factory.get('/api/v1/tasks/{0}/next_item'.format(task.id))
+    force_authenticate(request, user)
+    view = TaskNextItem.as_view()
+    response = view(request, task.id)
+    item_id = response.data['id']
+    return item_id

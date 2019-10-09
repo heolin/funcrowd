@@ -43,3 +43,11 @@ def test_setup_tasks(setup_task_with_items, setup_user):
     assert response.status_code == 200
     assert len(response.data['items']) == 2
     assert response.data['order'] == 2
+
+    view = NextPackage.as_view()
+    request = factory.get('/api/v1/missions/{0}/next_package'.format(mission.id))
+    request.user = setup_user
+    response = view(request, mission.id)
+    assert response.status_code == 200
+    assert len(response.data['items']) == 2
+    assert response.data['order'] == 2

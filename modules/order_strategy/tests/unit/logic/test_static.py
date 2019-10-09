@@ -12,6 +12,9 @@ def test_empty_items(setup_task_with_items, setup_user):
 
     item = task.next_item(user, None)
     assert item.order == 0
+    item = task.next_item(user, None)
+    assert item.order == 0
+
     item = task.next_item(user, item)
     assert item.order == 1
     item = task.next_item(user, item)
