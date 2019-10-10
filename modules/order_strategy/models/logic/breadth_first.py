@@ -17,7 +17,7 @@ class BreadthFirstStrategyLogic(BaseStrategyLogic):
             items = self.task.exclude_max_annotations(items)
 
         items = items.exclude(status__in=[FINISHED, VERIFICATION])
-        items = items.order_by("-annotations_done", "order")
+        items = items.order_by("-annotations_done", "order", "id")
         return items.first()
 
     def prev(self):
