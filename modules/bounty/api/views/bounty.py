@@ -11,7 +11,7 @@ class BountyListView(GenericAPIView):
     serializer_class = BountySerializer
 
     def get(self, request, *args, **kwargs):
-        bounties = Bounty.objects.all()
+        bounties = Bounty.objects.filter(hidden=False)
         serializer = self.serializer_class(bounties, many=True, context={"request": request})
         return Response(serializer.data)
 

@@ -9,6 +9,7 @@ from tasks.models.task import Task
 class Bounty(models.Model):
     annotations_target = models.IntegerField(default=50)
     closed = models.BooleanField(default=False)
+    hidden = models.BooleanField(default=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="bounties")
 
     def __str__(self):
