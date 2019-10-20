@@ -15,31 +15,23 @@ class UserBounty(models.Model):
     bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name="user_bounties")
     user = models.ForeignKey(EndWorker, blank=True, null=True, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
+
     annotations_initial = models.IntegerField(default=0)
     annotations_done = models.IntegerField(default=0)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
     reward_token = models.CharField(max_length=32, default=get_reward_token)
 
-    @staticmethod
-    def get_or_create(bounty: Bounty, user: EndWorker):
-        user_bounty = UserBounty.objects.filter(user=user, bounty=bounty).first()
-        created = False
-
-        if not UserBounty.objects.exclude(bounty=bounty).filter(
-                user=user, bounty__task=bounty.task, status__in=[NEW, IN_PROGRESS]).first():
-            if not user_bounty and not bounty.closed:
-                user_bounty = UserBounty.objects.create(user=user, bounty=bounty)
-                user_bounty.annotations_initial = user_bounty._get_annotations()
-                user_bounty.save()
-                created = True
-        return user_bounty, created
+    class Meta:
+        ordering = ['-created']
 
     def __str__(self):
         return "UserBounty (#{}): Bounty: {} - User: {}".format(
             self.id, self.bounty, self.user)
 
-    def _get_annotations(self):
+    def get_annotations(self):
         return m.annotation.Annotation.objects.filter(
             item__task=self.bounty.task,
             annotated=True,
@@ -50,7 +42,7 @@ class UserBounty(models.Model):
         if self.bounty.closed:
             return
 
-        annotations_count = self._get_annotations()
+        annotations_count = self.get_annotations()
         self.annotations_done = min(annotations_count - self.annotations_initial, self.bounty.annotations_target)
 
         if self.status == NEW and self.annotations_done > 0:

@@ -15,7 +15,7 @@ class BountySerializer(serializers.ModelSerializer):
         fields = ('id', 'task', 'annotations_target', 'user_bounty', 'closed')
 
     def get_user_bounty(self, obj):
-        user_bounty, _ = UserBounty.get_or_create(obj, self.context['request'].user)
+        user_bounty, _ = obj.get_or_create_user_bounty(self.context['request'].user)
         if user_bounty:
             user_bounty.update()
         return UserBountyElementSerializer(user_bounty).data

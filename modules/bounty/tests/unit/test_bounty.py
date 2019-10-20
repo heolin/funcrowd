@@ -24,13 +24,13 @@ def test_bounty(setup_task_with_items, setup_user):
 
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    user_bounty, created = UserBounty.get_or_create(bounty, user)
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
     assert created
     assert user_bounty.annotations_done == 0
     assert user_bounty.status == NEW
     assert len(user_bounty.reward_token) == 32
 
-    user_bounty, created = UserBounty.get_or_create(bounty, user)
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
     assert created is False
 
     item = task.next_item(user, None)
@@ -39,13 +39,13 @@ def test_bounty(setup_task_with_items, setup_user):
     # annotation created but annotated=False
     annotation.annotated = False
     annotation.save()
-    assert user_bounty._get_annotations() == 0
+    assert user_bounty.get_annotations() == 0
 
     # annotation created and annotated=True
     annotation.annotated = True
     annotation.save()
 
-    assert user_bounty._get_annotations() == 1
+    assert user_bounty.get_annotations() == 1
     assert user_bounty.annotations_done == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 1
@@ -79,8 +79,8 @@ def test_bounty_pre_annotations(setup_task_with_items, setup_user):
 
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    user_bounty, created = UserBounty.get_or_create(bounty, user)
-    assert user_bounty._get_annotations() == 2
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
+    assert user_bounty.get_annotations() == 2
     assert user_bounty.annotations_done == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 0
@@ -88,7 +88,7 @@ def test_bounty_pre_annotations(setup_task_with_items, setup_user):
     item = task.next_item(user, item)
     add_annotation(item, user, "A")
     user_bounty.update()
-    assert user_bounty._get_annotations() == 3
+    assert user_bounty.get_annotations() == 3
     assert user_bounty.annotations_done == 1
 
     for i in range(4):
@@ -103,23 +103,66 @@ def test_one_active_bounty_per_task(setup_task_with_items, setup_user):
     user = setup_user
     task = Task.objects.first()
 
-    bounty1 = Bounty.objects.create(task=task, annotations_target=5)
-    bounty2 = Bounty.objects.create(task=task, annotations_target=3)
+    bounty_old = Bounty.objects.create(task=task, annotations_target=5)
 
-    user_bounty, created = UserBounty.get_or_create(bounty1, user)
+    # Doesn't allow to create a new bounty for the same task,
+    # if the previous one was not closed yet
+    with pytest.raises(OnlyOneActiveBountyPerTask):
+        Bounty.objects.create(task=task, annotations_target=3)
+
+    bounty_old.close()
+    bounty = Bounty.objects.create(task=task, annotations_target=3)
+    assert bounty
+
+    # Doesn't allow to create user bounty for a closed bounty
+    user_bounty, created = bounty_old.get_or_create_user_bounty(user)
+    assert not created
+    assert user_bounty is None
+
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
+    assert created
+    assert user_bounty is not None
+
+
+@pytest.mark.django_db
+def test_create_first_or_next_user_bounty(setup_task_with_items, setup_user):
+    user = setup_user
+    task = Task.objects.first()
+
+    # Bounty closed
+    bounty = Bounty.objects.create(task=task, annotations_target=5)
+    bounty.closed = True
+    bounty.save()
+
+    user_bounty, created = bounty.create_first_or_next_user_bounty(user)
+    assert user_bounty is None
+    assert not created
+
+    # Bounty open
+    bounty.closed = False
+    bounty.save()
+
+    user_bounty, created = bounty.create_first_or_next_user_bounty(user)
     assert created
 
-    _, created = UserBounty.get_or_create(bounty2, user)
-    assert created is False
+    # User bounty exist, not finished
+    _, created = bounty.create_first_or_next_user_bounty(user)
+    assert not created
 
+    # User bounty exist, finished
     item = None
     for i in range(5):
         item = task.next_item(user, item)
         add_annotation(item, user, "A")
     user_bounty.update()
 
-    _, created = UserBounty.get_or_create(bounty2, user)
+    # User bounty exist, not finished
+    bounty2, created = bounty.create_first_or_next_user_bounty(user)
     assert created
+
+    assert bounty != bounty2
+    temp_bounty, _ = bounty.get_or_create_user_bounty(user)
+    assert bounty2 == temp_bounty
 
 
 @pytest.mark.django_db
@@ -130,7 +173,7 @@ def test_bounty_closed(setup_task_with_items, setup_user):
     bounty = Bounty.objects.create(task=task, annotations_target=5)
     bounty.close()
 
-    user_bounty, created = UserBounty.get_or_create(bounty, user)
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
     assert created is False
 
 
@@ -141,15 +184,15 @@ def test_skipped(setup_task_with_items, setup_user):
 
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    user_bounty, created = UserBounty.get_or_create(bounty, user)
+    user_bounty, created = bounty.get_or_create_user_bounty(user)
 
     item = task.next_item(user, None)
     annotation = add_annotation(item, user, "A")
 
-    assert user_bounty._get_annotations() == 1
+    assert user_bounty.get_annotations() == 1
     annotation.skipped = True
     annotation.save()
-    assert user_bounty._get_annotations() == 0
+    assert user_bounty.get_annotations() == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 0
 
@@ -159,26 +202,13 @@ def test_skipped(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_automatic_finish_bounty(setup_task_with_items):
-    task = Task.objects.first()
-
-    bounty1 = Bounty.objects.create(task=task, annotations_target=1)
-    assert bounty1.closed is False
-
-    bounty2 = Bounty.objects.create(task=task, annotations_target=2)
-    bounty1 = Bounty.objects.get(id=bounty1.id)
-    assert bounty1.closed is True
-    assert bounty2.closed is False
-
-
-@pytest.mark.django_db
 def test_bounty_finish_and_close(setup_task_with_items, setup_user):
     user = setup_user
     task = Task.objects.first()
 
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    user_bounty, _ = UserBounty.get_or_create(bounty, user)
+    user_bounty, _ = bounty.get_or_create_user_bounty(user)
     assert user_bounty.status == NEW
 
     item = task.next_item(user, None)
@@ -187,13 +217,13 @@ def test_bounty_finish_and_close(setup_task_with_items, setup_user):
     assert user_bounty.status == IN_PROGRESS
 
     bounty.finish()
-    user_bounty, _ = UserBounty.get_or_create(bounty, user)
+    user_bounty, _ = bounty.get_or_create_user_bounty(user)
     assert user_bounty.status == FINISHED
 
     bounty.close()
-    user_bounty, _ = UserBounty.get_or_create(bounty, user)
+    user_bounty, _ = bounty.get_or_create_user_bounty(user)
     assert user_bounty.status == CLOSED
 
     bounty.finish()
-    user_bounty, _ = UserBounty.get_or_create(bounty, user)
+    user_bounty, _ = bounty.get_or_create_user_bounty(user)
     assert user_bounty.status == CLOSED

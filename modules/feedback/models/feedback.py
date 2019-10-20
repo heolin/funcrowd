@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
+from modules.feedback.consts import FeedbackTypes, FEEDBACK_TYPES
 from tasks.models.task import Task
 from .feedback_field import FeedbackField
 from .feedback_score_field import FeedbackScoreField
@@ -17,6 +18,7 @@ class Feedback(models.Model):
                                 null=True, related_name="feedback")
     score_fields = models.ManyToManyField(FeedbackScoreField, blank=True)
     fields = models.ManyToManyField(FeedbackField, blank=True)
+    type = models.CharField(max_length=32, choices=FEEDBACK_TYPES, default=FeedbackTypes.NONE)
 
     def __str__(self):
         return "Feedback(#{} - {})".format(self.task.id, self.task.name)
