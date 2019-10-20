@@ -27,3 +27,9 @@ def test_missions_order():
     Mission.objects.create(name="Mission B", order=0)
 
     Mission.objects.first().name == "Mission B"
+
+
+@pytest.mark.django_db
+def test_mission_total_exp(setup_task_with_items):
+    mission = Mission.objects.first()
+    assert mission.total_exp == 10

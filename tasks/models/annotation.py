@@ -25,3 +25,16 @@ class Annotation(models.Model):
     def get_feedback(self):
         if hasattr(self, "feedback"):
             return self.feedback
+
+    def get_exp(self):
+        feedback = self.get_feedback()
+        feedback_score = 1.0
+        if feedback:
+            feedback_score = feedback.score
+
+        if self.item.task.multiple_annotations:
+            # check if previous annotations were correct
+            exp = self.item.exp * feedback_score
+        else:
+            exp = self.item.exp * feedback_score
+        return exp

@@ -11,7 +11,7 @@ def test_creating_achievements(setup_user1, setup_achievements):
     assert UserAchievement.objects.filter(user=user).count() == 0
 
     user_achievements = UserAchievement.get_user_achievements(user)
-    assert user_achievements.count() == 4
+    assert user_achievements.count() == Achievement.objects.count()
     assert UserAchievement.objects.filter(user=user).count() == Achievement.objects.count()
 
 

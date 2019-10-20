@@ -30,7 +30,7 @@ class UserBounty(models.Model):
         return "UserBounty (#{}): Bounty: {} - User: {}".format(
             self.id, self.bounty, self.user)
 
-    def get_annotations(self):
+    def get_annotations_count(self):
         return m.annotation.Annotation.objects.filter(
             item__task=self.bounty.task,
             annotated=True,
@@ -41,7 +41,7 @@ class UserBounty(models.Model):
         if self.bounty.closed:
             return
 
-        annotations_count = self.get_annotations()
+        annotations_count = self.get_annotations_count()
         self.annotations_done = min(annotations_count - self.annotations_initial, self.bounty.annotations_target)
 
         if self.status == BountyStatus.NEW and self.annotations_done > 0:
@@ -57,7 +57,7 @@ class UserBounty(models.Model):
             self.save()
 
     def close(self):
-        self.status = CLOSED
+        self.status = BountyStatus.CLOSED
         self.save()
 
     @property

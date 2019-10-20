@@ -39,13 +39,13 @@ def test_bounty(setup_task_with_items, setup_user):
     # annotation created but annotated=False
     annotation.annotated = False
     annotation.save()
-    assert user_bounty.get_annotations() == 0
+    assert user_bounty.get_annotations_count() == 0
 
     # annotation created and annotated=True
     annotation.annotated = True
     annotation.save()
 
-    assert user_bounty.get_annotations() == 1
+    assert user_bounty.get_annotations_count() == 1
     assert user_bounty.annotations_done == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 1
@@ -80,7 +80,7 @@ def test_bounty_pre_annotations(setup_task_with_items, setup_user):
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
     user_bounty, created = bounty.get_or_create_user_bounty(user)
-    assert user_bounty.get_annotations() == 2
+    assert user_bounty.get_annotations_count() == 2
     assert user_bounty.annotations_done == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 0
@@ -88,7 +88,7 @@ def test_bounty_pre_annotations(setup_task_with_items, setup_user):
     item = task.next_item(user, item)
     add_annotation(item, user, "A")
     user_bounty.update()
-    assert user_bounty.get_annotations() == 3
+    assert user_bounty.get_annotations_count() == 3
     assert user_bounty.annotations_done == 1
 
     for i in range(4):
@@ -190,10 +190,10 @@ def test_skipped(setup_task_with_items, setup_user):
     item = task.next_item(user, None)
     annotation = add_annotation(item, user, "A")
 
-    assert user_bounty.get_annotations() == 1
+    assert user_bounty.get_annotations_count() == 1
     annotation.skipped = True
     annotation.save()
-    assert user_bounty.get_annotations() == 0
+    assert user_bounty.get_annotations_count() == 0
     user_bounty.update()
     assert user_bounty.annotations_done == 0
 

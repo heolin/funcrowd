@@ -5,25 +5,27 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from modules.achievements.api.views.user_achievement import AchievementsList, MissionAchievementsList, \
     TaskAchievementsList, UnclosedAchievementsList
-from modules.achievements.models import ItemDoneAchievement, UserAchievement
+from modules.achievements.models import ItemDoneAchievement, UserAchievement, Achievement
+from modules.achievements.tests.conftest import compare_without_fields
 from tasks.api.views.annotation import AnnotationDetail
 from tasks.models import Item
 
 
 @pytest.mark.django_db
-def test_achievements_list_view(setup_user1, setup_achievements):
+def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_progress_achievement):
     factory = APIRequestFactory()
 
     user = setup_user1
 
     # all achievements list
+    achievements = Achievement.objects.all()
+
     request = factory.get('/api/v1/achievements')
     force_authenticate(request, user)
     view = AchievementsList.as_view()
     response = view(request)
-    assert response.data == [
+    expected_data = [
         {
-            'id': 1,
             'order': 0,
             'status': 'NEW',
             'value': 0.0,
@@ -32,7 +34,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 2,
             'order': 1,
             'status': 'NEW',
             'value': 0.0,
@@ -41,7 +42,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 3,
             'order': 2,
             'status': 'NEW',
             'value': 0.0,
@@ -50,7 +50,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 4,
             'order': 3,
             'status': 'NEW',
             'value': 0.0,
@@ -59,7 +58,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 5,
             'order': 4,
             'status': 'NEW',
             'value': 0.0,
@@ -68,7 +66,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 6,
             'order': 5,
             'status': 'NEW',
             'value': 0.0,
@@ -77,7 +74,6 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 7,
             'order': 6,
             'status': 'NEW',
             'value': 0.0,
@@ -86,17 +82,20 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
     ]
+    for received, expected in zip(response.data, expected_data):
+        assert compare_without_fields(received, expected)
 
     # mission achievements list
     mission_id = 1
+    achievements = Achievement.objects.filter(mission_id=mission_id)
 
     request = factory.get('/api/v1/achievements/mission/1')
     force_authenticate(request, user)
     view = MissionAchievementsList.as_view()
     response = view(request, mission_id)
-    assert response.data == [
+    expected_data = [
         {
-            'id': 3,
+            'id': achievements[0].id,
             'order': 2,
             'status': 'NEW',
             'value': 0.0,
@@ -105,7 +104,7 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
         {
-            'id': 7,
+            'id': achievements[1].id,
             'order': 6,
             'status': 'NEW',
             'value': 0.0,
@@ -114,17 +113,20 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
     ]
+    for received, expected in zip(response.data, expected_data):
+        assert compare_without_fields(received, expected)
 
     # task achievements list
     task_id = 1
+    achievements = Achievement.objects.filter(task_id=task_id)
 
     request = factory.get('/api/v1/achievements/task/1')
     force_authenticate(request, user)
     view = TaskAchievementsList.as_view()
     response = view(request, task_id)
-    assert response.data == [
+    expected_data = [
         {
-            'id': 6,
+            'id': achievements[0].id,
             'order': 5,
             'status': 'NEW',
             'value': 0.0,
@@ -133,6 +135,8 @@ def test_achievements_list_view(setup_user1, setup_achievements):
             'metadata': {}
         },
     ]
+    for received, expected in zip(response.data, expected_data):
+        assert compare_without_fields(received, expected)
 
 
 @pytest.mark.django_db
@@ -166,7 +170,7 @@ def test_unclosed_achievements_list(setup_user1, setup_achievements):
     view = UnclosedAchievementsList.as_view()
     response = view(request)
 
-    assert response.data == [
+    expected_data = [
         {
             'id': achievement.id,
             'order': achievement.order,
@@ -177,6 +181,8 @@ def test_unclosed_achievements_list(setup_user1, setup_achievements):
             'metadata': {}
         },
     ]
+    for received, expected in zip(response.data, expected_data):
+        assert compare_without_fields(received, expected)
 
     user_achievement = UserAchievement.objects.get(user=user, achievement=achievement)
     user_achievement.close()

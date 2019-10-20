@@ -26,3 +26,8 @@ def create_task(setup_task):
     assert task.mission == mission
     assert mission.tasks.count() == 2
 
+
+@pytest.mark.django_db
+def test_mission_total_exp(setup_task_with_items):
+    task = Task.objects.first()
+    assert task.total_exp == 10

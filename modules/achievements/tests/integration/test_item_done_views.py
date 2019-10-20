@@ -4,7 +4,6 @@ import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from modules.achievements.models import UserAchievement, ItemDoneAchievement
-from modules.achievements.tests.integration import events_manager
 from tasks.api.views.annotation import AnnotationDetail
 from tasks.models import Item
 

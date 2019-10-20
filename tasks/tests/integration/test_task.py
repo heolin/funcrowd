@@ -18,7 +18,7 @@ def test_task_list(setup_task, setup_user):
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'name': 'Add two digits', 'description': '',
-         'instruction': '', 'keywords': '', 'metadata': {}}
+         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None}
     ]
 
     # Task empty list
@@ -52,7 +52,7 @@ def test_task_details(setup_task, setup_user):
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'name': 'Add two digits', 'description': '',
-        'instruction': '', 'keywords': '', 'metadata': {}
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None
     }
 
     # Task details, task not found
@@ -62,3 +62,21 @@ def test_task_details(setup_task, setup_user):
     response = view(request, 100)
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
+
+
+@pytest.mark.django_db
+def test_task_details(setup_task_with_items, setup_user):
+    factory = APIRequestFactory()
+
+    # Task details
+    task_id = 1
+    request = factory.get('/tasks/{0}'.format(task_id))
+    force_authenticate(request, setup_user)
+    view = TaskDetail.as_view()
+    response = view(request, task_id)
+    force_authenticate(request, setup_user)
+    assert response.status_code == 200
+    assert response.data == {
+        'id': 1, 'name': 'Add two digits', 'description': '',
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10
+    }

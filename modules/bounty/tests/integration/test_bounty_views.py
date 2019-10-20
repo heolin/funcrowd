@@ -29,7 +29,8 @@ def test_bounty_views(setup_task_with_items, setup_user):
             'description': task.description,
             'instruction': task.instruction,
             'keywords': task.keywords,
-            'metadata': task.metadata
+            'metadata': task.metadata,
+            'total_exp': 0
         },
         'closed': False,
         'annotations_target': bounty.annotations_target,
@@ -37,7 +38,7 @@ def test_bounty_views(setup_task_with_items, setup_user):
             'id': 1,
             'progress': 0.0,
             'status': 'NEW',
-            'annotations_done': 0
+            'annotations_done': 0,
         }
     }
 

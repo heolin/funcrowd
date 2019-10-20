@@ -19,6 +19,7 @@ class Item(models.Model):
     template = models.ForeignKey("ItemTemplate", on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
     order = models.IntegerField(default=0)
+    exp = models.IntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
         return "Task {} (#{}) - Item {} - {} (#{}) - {}".format(self.task.order, self.task.id,

@@ -17,7 +17,7 @@ class EndWorker(AbstractUser):
     profile = models.IntegerField(default=ProfileType.NORMAL)
 
     login_count = models.IntegerField(default=0)
-    experience = models.IntegerField(default=0)
+    exp = models.IntegerField(default=0)
     level = models.IntegerField(default=0)
 
     @property
@@ -69,3 +69,9 @@ class EndWorker(AbstractUser):
         mission_progress.update()
 
         events_manager.on_event(self, Events.ON_ITEM_DONE)
+
+    def add_exp(self, exp):
+        self.exp += exp
+        self.save()
+
+

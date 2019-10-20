@@ -21,6 +21,7 @@ def test_next_item(setup_task_with_items, setup_user):
 
     assert response.data['id'] == item.id
     assert response.data['task'] == task.id
+    assert response.data['exp'] == item.exp
     assert response.data['data'] == {'first': 1, 'second': 2}
     assert response.data['template']['id'] == item.template.id
 

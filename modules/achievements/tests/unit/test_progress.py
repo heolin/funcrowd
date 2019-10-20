@@ -3,15 +3,19 @@ import pytest
 from modules.achievements.models import UserAchievement, ProgressAchievement
 from tasks.models import Item
 
-
 @pytest.mark.django_db
-def test_progress_logic(setup_user1, setup_achievements):
+def test_progress_logic(setup_user1, setup_wrong_progress_achievement):
     user = setup_user1
 
     achievement = ProgressAchievement.objects.filter(order=4).first()
     user_achievement = UserAchievement.objects.create(user=user, achievement=achievement)
     with pytest.raises(ValueError):
         user_achievement.update()
+
+
+@pytest.mark.django_db
+def test_progress_logic(setup_user1, setup_achievements):
+    user = setup_user1
 
     achievement = ProgressAchievement.objects.filter(order=5).first()
     user_achievement = UserAchievement.objects.create(user=user, achievement=achievement)

@@ -40,7 +40,7 @@ class Bounty(models.Model):
     def _create_user_bounty(self, user: EndWorker):
         UserBounty = b.models.UserBounty
         user_bounty = UserBounty.objects.create(user=user, bounty=self)
-        user_bounty.annotations_initial = user_bounty.get_annotations()
+        user_bounty.annotations_initial = user_bounty.get_annotations_count()
         user_bounty.save()
         return user_bounty
 

@@ -23,6 +23,7 @@ def test_end_worker_view(setup_user, setup_other_user):
     assert response.data['id'] == setup_user.id
     assert response.data['username'] == setup_user.username
     assert response.data['token'] == str(setup_user.token)
+    assert response.data['exp'] == 0
 
     # get user2 stats
     request = factory.get('/api/v1/users/current')

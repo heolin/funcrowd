@@ -55,7 +55,18 @@ def setup_achievements(setup_task_with_items):
     ItemDoneAchievement.objects.create(order=1)
     ItemDoneAchievement.objects.create(order=2, mission_id=1, target=2)
     ItemDoneAchievement.objects.create(order=3, task_id=2)
-    ProgressAchievement.objects.create(order=4)
     ProgressAchievement.objects.create(order=5, task_id=1)
     ProgressAchievement.objects.create(order=6, mission_id=1)
     LoginCountAchievement.objects.create(order=0)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_wrong_progress_achievement():
+    ProgressAchievement.objects.create(order=4)
+
+
+def compare_without_fields(dict1, dict2, excluded_fields=['id']):
+    dict1 = {k: v for (k, v) in dict1.items() if k not in excluded_fields}
+    dict2 = {k: v for (k, v) in dict2.items() if k not in excluded_fields}
+    return dict1 == dict2

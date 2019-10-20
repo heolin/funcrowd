@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import JSONField
 
 import modules.statistics as s
 import modules.achievements as a
+import tasks as t
 
 """
 Mission are the base object used for story logic.
@@ -27,8 +28,8 @@ class Mission(models.Model):
 
     @property
     def stats(self):
-        cls = s.models.MissionStats
-        stats, _ = cls.objects.get_or_create(mission=self)
+        MissionStats = s.models.MissionStats
+        stats, _ = MissionStats.objects.get_or_create(mission=self)
         return stats
 
     @property
@@ -37,8 +38,13 @@ class Mission(models.Model):
 
     @property
     def achievements_count(self):
-        cls = a.models.Achievement
-        return cls.objects.filter(mission=self).count()
+        Achievement = a.models.Achievement
+        return Achievement.objects.filter(mission=self).count()
+
+    @property
+    def total_exp(self):
+        Item = t.models.Item
+        return Item.objects.filter(task__mission=self).aggregate(models.Sum("exp"))['exp__sum']
 
     def __str__(self):
         return "{}({})".format(

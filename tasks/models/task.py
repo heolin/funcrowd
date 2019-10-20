@@ -9,6 +9,7 @@ from tasks.models.mission import Mission
 
 from modules.order_strategy.models import Strategy
 import modules.achievements as a
+import tasks as t
 
 
 """
@@ -51,8 +52,13 @@ class Task(models.Model):
 
     @property
     def achievements_count(self):
-        cls = a.models.Achievement
-        return cls.objects.filter(task=self).count()
+        Achievement = a.models.Achievement
+        return Achievement.objects.filter(task=self).count()
+
+    @property
+    def total_exp(self):
+        Item = t.models.Item
+        return Item.objects.filter(task=self).aggregate(models.Sum("exp"))['exp__sum']
 
     class Meta:
         ordering = ['order']

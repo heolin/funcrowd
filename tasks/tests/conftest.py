@@ -57,7 +57,7 @@ def setup_task_with_items():
     template.fields.add(optional_annotation_field)
 
     Item.objects.create(task=task, template=template, order=1,
-                        data={first_field.name: 1, second_field.name: 2})
+                        data={first_field.name: 1, second_field.name: 2}, exp=10)
     Item.objects.create(task=task, template=template, order=2,
                         data={first_field.name: 2, second_field.name: 2})
 
