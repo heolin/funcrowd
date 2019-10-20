@@ -16,3 +16,10 @@ class EndWorkerSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = EndWorker
         fields = ('id', 'username', 'email', 'group', 'profile', 'exp')
+
+
+class EndWorkerStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = EndWorker
+        fields = ('id', 'username', 'exp')

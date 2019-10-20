@@ -6,7 +6,8 @@ from users.api.views.auth import (
     EndWorkerLogoutView,
     EndWorkerRegistrationView,
     EndWorkerEmailInfoView,
-    EndWorkerUsernameInfoView
+    EndWorkerUsernameInfoView,
+    EndWorkerStatusView
 )
 from users.api.views.mturk import (
     MturkRegisterLoginView
@@ -23,7 +24,8 @@ urlpatterns = [
     path('mturk', MturkRegisterLoginView.as_view(), name='register_mturk'),
     path('register', EndWorkerRegistrationView.as_view(), name='register_end_worker'),
     path('current', EndWorkerView.as_view(), name='current_end_worker'),
-    path('logout', EndWorkerLogoutView.as_view(), name='current_end_worker'),
+    path('status', EndWorkerStatusView.as_view(), name='end_worker_status'),
+    path('logout', EndWorkerLogoutView.as_view(), name='end_worker_logout'),
     path('storage/<str:key>', EndWorkerStorageView.as_view(), name='end_worker_storage'),
     path('storage', EndWorkerStorageBatchView.as_view(), name='end_worker_storage_batch'),
 ]

@@ -1,7 +1,8 @@
 
 from users.api.serializers.end_worker import (
     EndWorkerSerializer,
-    EndWorkerSimpleSerializer
+    EndWorkerSimpleSerializer,
+    EndWorkerStatusSerializer
 )
 
 from users.api.serializers.auth import (

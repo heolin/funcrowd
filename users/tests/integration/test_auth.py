@@ -6,6 +6,7 @@ from django.test import Client
 from users.api.views.auth import (
     EndWorkerView,
     EndWorkerRegistrationView,
+    EndWorkerStatusView
 )
 from users.models.end_workers import EndWorker
 
@@ -154,3 +155,18 @@ def test_end_worker_logout(setup_user):
     # get data of current user
     response = client.get('/api/v1/users/current')
     assert response.status_code == 401
+
+
+@pytest.mark.django_db
+def test_end_worker_status_view(setup_user):
+    factory = APIRequestFactory()
+
+    # get user1 stats
+    request = factory.get('/api/v1/users/status')
+    force_authenticate(request, user=setup_user)
+    view = EndWorkerStatusView.as_view()
+    response = view(request)
+    assert response.status_code == 200
+    assert response.data['id'] == setup_user.id
+    assert response.data['username'] == setup_user.username
+    assert response.data['exp'] == 0

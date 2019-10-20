@@ -9,8 +9,6 @@ from rest_framework import status
 
 from django.contrib.auth import authenticate, login, logout
 
-from funcrowd.settings import events_manager
-from modules.achievements.events import Events
 from users.models.end_workers import EndWorker
 from users.api.serializers import (
     EndWorkerRegistrationSerializer,
@@ -18,8 +16,8 @@ from users.api.serializers import (
     EndWorkerSerializer,
     EndWorkerEmailInfoSerializer,
     EndWorkerUsernameInfoSerializer,
-    EndWorkerSimpleSerializer
-)
+    EndWorkerSimpleSerializer,
+    EndWorkerStatusSerializer)
 
 
 class EndWorkerRegistrationView(GenericAPIView):
@@ -116,3 +114,11 @@ class EndWorkerUsernameInfoView(GenericAPIView):
                 return Response(serializer.data)
             raise NotFound("No EndWorker found for given username.")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EndWorkerStatusView(GenericAPIView):
+    serializer_class = EndWorkerStatusSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data)
