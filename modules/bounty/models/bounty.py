@@ -5,7 +5,7 @@ from django.db import models
 
 import modules.bounty as b
 
-from modules.bounty.consts import NEW, IN_PROGRESS, FINISHED, CLOSED
+from modules.bounty.consts import BountyStatus
 from tasks.models.task import Task
 from users.models import EndWorker
 from modules.bounty.exceptions import OnlyOneActiveBountyPerTask
@@ -63,12 +63,12 @@ class Bounty(models.Model):
             return None, False
 
         # User bounty exist but not finished
-        if user_bounty.status in [NEW, IN_PROGRESS]:
+        if user_bounty.status in [BountyStatus.NEW, BountyStatus.IN_PROGRESS]:
             return user_bounty, created
 
         # User bounty finished
-        if user_bounty.status == FINISHED:
-            user_bounty.status = CLOSED
+        if user_bounty.status == BountyStatus.FINISHED:
+            user_bounty.status = BountyStatus.CLOSED
             user_bounty.save()
 
         user_bounty = self._create_user_bounty(user)

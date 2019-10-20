@@ -3,7 +3,7 @@ from rest_framework import serializers
 from tasks.api.serializers.task import TaskSerializer
 from modules.bounty.models import Bounty, UserBounty
 
-from modules.bounty.serializers.user_bounty import UserBountyElementSerializer
+from modules.bounty.api.serializers import UserBountyElementSerializer
 
 
 class BountySerializer(serializers.ModelSerializer):

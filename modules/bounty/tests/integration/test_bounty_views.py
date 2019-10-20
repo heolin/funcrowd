@@ -5,12 +5,6 @@ from modules.bounty.api.views.bounty import BountyListView
 from modules.bounty.models import Bounty
 from tasks.models import Task
 
-"""
-    path('bounty/<int:bounty_id>/status', BountyStatusView.as_view(), name='bounty_status'),
-    path('bounty/<int:bounty_id>/start', FirstOrNextBountyView.as_view(), name='bounty_next'),
-    path('bounty/<int:bounty_id>', BountyDetailsView.as_view(), name='bounty_view'),
-    path('bounty/', BountyListView.as_view(), name='bounty_list'),
-"""
 
 @pytest.mark.django_db
 def test_bounty_views(setup_task_with_items, setup_user):

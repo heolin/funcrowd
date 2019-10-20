@@ -1,12 +1,14 @@
 
-NEW = "NEW"
-IN_PROGRESS = "IN_PROGRESS"
-FINISHED = "FINISHED"
-CLOSED = "CLOSED"
+class BountyStatus:
+    NEW = "NEW"
+    IN_PROGRESS = "IN_PROGRESS"
+    FINISHED = "FINISHED"
+    CLOSED = "CLOSED"
+
 
 STATUSES = (
-    NEW,
-    IN_PROGRESS,
-    FINISHED,
-    CLOSED
+    (BountyStatus.NEW, "NEW"),
+    (BountyStatus.IN_PROGRESS, "IN_PROGRESS"),
+    (BountyStatus.FINISHED, "FINISHED"),
+    (BountyStatus.CLOSED, "CLOSED")
 )

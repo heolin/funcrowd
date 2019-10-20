@@ -4,17 +4,16 @@ from __future__ import unicode_literals
 from django.db import models
 
 from users.models.end_workers import EndWorker
-from modules.bounty.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, CLOSED
+from modules.bounty.consts import BountyStatus, STATUSES
 from modules.bounty.models.bounty import Bounty
 from modules.bounty.models.utils import get_reward_token
-from modules.bounty.exceptions import OnlyOneActiveBountyPerTask, BountyFinished
 import tasks.models as m
 
 
 class UserBounty(models.Model):
     bounty = models.ForeignKey(Bounty, on_delete=models.CASCADE, related_name="user_bounties")
     user = models.ForeignKey(EndWorker, blank=True, null=True, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
+    status = models.CharField(max_length=20, choices=STATUSES, default=BountyStatus.NEW)
 
     annotations_initial = models.IntegerField(default=0)
     annotations_done = models.IntegerField(default=0)
@@ -45,16 +44,16 @@ class UserBounty(models.Model):
         annotations_count = self.get_annotations()
         self.annotations_done = min(annotations_count - self.annotations_initial, self.bounty.annotations_target)
 
-        if self.status == NEW and self.annotations_done > 0:
-            self.status = IN_PROGRESS
-        if self.status == IN_PROGRESS and self.annotations_done >= self.bounty.annotations_target:
-            self.status = FINISHED
+        if self.status == BountyStatus.NEW and self.annotations_done > 0:
+            self.status = BountyStatus.IN_PROGRESS
+        if self.status == BountyStatus.IN_PROGRESS and self.annotations_done >= self.bounty.annotations_target:
+            self.status = BountyStatus.FINISHED
 
         self.save()
 
     def finish(self):
-        if self.status != CLOSED:
-            self.status = FINISHED
+        if self.status != BountyStatus.CLOSED:
+            self.status = BountyStatus.FINISHED
             self.save()
 
     def close(self):

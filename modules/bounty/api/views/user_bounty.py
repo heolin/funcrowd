@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 
 from modules.bounty.models import Bounty, UserBounty
-from modules.bounty.serializers.user_bounty import UserBountySerializer
+from modules.bounty.api.serializers import UserBountySerializer
 
 
 class BountyStatusView(GenericAPIView):

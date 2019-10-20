@@ -4,7 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from modules.bounty.models import Bounty
-from modules.bounty.serializers.bounty import BountySerializer
+from modules.bounty.api.serializers import BountySerializer
 
 
 class BountyListView(GenericAPIView):
