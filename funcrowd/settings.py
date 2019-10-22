@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users',
     'tasks',
     'resources',
+    'modules.ranking',
     'modules.order_strategy',
     'modules.agreement',
     'modules.aggregation',
