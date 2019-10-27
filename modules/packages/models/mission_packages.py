@@ -21,6 +21,10 @@ class MissionPackages(models.Model, IStrategyClient):
     def items(self):
         return self.packages.all()
 
+    @property
+    def items_in_package(self):
+        return self.packages.first().items.count()
+
     def next_package(self, user, package):
         return self.next_item(user, package)
 
@@ -34,24 +38,21 @@ class MissionPackages(models.Model, IStrategyClient):
         return self.strategy.prev(self, user, item)
 
     def exclude_items_with_user_annotations(self, user):
-        items_in_package = self.packages.first().items.count()
         packages = self.packages.filter(items__annotations__user=user)
-        packages = packages.annotate(count=models.Count("items__annotations__user") / items_in_package)
+        packages = packages.annotate(count=models.Count("items__annotations__user") / self.items_in_package)
         packages = packages.filter(count__gte=1)
         packages = self.packages.exclude(id__in=packages)
         return packages
 
     def exclude_max_annotations(self, items):
         from modules.packages.models.package import Package
-        items_in_package = self.packages.first().items.count()
         unfinished_packages = Package.objects.raw(UNFINISHED_PACKAGES_QUERY,
-                                                  [items_in_package, self.id, self.max_annotations])
+                                                  [self.items_in_package, self.id, self.max_annotations])
         packages = Package.objects.filter(id__in=[p.id for p in unfinished_packages])
         packages = self.annotate_annotations_done(packages)
         return packages
 
     def annotate_annotations_done(self, packages):
-        items_in_package = self.packages.first().items.count()
         return packages.annotate(
-            annotations_done=models.Count('items__annotations__user') / items_in_package)
+            annotations_done=models.Count('items__annotations__user') / self.items_in_package)
 

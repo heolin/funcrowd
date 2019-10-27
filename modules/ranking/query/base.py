@@ -37,41 +37,27 @@ from
 
 
 '''
-Query used to get neighbour values for selected user
+Base ranking query for mission package statistics
+
 Params:
-0 - ranking base query
-1 - user id
-2 - neighbourhood size
+0 - mission id
 '''
-RANKING_NEIGHBOURHOOD_QUERY = """
-with cte as (
-    {0}
-), current as (
+MISSION_PACKAGE_RANKING_BASE_QUERY = """
+
+select
+    *, row_number() over (order by value desc)
+from (
     select
-        row_number
+        ums.user_id,
+        u.username,
+        ums.annotated_documents,
+        coalesce(ums.high_agreement_percentage, 0) high_agreement_percentage,
+        ceil((ums.annotated_documents * coalesce(ums.high_agreement_percentage, 0) * 10)) as value
     from
-        cte
+        statistics_usermissionstats ums 
+    join
+        users_endworker u on u.id = ums.user_id
     where
-        user_id = {1}
-)
-select 
-    cte.*
-from
-    cte, current
-where 
-    abs(cte.row_number - current.row_number) <= {2}
-order by cte.row_number;
-"""
-
-
-'''
-Query used to create a ranking pagination query
-Params:
-0 - ranking base query
-1 - page size
-2 - page offset = page number * page size
-'''
-RANKING_PAGINATION_QUERY = """
-{0}
-limit {1} offset {2}
+        ums.mission_id = {0}
+) acu
 """
