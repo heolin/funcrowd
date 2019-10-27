@@ -13,6 +13,7 @@ class UserAchievement(models.Model):
     user = models.ForeignKey(EndWorker, on_delete=models.CASCADE)
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
     value = models.FloatField(default=0)
+    updated = models.DateTimeField(auto_now=True)
 
     def update(self):
         self.achievement.update(self)

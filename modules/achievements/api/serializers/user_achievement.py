@@ -8,4 +8,4 @@ class UserAchievementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAchievement
-        fields = ('id', 'order', 'status', 'value', 'target', 'progress', 'metadata')
+        fields = ('id', 'order', 'status', 'value', 'target', 'progress', 'updated', 'metadata')

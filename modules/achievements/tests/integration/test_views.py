@@ -83,7 +83,7 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
         },
     ]
     for received, expected in zip(response.data, expected_data):
-        assert compare_without_fields(received, expected)
+        assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
     # mission achievements list
     mission_id = 1
@@ -114,7 +114,7 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
         },
     ]
     for received, expected in zip(response.data, expected_data):
-        assert compare_without_fields(received, expected)
+        assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
     # task achievements list
     task_id = 1
@@ -136,7 +136,7 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
         },
     ]
     for received, expected in zip(response.data, expected_data):
-        assert compare_without_fields(received, expected)
+        assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
 
 @pytest.mark.django_db
@@ -182,7 +182,7 @@ def test_unclosed_achievements_list(setup_user1, setup_achievements):
         },
     ]
     for received, expected in zip(response.data, expected_data):
-        assert compare_without_fields(received, expected)
+        assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
     user_achievement = UserAchievement.objects.get(user=user, achievement=achievement)
     user_achievement.close()
