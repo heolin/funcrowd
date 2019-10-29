@@ -21,7 +21,7 @@ rest-pandas==1.0.0
 openpyxl==2.6.1
 raven==6.10.0
 django-storages==1.7.1
-Pillow==2.1.0
+Pillow==6.2.0
 boto3==1.9.143
 django-polymorphic==2.1.2
 sendgrid==6.1.0
