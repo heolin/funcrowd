@@ -24,15 +24,22 @@ def test_user_bounty_views(setup_task_with_items, setup_user):
 
     factory = APIRequestFactory()
 
-    # Getting bounty status creates user bounty
+    # Getting bounty status does not creates user bounty
+    request = factory.get('/api/v1/bounty/{}/status'.format(bounty.id))
+    force_authenticate(request, user)
+    view = BountyStatusView.as_view()
+    response = view(request, bounty.id)
+    assert response.data is None
+    assert response.status_code == 204
+
+    user_bounty, _ = bounty.get_or_create_user_bounty(setup_user)
+
+    # Check user bounty serialization format
     request = factory.get('/api/v1/bounty/{}/status'.format(bounty.id))
     force_authenticate(request, user)
     view = BountyStatusView.as_view()
     response = view(request, bounty.id)
 
-    user_bounty, _ = bounty.get_or_create_user_bounty(setup_user)
-
-    # Check user bounty serialization format
     assert response.data == {
         'id': user_bounty.id,
         'bounty': bounty.id,
