@@ -2,7 +2,7 @@ import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from modules.bounty.api.views.bounty import BountyListView
-from modules.bounty.api.views.user_bounty import BountyStatusView, FirstOrNextBountyView
+from modules.bounty.api.views.user_bounty import BountyStatusView, StartBountyView
 from modules.bounty.consts import BountyStatus
 from modules.bounty.models import Bounty, UserBounty
 from modules.bounty.tests.unit.test_bounty import add_annotation
@@ -57,7 +57,7 @@ def test_user_redo_bounty(setup_task_with_items, setup_user):
     # Start bounty
     request = factory.get('/api/v1/bounty/{}/bounty_next'.format(bounty.id))
     force_authenticate(request, user)
-    view = FirstOrNextBountyView.as_view()
+    view = StartBountyView.as_view()
     view(request, bounty.id)
 
     _, created = bounty.get_or_create_user_bounty(setup_user)
@@ -81,7 +81,7 @@ def test_user_redo_bounty(setup_task_with_items, setup_user):
 
     request = factory.get('/api/v1/bounty/{}/bounty_next'.format(bounty.id))
     force_authenticate(request, user)
-    view = FirstOrNextBountyView.as_view()
+    view = StartBountyView.as_view()
     response = view(request, bounty.id)
 
     assert response.data['status'] == BountyStatus.NEW

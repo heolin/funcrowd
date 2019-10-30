@@ -44,6 +44,10 @@ class Bounty(models.Model):
         user_bounty.save()
         return user_bounty
 
+    def get_user_bounty(self, user: EndWorker):
+        UserBounty = b.models.UserBounty
+        return UserBounty.objects.filter(user=user, bounty=self).first()
+
     def get_or_create_user_bounty(self, user: EndWorker):
         UserBounty = b.models.UserBounty
         user_bounty = UserBounty.objects.filter(user=user, bounty=self).first()
@@ -55,7 +59,7 @@ class Bounty(models.Model):
 
         return user_bounty, created
 
-    def create_first_or_next_user_bounty(self, user: EndWorker):
+    def start_user_bounty(self, user: EndWorker):
         user_bounty, created = self.get_or_create_user_bounty(user)
 
         # Bounty closed and user bounty does not exist
