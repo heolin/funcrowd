@@ -1,8 +1,7 @@
 import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from modules.bounty.api.views.bounty import BountyListView
-from modules.bounty.api.views.user_bounty import StartBountyView
+from modules.bounty.api.views.bounty import BountyListView, StartBountyView
 from modules.bounty.models import Bounty
 from tasks.models import Task
 
@@ -54,19 +53,11 @@ def test_bounty_views_start(setup_task_with_items, setup_user):
     force_authenticate(request, user)
     view = StartBountyView.as_view()
     response = view(request, bounty.id)
-    assert response.data == {
-        'id': bounty.get_user_bounty(user).id,
-        'bounty': bounty.id,
-        'status': 'NEW',
-        'progress': 0.0,
-        'reward': None,
-        'annotations_done': 0,
-        'annotations_target': 5,
-        'rewards_list': []
-    }
+    assert response.data['id'] == bounty.id
+    assert response.data['user_bounty']['id'] == bounty.get_user_bounty(user).id
 
     # see list of all bounties
-    request = factory.get('/api/v1/bounty/start')
+    request = factory.get('/api/v1/bounty/')
     force_authenticate(request, user)
     view = BountyListView.as_view()
     response = view(request)

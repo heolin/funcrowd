@@ -1,19 +1,13 @@
 import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from modules.bounty.api.views.bounty import BountyListView
-from modules.bounty.api.views.user_bounty import BountyStatusView, StartBountyView
+from modules.bounty.api.views.bounty import StartBountyView
+from modules.bounty.api.views.user_bounty import BountyStatusView
 from modules.bounty.consts import BountyStatus
-from modules.bounty.models import Bounty, UserBounty
+from modules.bounty.models import Bounty
 from modules.bounty.tests.unit.test_bounty import add_annotation
 from tasks.models import Task
 
-"""
-    path('bounty/<int:bounty_id>/status', BountyStatusView.as_view(), name='bounty_status'),
-    path('bounty/<int:bounty_id>/start', FirstOrNextBountyView.as_view(), name='bounty_next'),
-    path('bounty/<int:bounty_id>', BountyDetailsView.as_view(), name='bounty_view'),
-    path('bounty/', BountyListView.as_view(), name='bounty_list'),
-"""
 
 @pytest.mark.django_db
 def test_user_bounty_views(setup_task_with_items, setup_user):
@@ -62,7 +56,7 @@ def test_user_redo_bounty(setup_task_with_items, setup_user):
     factory = APIRequestFactory()
 
     # Start bounty
-    request = factory.get('/api/v1/bounty/{}/bounty_next'.format(bounty.id))
+    request = factory.get('/api/v1/bounty/{}/start'.format(bounty.id))
     force_authenticate(request, user)
     view = StartBountyView.as_view()
     view(request, bounty.id)
@@ -86,12 +80,19 @@ def test_user_redo_bounty(setup_task_with_items, setup_user):
     # Start next bounty
     prev_user_bounty_id = response.data['id']
 
-    request = factory.get('/api/v1/bounty/{}/bounty_next'.format(bounty.id))
+    request = factory.get('/api/v1/bounty/{}/start'.format(bounty.id))
     force_authenticate(request, user)
     view = StartBountyView.as_view()
     response = view(request, bounty.id)
 
+    assert response.data['user_bounty']['status'] == BountyStatus.NEW
+    assert prev_user_bounty_id != response.data['user_bounty']['id']
+
+    # Check status
+    request = factory.get('/api/v1/bounty/{}/status'.format(bounty.id))
+    force_authenticate(request, user)
+    view = BountyStatusView.as_view()
+    response = view(request, bounty.id)
     assert response.data['status'] == BountyStatus.NEW
-    assert prev_user_bounty_id != response.data['id']
-    assert len(response.data['rewards_list']) == 1
     assert response.data['reward'] is None
+    assert len(response.data['rewards_list']) == 1

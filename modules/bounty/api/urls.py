@@ -1,7 +1,7 @@
 from django.urls import path
 
-from modules.bounty.api.views.user_bounty import BountyStatusView, StartBountyView
-from modules.bounty.api.views.bounty import BountyListView, BountyDetailsView
+from modules.bounty.api.views.user_bounty import BountyStatusView
+from modules.bounty.api.views.bounty import BountyListView, BountyDetailsView, StartBountyView
 
 
 urlpatterns = [
