@@ -12,7 +12,7 @@ class AnnotationFeedback(models.Model):
     annotation = models.OneToOneField(Annotation, on_delete=models.CASCADE, related_name="feedback")
     values = JSONField(default={})
     scores = JSONField(default={})
-    score = models.FloatField(default=0)
+    score = models.FloatField(default=0, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     @property

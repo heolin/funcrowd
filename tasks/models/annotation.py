@@ -29,7 +29,7 @@ class Annotation(models.Model):
     def get_exp(self):
         feedback = self.get_feedback()
         feedback_score = 1.0
-        if feedback:
+        if feedback and feedback.score:
             feedback_score = feedback.score
 
         if self.item.task.multiple_annotations:
