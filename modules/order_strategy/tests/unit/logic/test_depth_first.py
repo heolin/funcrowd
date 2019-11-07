@@ -69,6 +69,57 @@ def test_items_with_annotations(setup_task_with_annotations, setup_user, setup_o
 
 
 @pytest.mark.django_db
+def test_annotations_skip_and_reject(setup_task_with_annotations, setup_user, setup_other_user):
+    user, other_user = setup_user, setup_other_user
+    task = Task.objects.first()
+    task.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
+
+    item = task.next_item(user, None)
+    assert item.order == 1
+    item = task.next_item(user, item)
+    assert item.order == 1
+
+    annotation, _ = add_annotation(item, user)
+
+    item = task.next_item(user, item)
+    assert item.order == 2
+
+    item = task.next_item(other_user, item)
+    assert item.order == 2
+
+    annotation.rejected = True
+    annotation.skipped = False
+    annotation.save()
+
+    item = task.next_item(user, item)
+    assert item.order == 2
+
+    item = task.next_item(other_user, item)
+    assert item.order == 1
+
+    annotation.rejected = True
+    annotation.skipped = True
+    annotation.save()
+
+    item = task.next_item(user, item)
+    assert item.order == 2
+
+    item = task.next_item(other_user, item)
+    assert item.order == 1
+
+    annotation.rejected = False
+    annotation.skipped = True
+    annotation.save()
+
+    item = task.next_item(user, item)
+    assert item.order == 2
+
+    item = task.next_item(other_user, item)
+    assert item.order == 1
+
+
+
+@pytest.mark.django_db
 def test_max_annotations(setup_task_with_annotations, setup_user, setup_other_user):
     user, other_user = setup_user, setup_other_user
     task = Task.objects.first()

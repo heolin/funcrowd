@@ -43,7 +43,7 @@ class Task(models.Model):
         return self.strategy.prev(self, user, item)
 
     def exclude_items_with_user_annotations(self, user):
-        return self.items.exclude(annotations__user=user, annotations__annotated=True)
+        return self.items.exclude(Q(annotations__user=user) & Q(annotations__annotated=True))
 
     def annotate_annotations_done(self, items):
         return items.annotate(
