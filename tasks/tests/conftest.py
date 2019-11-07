@@ -60,6 +60,10 @@ def setup_task_with_items():
                         data={first_field.name: 1, second_field.name: 2}, exp=10)
     Item.objects.create(task=task, template=template, order=2,
                         data={first_field.name: 2, second_field.name: 2})
+    Item.objects.create(task=task, template=template, order=3,
+                        data={first_field.name: 2, second_field.name: 2})
+    Item.objects.create(task=task, template=template, order=4,
+                        data={first_field.name: 2, second_field.name: 2})
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -82,3 +86,11 @@ def setup_task_with_items_data_source():
 
     Item.objects.create(task=task, template=template, order=1,
                         data={first_field.name: 1, source_field.name: ["A", "B"]})
+
+
+def add_annotation(item, user):
+    annotation, created = item.get_or_create_annotation(user)
+    annotation.data = {"output": "1"}
+    annotation.annotated = True
+    annotation.save()
+    return annotation, created

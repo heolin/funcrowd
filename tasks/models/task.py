@@ -2,14 +2,16 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.db.models import IntegerField
-from django.db.models.functions import Cast, Coalesce
+from django.db.models import IntegerField, FloatField
+from django.db.models.functions import Cast, Coalesce, Greatest
+from django.db.models.functions import Ceil
 from django.contrib.postgres.fields import JSONField
 from tasks.models.mission import Mission
 
 from modules.order_strategy.models import Strategy
 import modules.achievements as a
 import tasks as t
+from django.db.models import Q
 
 
 """
@@ -44,8 +46,17 @@ class Task(models.Model):
         return self.items.exclude(annotations__user=user, annotations__annotated=True)
 
     def annotate_annotations_done(self, items):
-        return items.annotate(annotations_done=models.Sum(
-            Coalesce(Cast('annotations__annotated', IntegerField()), 0)))
+        return items.annotate(
+            annotations_done=models.Count(models.Case(
+                models.When(
+                    Q(annotations__annotated=True) &
+                    Q(annotations__skipped=False) &
+                    Q(annotations__rejected=False),
+                    then=1
+                ),
+                output_field=IntegerField(),
+            ))
+        )
 
     def exclude_max_annotations(self, items):
         return items.filter(annotations_done__lt=self.max_annotations)

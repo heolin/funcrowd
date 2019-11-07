@@ -13,7 +13,7 @@ def test_task_progress(setup_task_with_items, setup_user):
 
     progress = user.get_task_progress(task=task)
 
-    assert progress.items_count == 2
+    assert progress.items_count == 4
     assert progress.items_done == 0
     assert progress.progress == 0
 
@@ -23,30 +23,32 @@ def test_task_progress(setup_task_with_items, setup_user):
     # creating an annotation for the first item
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": "C"}
+    annotation.annotated = True
     controller.process(annotation)
 
     progress = user.get_task_progress(task=task)
     assert progress.items_done == 1
-    assert progress.progress == 0.5
+    assert progress.progress == 0.25
 
     # creating new annotation for the first item
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": "B"}
+    annotation.annotated = True
     controller.process(annotation)
 
     progress = user.get_task_progress(task=task)
     assert progress.items_done == 1
-    assert progress.progress == 0.5
+    assert progress.progress == 0.25
 
     # creating an annotation for the second item
-    item = task.items.all()[1]
-
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data = {"output": "A"}
-    controller.process(annotation)
+    for item in task.items.all()[1:]:
+        annotation, _ = item.get_or_create_annotation(user)
+        annotation.data = {"output": "A"}
+        annotation.annotated = True
+        controller.process(annotation)
 
     progress = user.get_task_progress(task=task)
-    assert progress.items_done == 2
+    assert progress.items_done == 4
     assert progress.progress == 1.0
 
 
@@ -67,6 +69,7 @@ def test_mission_progress(setup_task_with_items, setup_user):
     # creating an annotation for the first item
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": "C"}
+    annotation.annotated = True
     controller.process(annotation)
 
     progress = user.get_mission_progress(mission=task.mission)
@@ -74,10 +77,11 @@ def test_mission_progress(setup_task_with_items, setup_user):
     assert progress.progress == 0
 
     # creating an annotation for the second item
-    item = task.items.all()[1]
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data = {"output": "A"}
-    controller.process(annotation)
+    for item in task.items.all()[1:]:
+        annotation, _ = item.get_or_create_annotation(user)
+        annotation.data = {"output": "A"}
+        annotation.annotated = True
+        controller.process(annotation)
 
     progress = user.get_mission_progress(mission=task.mission)
     assert progress.tasks_done == 1

@@ -16,6 +16,7 @@ class Annotation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     annotated = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
 
     def __str__(self):
         TEMPLATE = "Task {} (#{}) - Item: {} (#{}) - Annotation: #{} - User: {}"

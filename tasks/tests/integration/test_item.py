@@ -57,11 +57,12 @@ def test_next_item_with_previous(setup_task_with_items, setup_user):
     assert response.data['template']['id'] == item.template.id
 
     # no next item
-    request = factory.get('/api/v1/items/{0}/next_item'.format(next_item.id))
+    last_item = task.items.all()[3]
+    request = factory.get('/api/v1/items/{0}/next_item'.format(last_item.id))
     force_authenticate(request, setup_user)
 
     view = TaskNextItemWithPrevious.as_view()
-    response = view(request, next_item.id)
+    response = view(request, last_item.id)
     assert response.status_code == 204
     assert response.data is None
 

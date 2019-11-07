@@ -9,8 +9,8 @@ from tasks.models import (
 def test_items(setup_task_with_items):
     assert Task.objects.count() == 1
     task = Task.objects.first()
-    assert task.items.count() == 2
-    assert Item.objects.count() == 2
+    assert task.items.count() == 4
+    assert Item.objects.count() == 4
 
     for item in task.items.all():
         assert item.verify_fields()
@@ -20,13 +20,13 @@ def test_items(setup_task_with_items):
 def test_create_items(setup_task_with_items):
     task = Task.objects.first()
 
-    assert task.items.count() == 2
+    assert task.items.count() == 4
 
     template = ItemTemplate.objects.first()
     data = {field.name: "" for field in template.items_fields.all()}
     item = Item.objects.create(task=task, template=template, data=data)
     assert item.verify_fields()
-    assert task.items.count() == 3
+    assert task.items.count() == 5
 
     item.data = {}
     assert item.verify_fields() is False
@@ -45,4 +45,4 @@ def test_create_items(setup_task_with_items):
     item.order = 0
     assert item.index == 1
     item.order = 4
-    assert item.index == 3
+    assert item.index == 5
