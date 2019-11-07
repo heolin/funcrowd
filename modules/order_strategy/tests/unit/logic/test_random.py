@@ -35,6 +35,7 @@ def test_items_with_annotations(setup_task_with_annotations, setup_user, setup_d
 
     item = task.items.first()
     annotation, _ = item.get_or_create_annotation(user)
+    annotation.annotated = True
     annotation.data["output"] = 1
     annotation.save()
 
@@ -75,6 +76,7 @@ def test_multiple_annotations(setup_task_with_annotations, setup_user, setup_db_
     item = task.items.first()
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data["output"] = 1
+    annotation.annotated = True
     annotation.save()
 
     orders = set()
