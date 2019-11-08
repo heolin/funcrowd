@@ -47,7 +47,10 @@ class UserMissionProgress(models.Model):
     def _get_parent_progress(self):
         parent_progress = None
         if self.mission.parent:
-            parent_progress = self.user.get_mission_progress(self.mission.parent)
+            parent_progress = UserMissionProgress.objects.filter(
+                mission=self.mission.parent,
+                user=self.user
+            ).first()
         return parent_progress
 
     @property
