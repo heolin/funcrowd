@@ -39,7 +39,7 @@ def setup_task():
 def setup_task_with_items():
     Strategy.register_values()
 
-    mission = Mission.objects.create(id=1, name="Test mission")
+    mission = Mission.objects.create(id=1, name="Test mission", order=1)
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
 
@@ -70,7 +70,7 @@ def setup_task_with_items():
 def setup_task_with_items_data_source():
     Strategy.register_values()
 
-    mission = Mission.objects.create(id=1, name="Test mission")
+    mission = Mission.objects.create(id=1, name="Mission1")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
 
@@ -86,6 +86,23 @@ def setup_task_with_items_data_source():
 
     Item.objects.create(task=task, template=template, order=1,
                         data={first_field.name: 1, source_field.name: ["A", "B"]})
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_two_missions(setup_task_with_items):
+    mission1 = Mission.objects.get(order=1)
+    mission2 = Mission.objects.create(id=2, name="Mission2", order=2, parent=mission1)
+    Mission.objects.create(id=3, name="Mission3", order=3)
+
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    template = ItemTemplate.objects.get(name="Adding two")
+
+    task1 = Task.objects.create(id=2, mission=mission2, name="Add two digits", strategy=strategy)
+    Item.objects.create(task=task1, template=template, order=1, data={"test": 1}, exp=10)
+
+    task2 = Task.objects.create(id=3, mission=mission2, name="Add two digits", strategy=strategy)
+    Item.objects.create(task=task2, template=template, order=1, data={"test": 1}, exp=10)
 
 
 def add_annotation(item, user):

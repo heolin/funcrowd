@@ -7,4 +7,4 @@ class UserMissionProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMissionProgress
-        fields = ('id', 'mission', 'tasks_done', 'tasks_count', 'progress')
+        fields = ('id', 'mission', 'tasks_done', 'tasks_count', 'progress', 'status')

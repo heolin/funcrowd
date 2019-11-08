@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
+from tasks.consts import MissionStatus, MISSION_STATUSES
 from tasks.models import Mission, UserTaskProgress
 from users.models.end_workers import EndWorker
 
@@ -11,19 +12,48 @@ class UserMissionProgress(models.Model):
     user = models.ForeignKey(EndWorker, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     tasks_done = models.IntegerField(default=0)
+    status = models.CharField(default=MissionStatus.LOCKED, choices=MISSION_STATUSES, max_length=32)
 
     def update(self):
-        self.tasks_done = UserTaskProgress.objects.filter(user=self.user).annotate(
+        self.tasks_done = UserTaskProgress.objects.filter(
+            user=self.user, task__mission=self.mission).annotate(
             items_count=models.Count('task__items')).annotate(
             progress=models.F('items_done') / models.F('items_count')).values(
             "progress").filter(progress=1).count()
+
+        self.update_status(False)
         self.save()
+
+    def update_status(self, commit=True):
+        parent_progress = self._get_parent_progress()
+
+        last_status = self.status
+
+        if self.status == MissionStatus.LOCKED:
+            if not parent_progress:
+                self.status = MissionStatus.UNLOCKED
+            elif parent_progress.status == MissionStatus.FINISHED:
+                self.status = MissionStatus.UNLOCKED
+        if self.status == MissionStatus.UNLOCKED:
+            if self.tasks_done > 0:
+                self.status = MissionStatus.IN_PROGRESS
+        if self.status == MissionStatus.IN_PROGRESS:
+            if self.tasks_done == self.tasks_count:
+                self.status = MissionStatus.FINISHED
+
+        if commit and last_status != self.status:
+            self.save()
+
+    def _get_parent_progress(self):
+        parent_progress = None
+        if self.mission.parent:
+            parent_progress = self.user.get_mission_progress(self.mission.parent)
+        return parent_progress
 
     @property
     def progress(self):
         if self.tasks_count:
             return self.tasks_done / self.tasks_count
-
 
     @property
     def tasks_count(self):

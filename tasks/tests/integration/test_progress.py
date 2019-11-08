@@ -30,7 +30,8 @@ def test_task_progress(setup_task, setup_user):
     view = UserTaskProgressDetail.as_view()
     response = view(request, task_id)
     assert response.status_code == 200
-    assert response.data == {'id': ut.id, 'task': ut.task.id, 'items_done': 0, 'items_count': 0, 'progress': None}
+    assert response.data == {'id': ut.id, 'task': ut.task.id, 'items_done': 0,
+                             'items_count': 0, 'progress': None}
 
     # Task progress detail, task not found
     task_id = 3
@@ -54,7 +55,7 @@ def test_mission_progress(setup_task, setup_user):
     assert response.status_code == 200
     assert response.data == [
         {'id': u.id, 'mission': u.mission.id, 'tasks_done': 0,
-         'tasks_count': u.mission.tasks_count, 'progress': u.progress}
+         'tasks_count': u.mission.tasks_count, 'progress': u.progress, 'status': 'UNLOCKED'}
         for u in UserMissionProgress.objects.filter(user=setup_user)
     ]
 
@@ -67,7 +68,8 @@ def test_mission_progress(setup_task, setup_user):
 
     um = UserMissionProgress.objects.get(user=setup_user, mission_id=mission_id)
     assert response.status_code == 200
-    assert response.data == {'id': um.id, 'mission': mission_id, 'tasks_done': 0, 'tasks_count': 1, 'progress': 0.0}
+    assert response.data == {'id': um.id, 'mission': mission_id, 'tasks_done': 0,
+                             'tasks_count': 1, 'progress': 0.0, 'status': 'UNLOCKED'}
 
     # Mission detail, mission not found
     mission_id = 3

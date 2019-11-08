@@ -54,6 +54,7 @@ class EndWorker(AbstractUser):
     def get_mission_progress(self, mission):
         # move this part to Mission
         progress, _ = t.models.mission_progress.UserMissionProgress.objects.get_or_create(mission=mission, user=self)
+        progress.update_status()
         return progress
 
     def on_login(self):

@@ -19,6 +19,7 @@ class Mission(models.Model):
     description = models.TextField(default="", blank=True)
     metadata = JSONField(blank=True, default={})
     order = models.IntegerField(default=0)
+    parent = models.ForeignKey('Mission', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['order']
