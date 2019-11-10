@@ -44,6 +44,7 @@ class EndWorker(AbstractUser):
     def get_task_progress(self, task):
         # move this part to Task
         progress, _ = t.models.task_progress.UserTaskProgress.objects.get_or_create(task=task, user=self)
+        progress.update_status()
         return progress
 
     def get_mission_stats(self, mission_id):

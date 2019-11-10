@@ -25,6 +25,7 @@ class Task(models.Model):
     description = models.CharField(max_length=1000, default="", blank=True)
     instruction = models.TextField(default="", blank="")
     created = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
 
     metadata = JSONField(blank=True, default={})
 

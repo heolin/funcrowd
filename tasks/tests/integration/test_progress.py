@@ -21,7 +21,7 @@ def test_task_progress(setup_task, setup_user):
 
     assert response.status_code == 200
     assert response.data == [
-        {'id': ut.id, 'task': ut.task.id, 'items_done': 0, 'items_count': 0, 'progress': None}
+        {'id': ut.id, 'task': ut.task.id, 'items_done': 0, 'items_count': 0, 'progress': None, 'status': "UNLOCKED"}
     ]
 
     # Task progress detail, task found
@@ -31,7 +31,7 @@ def test_task_progress(setup_task, setup_user):
     response = view(request, task_id)
     assert response.status_code == 200
     assert response.data == {'id': ut.id, 'task': ut.task.id, 'items_done': 0,
-                             'items_count': 0, 'progress': None}
+                             'items_count': 0, 'progress': None, "status": "UNLOCKED"}
 
     # Task progress detail, task not found
     task_id = 3

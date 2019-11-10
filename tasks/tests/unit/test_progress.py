@@ -1,6 +1,6 @@
 import pytest
 
-from tasks.consts import MissionStatus
+from tasks.consts import MissionStatus, TaskStatus
 from tasks.models import (
     Task, Item, Annotation,
     Mission)
@@ -18,6 +18,7 @@ def test_task_progress(setup_task_with_items, setup_user):
     assert progress.items_count == 4
     assert progress.items_done == 0
     assert progress.progress == 0
+    assert progress.status == TaskStatus.UNLOCKED
 
     item = task.items.first()
     controller = AnnotationController()
@@ -31,6 +32,7 @@ def test_task_progress(setup_task_with_items, setup_user):
     progress = user.get_task_progress(task=task)
     assert progress.items_done == 1
     assert progress.progress == 0.25
+    assert progress.status == TaskStatus.IN_PROGRESS
 
     # creating new annotation for the first item
     annotation, _ = item.get_or_create_annotation(user)
@@ -52,6 +54,7 @@ def test_task_progress(setup_task_with_items, setup_user):
     progress = user.get_task_progress(task=task)
     assert progress.items_done == 4
     assert progress.progress == 1.0
+    assert progress.status == TaskStatus.FINISHED
 
 
 @pytest.mark.django_db

@@ -25,3 +25,18 @@ MISSION_STATUSES = (
     (MissionStatus.IN_PROGRESS, "InProgress"),
     (MissionStatus.FINISHED, "Finished"),
 )
+
+
+class TaskStatus:
+    LOCKED = "LOCKED"
+    UNLOCKED = "UNLOCKED"
+    IN_PROGRESS = "IN_PROGRESS"
+    FINISHED = "FINISHED"
+
+
+TASK_STATUSES = (
+    (TaskStatus.LOCKED, "Locked"),
+    (TaskStatus.UNLOCKED, "Unlocked"),
+    (TaskStatus.IN_PROGRESS, "InProgress"),
+    (TaskStatus.FINISHED, "Finished"),
+)
