@@ -51,10 +51,11 @@ class EndWorkerRegistrationView(GenericAPIView):
             if settings.ACCOUNT_EMAIL_VERIFICATION:
                 token = end_worker.create_activation_token()
                 EmailHelper.send_activation_email(end_worker, token)
-
                 end_worker.is_active = False
-            else:
-                end_worker.is_active = True
+                end_worker.save()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            end_worker.is_active = True
             end_worker.save()
 
             serializer = EndWorkerSerializer(end_worker)

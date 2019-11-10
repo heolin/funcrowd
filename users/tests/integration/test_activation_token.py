@@ -33,15 +33,7 @@ def test_end_worker_registration_verification():
     response = view(request)
     end_worker = EndWorker.objects.last()
 
-    assert response.status_code == 201
-    assert end_worker.username == "newuser"
-    assert end_worker.email == ""
-    assert response.data['id'] == end_worker.id
-    assert response.data['username'] == end_worker.username
-    assert response.data['token'] == str(end_worker.token)
-    assert response.data['email'] == ""
-    assert response.data['is_active'] == end_worker.is_active
-    assert response.data['is_active'] is False
+    assert response.status_code == 204
 
     token = ActivationToken.objects.get(user=end_worker)
 
@@ -65,7 +57,9 @@ def test_end_worker_registration_verification():
         "token": token.token
     }
     response = client.post('/api/v1/users/activate', payload)
-    assert response.status_code == 204
+    assert response.data['id'] == end_worker.id
+    assert response.data['username'] == end_worker.username
+    assert response.status_code == 200
 
     token = ActivationToken.objects.get(user=end_worker)
     assert token.token_used
@@ -95,7 +89,9 @@ def test_multiple_tokens():
     }
     request = factory.post('/api/v1/users/register', payload)
     view = EndWorkerRegistrationView.as_view()
-    view(request)
+    response = view(request)
+    assert response.status_code == 204
+
     end_worker = EndWorker.objects.last()
 
     client = Client()
@@ -114,7 +110,9 @@ def test_multiple_tokens():
         "token": token.token
     }
     response = client.post('/api/v1/users/activate', payload)
-    assert response.status_code == 204
+    assert response.status_code == 200
+    assert response.data['id'] == end_worker.id
+    assert response.data['username'] == end_worker.username
 
     # activate used token
     payload = {
