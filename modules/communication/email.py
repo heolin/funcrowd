@@ -1,16 +1,15 @@
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-from funcrowd.settings import SENDGRID_API_KEY
+from django.core.mail import send_mail
+from funcrowd.settings import EMAIL_HOST_USER
 
 
-class EmailSender:
-    def __init__(self):
-        self.sg = SendGridAPIClient(SENDGRID_API_KEY)
+class EmailHelper:
+    @staticmethod
+    def _send(email, subject, body):
+        send_mail(subject, body, EMAIL_HOST_USER, [email])
 
-    def send(self, sender, email, subject, body):
-        message = Mail(
-            from_email = sender,
-            to_emails = email,
-            subject = subject,
-            html_content = body)
-        self.sg.send(message)
+    def send_activation_email(end_worker, token):
+        EmailHelper._send(
+            end_worker.email,
+            'funcrowd activation token',
+            f'lol tu masz token: \"{token.token}\"'
+        )

@@ -11,6 +11,7 @@ from rest_framework import status
 
 from django.contrib.auth import authenticate, login, logout
 
+from modules.communication.email import EmailHelper
 from users.api.views.errors import UsernameUsed, EmailUsed, PasswordNotMatch, AccountUnactive, EmailNotFound, \
     UsernameNotFound
 from users.models.end_workers import EndWorker
@@ -48,7 +49,9 @@ class EndWorkerRegistrationView(GenericAPIView):
             end_worker = EndWorker.objects.create_user(username, email, password1)
 
             if settings.ACCOUNT_EMAIL_VERIFICATION:
-                end_worker.create_activation_token()
+                token = end_worker.create_activation_token()
+                EmailHelper.send_activation_email(end_worker, token)
+
                 end_worker.is_active = False
             else:
                 end_worker.is_active = True

@@ -1,10 +1,12 @@
 import pytest
+from unittest.mock import MagicMock
 
 import funcrowd.settings as settings
 
 from rest_framework.test import APIRequestFactory
 from django.test import Client
 
+from modules.communication.email import EmailHelper
 from users.api.views.auth import (
     EndWorkerRegistrationView,
 )
@@ -12,9 +14,11 @@ from users.models import ActivationToken
 from users.models.end_workers import EndWorker
 
 
+
 @pytest.mark.django_db
 def test_end_worker_registration_verification():
     settings.ACCOUNT_EMAIL_VERIFICATION = True
+    EmailHelper.send_activation_email = MagicMock()
 
     factory = APIRequestFactory()
 
@@ -39,6 +43,11 @@ def test_end_worker_registration_verification():
     assert response.data['is_active'] == end_worker.is_active
     assert response.data['is_active'] is False
 
+    token = ActivationToken.objects.get(user=end_worker)
+
+    # check if email was sent
+    EmailHelper.send_activation_email.assert_called_once_with(end_worker, token)
+
     # login not active
     payload = {
         "username": "newuser",
@@ -51,7 +60,6 @@ def test_end_worker_registration_verification():
     assert response.data['detail'].code == "account_not_active"
 
     # activate token
-    token = ActivationToken.objects.get(user=end_worker)
     #
     payload = {
         "token": token.token
@@ -75,6 +83,7 @@ def test_end_worker_registration_verification():
 @pytest.mark.django_db
 def test_multiple_tokens():
     settings.ACCOUNT_EMAIL_VERIFICATION = True
+    EmailHelper.send_activation_email = MagicMock()
 
     factory = APIRequestFactory()
 
