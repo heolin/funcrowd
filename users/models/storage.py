@@ -7,7 +7,7 @@ class Storage(models.Model):
     user = models.ForeignKey("EndWorker",
                              on_delete=models.CASCADE,
                              related_name="storages")
-    data = JSONField(default={})
+    data = JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

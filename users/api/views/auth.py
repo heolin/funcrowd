@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import funcrowd.settings as settings
+
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError, NotFound, AuthenticationFailed, NotAuthenticated
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 
 from django.contrib.auth import authenticate, login, logout
 
+from users.api.views.errors import UsernameUsed, EmailUsed, PasswordNotMatch, AccountUnactive, EmailNotFound, \
+    UsernameNotFound
 from users.models.end_workers import EndWorker
 from users.api.serializers import (
     EndWorkerRegistrationSerializer,
@@ -35,13 +39,21 @@ class EndWorkerRegistrationView(GenericAPIView):
             email = data.get('email')
 
             if EndWorker.objects.filter(username=username).first():
-                raise ValidationError("Username already used")
+                raise UsernameUsed()
             if EndWorker.objects.filter(email=email).first():
-                raise ValidationError("Email already used")
+                raise EmailUsed()
             if password1 != password2:
-                raise ValidationError("Passwords don't match")
+                raise PasswordNotMatch()
 
             end_worker = EndWorker.objects.create_user(username, email, password1)
+
+            if settings.ACCOUNT_EMAIL_VERIFICATION:
+                end_worker.create_activation_token()
+                end_worker.is_active = False
+            else:
+                end_worker.is_active = True
+            end_worker.save()
+
             serializer = EndWorkerSerializer(end_worker)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -59,13 +71,18 @@ class EndWorkerLoginView(GenericAPIView):
             username = data['username']
             password = data['password']
 
-            end_worker = authenticate(username=username, password=password)
+            end_worker = EndWorker.objects.filter(username=username).first()
             if end_worker is not None:
-                login(request, end_worker)
-                end_worker.on_login()
-                serializer = EndWorkerSerializer(end_worker)
-                return Response(serializer.data)
-            raise ValidationError("Username or password is not correct")
+                if end_worker.is_active:
+                    end_worker = authenticate(username=username, password=password)
+                    if end_worker is not None:
+                        login(request, end_worker)
+                        end_worker.on_login()
+                        serializer = EndWorkerSerializer(end_worker)
+                        return Response(serializer.data)
+                    raise NotAuthenticated()
+                raise AccountUnactive()
+            raise NotAuthenticated()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -97,7 +114,7 @@ class EndWorkerEmailInfoView(GenericAPIView):
             if end_worker:
                 serializer = EndWorkerSimpleSerializer(end_worker)
                 return Response(serializer.data)
-            raise NotFound("No EndWorker found for given email.")
+            raise EmailNotFound()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -112,7 +129,7 @@ class EndWorkerUsernameInfoView(GenericAPIView):
             if end_worker:
                 serializer = EndWorkerSimpleSerializer(end_worker)
                 return Response(serializer.data)
-            raise NotFound("No EndWorker found for given username.")
+            raise UsernameNotFound()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

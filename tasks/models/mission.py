@@ -17,7 +17,7 @@ Each mission can store multiple tasks.
 class Mission(models.Model):
     name = models.CharField(max_length=100, default="")
     description = models.TextField(default="", blank=True)
-    metadata = JSONField(blank=True, default={})
+    metadata = JSONField(blank=True, default=dict)
     order = models.IntegerField(default=0)
     parent = models.ForeignKey('Mission', blank=True, null=True, on_delete=models.CASCADE)
 

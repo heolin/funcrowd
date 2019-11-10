@@ -14,7 +14,7 @@ def test_ranking_top_view(setup_task_annotations):
 
     # test basic top ranking
     request = factory.get('/api/v1/ranking/annotations/top')
-    force_authenticate(request, user)
+    # force_authenticate(request, user)
     view = AnnotationsRankingTop.as_view()
     response = view(request)
 
@@ -46,7 +46,7 @@ def test_ranking_top_view(setup_task_annotations):
 
     # test using get parameters
     request = factory.get('/api/v1/ranking/annotations/top?size=2&page=1')
-    force_authenticate(request, user)
+    # force_authenticate(request, user)
     view = AnnotationsRankingTop.as_view()
     response = view(request)
 

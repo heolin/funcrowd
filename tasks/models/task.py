@@ -27,7 +27,7 @@ class Task(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
 
-    metadata = JSONField(blank=True, default={})
+    metadata = JSONField(blank=True, default=dict)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="tasks")
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)

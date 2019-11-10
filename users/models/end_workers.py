@@ -30,6 +30,13 @@ class EndWorker(AbstractUser):
         stats, _ = UserStats.objects.get_or_create(user=self)
         return stats
 
+    def create_activation_token(self):
+        from users.models import ActivationToken
+        for token in ActivationToken.objects.filter(user=self):
+            token.token_used = True
+            token.save()
+        return ActivationToken.objects.create(user=self)
+
     def get_storage(self, key):
         storage = Storage.objects.filter(user=self, key=key).first()
         if not storage:

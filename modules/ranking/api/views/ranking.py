@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from modules.packages.models import MissionPackages
@@ -12,6 +13,8 @@ from modules.ranking.models.mission_packages_ranking import MissionPackagesRanki
 class RankingTop(GenericAPIView):
     RankingType = None
     serializer_class = RankingSerializer
+    permission_classes = (AllowAny,)
+    authentication_classes = []
 
     def get(self, request, *args, **kwargs):
         ranking = self.RankingType()

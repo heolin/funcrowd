@@ -12,7 +12,7 @@ class Achievement(PolymorphicModel):
     trigger_events = []
 
     order = models.IntegerField(default=0)
-    metadata = JSONField(blank=True, default={})
+    metadata = JSONField(blank=True, default=dict)
     target = models.FloatField(default=1)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, null=True, blank=True)

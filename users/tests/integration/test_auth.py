@@ -1,4 +1,8 @@
 import pytest
+from django.contrib.auth import authenticate
+
+import funcrowd.settings as settings
+
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from django.test import Client
@@ -38,7 +42,8 @@ def test_end_worker_view(setup_user, setup_other_user):
 
 
 @pytest.mark.django_db
-def test_end_worker_registration():
+def test_end_worker_registration_not_verification():
+    settings.ACCOUNT_EMAIL_VERIFICATION = False
     factory = APIRequestFactory()
 
     # register new user
@@ -58,6 +63,7 @@ def test_end_worker_registration():
     assert response.data['username'] == end_worker.username
     assert response.data['token'] == str(end_worker.token)
     assert response.data['email'] == ""
+    assert response.data['is_active'] is True
 
     # register new user
     payload = {
@@ -86,7 +92,8 @@ def test_end_worker_registration():
     request = factory.post('/api/v1/users/register', payload)
     view = EndWorkerRegistrationView.as_view()
     response = view(request)
-    assert response.data[0] == "Username already used"
+
+    assert response.data['detail'].code == "username_used"
     assert response.status_code == 400
 
     # register passwords not match
@@ -98,7 +105,7 @@ def test_end_worker_registration():
     request = factory.post('/api/v1/users/register', payload)
     view = EndWorkerRegistrationView.as_view()
     response = view(request)
-    assert response.data[0] == "Passwords don't match"
+    assert response.data['detail'].code == "password_not_match"
     assert response.status_code == 400
 
 
@@ -112,8 +119,9 @@ def test_end_worker_login(setup_user):
 
     client = Client()
     response = client.post('/api/v1/users/login', payload)
-    assert response.data[0] == "Username or password is not correct"
-    assert response.status_code == 400
+    print(response.data)
+    assert response.data['detail'].code == "not_authenticated"
+    assert response.status_code == 403
 
     # login success
     payload = {

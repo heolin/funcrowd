@@ -1,5 +1,6 @@
 from django.urls import path
 
+from users.api.views.activation_token import ActivateTokenView
 from users.api.views.auth import (
     EndWorkerView,
     EndWorkerLoginView,
@@ -22,6 +23,7 @@ urlpatterns = [
     path('check/username', EndWorkerUsernameInfoView.as_view(), name='check_username_end_worker'),
     path('login', EndWorkerLoginView.as_view(), name='login_end_worker'),
     path('mturk', MturkRegisterLoginView.as_view(), name='register_mturk'),
+    path('activate', ActivateTokenView.as_view(), name='acitvate_token'),
     path('register', EndWorkerRegistrationView.as_view(), name='register_end_worker'),
     path('current', EndWorkerView.as_view(), name='current_end_worker'),
     path('status', EndWorkerStatusView.as_view(), name='end_worker_status'),
