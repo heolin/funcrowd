@@ -30,7 +30,8 @@ def test_get_annotation(setup_task_with_items, setup_user):
             'feedback': None
         },
         'is_verified': False,
-        'exp': None,
+        'exp_base': None,
+        'exp_bonus': None,
         'errors': [
             {
                 'name': 'RequiredFieldEmptyError',
@@ -122,7 +123,8 @@ def test_post_annotation(setup_task_with_items, setup_user):
             'skipped': False,
             'feedback': None
         },
-        'exp': 10,
+        'exp_base': 0,
+        'exp_bonus': 0,
         'is_verified': True,
         'errors': []
     }

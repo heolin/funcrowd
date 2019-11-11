@@ -15,7 +15,7 @@ class AnnotationController(object):
 
     def process(self, annotation):
         # processing validators
-        is_verified, exp, errors = True, None, []
+        is_verified, exp_base, exp_bonus, errors = True, None, None, []
         user = annotation.user
 
         if not annotation.skipped:
@@ -40,10 +40,10 @@ class AnnotationController(object):
             user.on_annotation(annotation)
 
             # handle exp
-            exp = annotation.get_exp()
-            if exp:
-                user.add_exp(exp)
+            exp_base, exp_bonus = annotation.get_exp()
+            if exp_base:
+                user.add_exp(exp_base + exp_bonus)
 
-        response = AnnotationResponse(annotation, is_verified, exp, errors)
+        response = AnnotationResponse(annotation, is_verified, exp_base, exp_bonus, errors)
         return response
 

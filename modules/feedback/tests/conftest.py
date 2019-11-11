@@ -37,9 +37,9 @@ def setup_users():
 
 
 def add_annotation(item, field_name, value, user):
-    annotation, _ = item.get_or_create_annotation(user)
-    annotation.data[field_name] = value
-    annotation.save()
+    annotation = Annotation.objects.create(
+        item=item, user=user, data={field_name: value}, annotated=True)
+    return annotation
 
 
 @pytest.fixture

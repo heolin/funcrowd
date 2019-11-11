@@ -10,6 +10,6 @@ class ReferenceScore(FeedbackScore):
         if references:
             ref_values = list(references.values_list("data", flat=True))
             df_references = pd.DataFrame(ref_values)
-            score = (df_references[self.field] == annotation.data[self.field]).mean()
+            score = int((df_references[self.field] == annotation.data[self.field]).any())
             return score
         return None

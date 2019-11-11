@@ -142,9 +142,9 @@ def test_reference_value(setup_task_with_items, setup_users):
 
     item = task.items.get(order=2)
     votes = {
-        user1: set([3]),
-        user2: set([3]),
-        user3: set([3]),
+        user1: set([3, 9]),
+        user2: set([3, 9]),
+        user3: set([3, 9]),
     }
     for annotation in item.annotations.exclude(user=None):
         assert set(field.evaluate(annotation)) == votes[annotation.user]

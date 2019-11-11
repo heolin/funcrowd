@@ -40,3 +40,8 @@ TASK_STATUSES = (
     (TaskStatus.IN_PROGRESS, "InProgress"),
     (TaskStatus.FINISHED, "Finished"),
 )
+
+
+EXP_BONUS_1 = 10
+EXP_BONUS_3 = 5
+EXP_BONUS_5 = 1

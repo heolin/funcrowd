@@ -49,7 +49,7 @@ def setup_task_with_items():
     second_field = ItemTemplateField.objects.create(name="second", widget="TextLabel")
     template.fields.add(second_field)
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
-                                                        required=True, editable=True)
+                                                        required=True, editable=True, feedback=True)
     template.fields.add(annotation_field)
     optional_annotation_field = ItemTemplateField.objects.create(name="optional", widget="TextLabel",
                                                                  required=False, editable=True)

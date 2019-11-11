@@ -6,8 +6,9 @@ from modules.validators.api.serializers.errors import AnnotationFormErrorSeriali
 class AnnotationResponseSerializer(serializers.Serializer):
     annotation = AnnotationSerializer()
     is_verified = serializers.BooleanField()
-    exp = serializers.IntegerField()
+    exp_base = serializers.IntegerField()
+    exp_bonus = serializers.IntegerField()
     errors = AnnotationFormErrorSerializers(many=True)
 
     class Meta:
-        fields = ('annotation', 'is_verified', 'exp', 'errors')
+        fields = ('annotation', 'is_verified', 'exp_base', 'exp_bonus', 'errors')
