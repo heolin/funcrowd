@@ -25,6 +25,7 @@ def test_progress_logic(setup_user1, setup_achievements):
     item = Item.objects.filter(task_id=1, order=1).first()
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": 1}
+    annotation.annotated = True
     annotation.save()
     user.on_annotation(annotation)
 
@@ -39,6 +40,7 @@ def test_progress_logic(setup_user1, setup_achievements):
     item = Item.objects.filter(task_id=1, order=2).first()
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": 1}
+    annotation.annotated = True
     annotation.save()
     user.on_annotation(annotation)
 

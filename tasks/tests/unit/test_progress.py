@@ -44,6 +44,51 @@ def test_task_progress(setup_task_with_items, setup_user):
     assert progress.items_done == 1
     assert progress.progress == 0.25
 
+    # annotation is not marked as annotated
+    annotation, _ = item.get_or_create_annotation(user)
+    annotation.data = {"output": "C"}
+    annotation.annotated = False
+    annotation.save()
+    progress.update()
+
+    progress = user.get_task_progress(task=task)
+    assert progress.items_done == 0
+    assert progress.progress == 0.0
+    assert progress.status == TaskStatus.IN_PROGRESS
+
+    # annotation is marked as skipped
+    annotation, _ = item.get_or_create_annotation(user)
+    annotation.data = {"output": "C"}
+    annotation.skipped = True
+    annotation.annotated = True
+    annotation.save()
+    progress.update()
+
+    progress = user.get_task_progress(task=task)
+    assert progress.items_done == 0
+    assert progress.progress == 0.0
+    assert progress.status == TaskStatus.IN_PROGRESS
+
+    # annotation is marked as rejected
+    annotation, _ = item.get_or_create_annotation(user)
+    annotation.data = {"output": "C"}
+    annotation.skipped = False
+    annotation.rejected = True
+    annotation.annotated = True
+    annotation.save()
+    progress.update()
+
+    progress = user.get_task_progress(task=task)
+    assert progress.items_done == 0
+    assert progress.progress == 0.0
+    assert progress.status == TaskStatus.IN_PROGRESS
+
+    # setting correct values for first item's annotation
+    annotation.annotated = True
+    annotation.skipped = False
+    annotation.rejected = False
+    annotation.save()
+
     # creating an annotation for the second item
     for item in task.items.all()[1:]:
         annotation, _ = item.get_or_create_annotation(user)

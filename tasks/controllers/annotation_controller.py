@@ -33,7 +33,12 @@ class AnnotationController(object):
             # adding feedback
             task = annotation.item.task
             if hasattr(task, "feedback") and not annotation.skipped:
-                task.feedback.create_feedback(annotation)
+                annotation_feedback = task.feedback.create_feedback(annotation)
+
+                # handle autoreject feedback
+                if task.feedback.autoreject and annotation_feedback.score == 0:
+                    annotation.rejected = True
+                    annotation.save()
 
             # update item status
             annotation.item.update_status()

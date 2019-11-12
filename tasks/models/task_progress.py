@@ -17,6 +17,7 @@ class UserTaskProgress(models.Model):
 
     def update(self):
         self.items_done = Annotation.objects.filter(
+            annotated=True, skipped=False, rejected=False,
             item__task=self.task, user=self.user).values("item").distinct().count()
 
         self.update_status(False)

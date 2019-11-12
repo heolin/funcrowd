@@ -80,7 +80,7 @@ def setup_task_with_items_data_source():
     source_field = ItemTemplateField.objects.create(name="ALL_VALUES", widget="Hidden")
     template.fields.add(source_field)
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel",
-                                                        required=True, editable=True,
+                                                        required=True, editable=True, feedback=True,
                                                         data_source=source_field)
     template.fields.add(annotation_field)
 

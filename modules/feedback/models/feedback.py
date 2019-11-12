@@ -19,6 +19,7 @@ class Feedback(models.Model):
     score_fields = models.ManyToManyField(FeedbackScoreField, blank=True)
     fields = models.ManyToManyField(FeedbackField, blank=True)
     type = models.CharField(max_length=32, choices=FEEDBACK_TYPES, default=FeedbackTypes.NONE)
+    autoreject = models.BooleanField(default=False)
 
     def __str__(self):
         return "Feedback(#{} - {})".format(self.task.id, self.task.name)
