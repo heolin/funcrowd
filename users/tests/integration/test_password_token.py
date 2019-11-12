@@ -30,6 +30,9 @@ def test_end_worker_reset_password(setup_user):
     response = client.post('/api/v1/users/reset_password', {})
     assert response.status_code == 204
 
+    # logout user
+    client.logout()
+
     # check if email was sent
     token = PasswordToken.objects.get(user=user)
     EmailHelper.send_reset_password_email.assert_called_once_with(user, token)

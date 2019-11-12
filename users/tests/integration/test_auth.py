@@ -182,31 +182,3 @@ def test_end_worker_status_view(setup_user):
     assert response.data['id'] == setup_user.id
     assert response.data['username'] == setup_user.username
     assert response.data['exp'] == 0
-
-
-@pytest.mark.django_db
-def test_end_worker_reset_password(setup_user):
-    EmailHelper.send_reset_password_email = MagicMock()
-
-    # login success
-    payload = {
-        "username": "user",
-        "password": "password",
-    }
-    client = Client()
-    response = client.post('/api/v1/users/login', payload)
-    assert response.status_code == 200
-
-    # get data of current user
-    response = client.post('/api/v1/users/reset_password')
-    assert response.status_code == 204
-    EmailHelper.send_reset_password_email.assert_called_once()
-
-    # login old password doesnt work
-    payload = {
-        "username": "user",
-        "password": "password",
-    }
-    client = Client()
-    response = client.post('/api/v1/users/login', payload)
-    assert response.status_code == 403
