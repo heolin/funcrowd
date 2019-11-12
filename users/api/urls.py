@@ -8,7 +8,8 @@ from users.api.views.auth import (
     EndWorkerRegistrationView,
     EndWorkerEmailInfoView,
     EndWorkerUsernameInfoView,
-    EndWorkerStatusView
+    EndWorkerStatusView,
+    EndWorkerResetPasswordView
 )
 from users.api.views.mturk import (
     MturkRegisterLoginView
@@ -24,6 +25,7 @@ urlpatterns = [
     path('login', EndWorkerLoginView.as_view(), name='login_end_worker'),
     path('mturk', MturkRegisterLoginView.as_view(), name='register_mturk'),
     path('activate', ActivateTokenView.as_view(), name='acitvate_token'),
+    path('reset_password', EndWorkerResetPasswordView.as_view(), name='end_worker_reset_password'),
     path('register', EndWorkerRegistrationView.as_view(), name='register_end_worker'),
     path('current', EndWorkerView.as_view(), name='current_end_worker'),
     path('status', EndWorkerStatusView.as_view(), name='end_worker_status'),

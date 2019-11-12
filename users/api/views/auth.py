@@ -143,3 +143,14 @@ class EndWorkerStatusView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
         return Response(serializer.data)
+
+
+class EndWorkerResetPasswordView(GenericAPIView):
+
+    def post(self, request, *args, **kwargs):
+        end_worker = request.user
+        password = EndWorker.objects.make_random_password(length=16)
+        end_worker.set_password(password)
+        end_worker.save()
+        EmailHelper.send_reset_password_email(end_worker, password)
+        return Response(status=status.HTTP_204_NO_CONTENT)

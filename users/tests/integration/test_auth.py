@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 from django.contrib.auth import authenticate
 
@@ -7,6 +9,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from django.test import Client
 
+from modules.communication.email import EmailHelper
 from users.api.views.auth import (
     EndWorkerView,
     EndWorkerRegistrationView,
@@ -156,6 +159,7 @@ def test_end_worker_logout(setup_user):
     response = client.get('/api/v1/users/current')
     end_worker = EndWorker.objects.last()
     assert response.status_code == 200
+    assert response.data['username'] == end_worker.username
     assert end_worker.username == "user"
 
     client.get('/api/v1/users/logout')
@@ -178,3 +182,31 @@ def test_end_worker_status_view(setup_user):
     assert response.data['id'] == setup_user.id
     assert response.data['username'] == setup_user.username
     assert response.data['exp'] == 0
+
+
+@pytest.mark.django_db
+def test_end_worker_reset_password(setup_user):
+    EmailHelper.send_reset_password_email = MagicMock()
+
+    # login success
+    payload = {
+        "username": "user",
+        "password": "password",
+    }
+    client = Client()
+    response = client.post('/api/v1/users/login', payload)
+    assert response.status_code == 200
+
+    # get data of current user
+    response = client.post('/api/v1/users/reset_password')
+    assert response.status_code == 204
+    EmailHelper.send_reset_password_email.assert_called_once()
+
+    # login old password doesnt work
+    payload = {
+        "username": "user",
+        "password": "password",
+    }
+    client = Client()
+    response = client.post('/api/v1/users/login', payload)
+    assert response.status_code == 403

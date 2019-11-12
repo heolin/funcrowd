@@ -13,3 +13,10 @@ class EmailHelper:
             'funcrowd activation token',
             f'lol tu masz token: \"{token.token}\"'
         )
+
+    def send_reset_password_email(end_worker, password):
+        EmailHelper._send(
+            end_worker.email,
+            'funcrowd nowe hasło',
+            f'lol tu masz nowe hasłó \"{password}\"'
+        )
