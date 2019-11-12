@@ -37,6 +37,13 @@ class EndWorker(AbstractUser):
             token.save()
         return ActivationToken.objects.create(user=self)
 
+    def create_password_token(self):
+        from users.models import PasswordToken
+        for token in PasswordToken.objects.filter(user=self):
+            token.token_used = True
+            token.save()
+        return PasswordToken.objects.create(user=self)
+
     def get_storage(self, key):
         storage = Storage.objects.filter(user=self, key=key).first()
         if not storage:

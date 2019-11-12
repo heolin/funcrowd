@@ -5,7 +5,7 @@ from funcrowd.settings import EMAIL_EXPIRATION_HOURS
 from users.models.utils.utils import get_reward_token
 
 
-class ActivationToken(models.Model):
+class PasswordToken(models.Model):
     token = models.CharField(max_length=32, default=get_reward_token())
     user = models.ForeignKey("EndWorker", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -17,7 +17,5 @@ class ActivationToken(models.Model):
         return timezone.now() > expiration_time
 
     def activate(self):
-        self.user.is_active = True
-        self.user.save()
         self.token_used = True
         self.save()

@@ -76,17 +76,19 @@ class EndWorkerLoginView(GenericAPIView):
             password = data['password']
 
             end_worker = EndWorker.objects.filter(username=username).first()
-            if end_worker is not None:
-                if end_worker.is_active:
-                    end_worker = authenticate(username=username, password=password)
-                    if end_worker is not None:
-                        login(request, end_worker)
-                        end_worker.on_login()
-                        serializer = EndWorkerSerializer(end_worker)
-                        return Response(serializer.data)
-                    raise NotAuthenticated()
+            if end_worker is None:
+                raise NotAuthenticated()
+            if not end_worker.is_active:
                 raise AccountUnactive()
-            raise NotAuthenticated()
+
+            end_worker = authenticate(username=username, password=password)
+            if end_worker is None:
+                raise NotAuthenticated()
+
+            login(request, end_worker)
+            end_worker.on_login()
+            serializer = EndWorkerSerializer(end_worker)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -115,10 +117,10 @@ class EndWorkerEmailInfoView(GenericAPIView):
         if serializer.is_valid():
             email = serializer.data['email']
             end_worker = EndWorker.objects.filter(email=email).first()
-            if end_worker:
-                serializer = EndWorkerSimpleSerializer(end_worker)
-                return Response(serializer.data)
-            raise EmailNotFound()
+            if not end_worker:
+                raise EmailNotFound()
+            serializer = EndWorkerSimpleSerializer(end_worker)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -130,10 +132,11 @@ class EndWorkerUsernameInfoView(GenericAPIView):
         if serializer.is_valid():
             username = serializer.data['username']
             end_worker = EndWorker.objects.filter(username=username).first()
-            if end_worker:
-                serializer = EndWorkerSimpleSerializer(end_worker)
-                return Response(serializer.data)
-            raise UsernameNotFound()
+            if not end_worker:
+                raise UsernameNotFound()
+
+            serializer = EndWorkerSimpleSerializer(end_worker)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -149,8 +152,6 @@ class EndWorkerResetPasswordView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         end_worker = request.user
-        password = EndWorker.objects.make_random_password(length=16)
-        end_worker.set_password(password)
-        end_worker.save()
-        EmailHelper.send_reset_password_email(end_worker, password)
+        token = end_worker.create_password_token()
+        EmailHelper.send_reset_password_email(end_worker, token)
         return Response(status=status.HTTP_204_NO_CONTENT)
