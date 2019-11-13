@@ -13,7 +13,7 @@ from users.api.views.errors import EmailNotFound
 from users.models.end_workers import EndWorker
 
 
-class EndWorkerResetPasswordView(GenericAPIView):
+class ResetPasswordView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
     permission_classes = (AllowAny,)
     authentication_classes = []

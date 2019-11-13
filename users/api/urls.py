@@ -15,7 +15,7 @@ from users.api.views.mturk import (
     MturkRegisterLoginView
 )
 from users.api.views.password_token import ResetPasswordTokenView
-from users.api.views.reset_password import EndWorkerResetPasswordView
+from users.api.views.reset_password import ResetPasswordView
 from users.api.views.storage import (
     EndWorkerStorageView, EndWorkerStorageBatchView
 )
@@ -28,7 +28,7 @@ urlpatterns = [
     path('mturk', MturkRegisterLoginView.as_view(), name='register_mturk'),
     path('activate', ActivateTokenView.as_view(), name='acitvate_token'),
     path('change_password', ChangePasswordView.as_view(), name='end_worker_change_password'),
-    path('reset_password', EndWorkerResetPasswordView.as_view(), name='end_worker_reset_password'),
+    path('reset_password', ResetPasswordView.as_view(), name='end_worker_reset_password'),
     path('reset_password/token', ResetPasswordTokenView.as_view(), name='end_worker_reset_password_token'),
     path('register', EndWorkerRegistrationView.as_view(), name='register_end_worker'),
     path('current', EndWorkerView.as_view(), name='current_end_worker'),
