@@ -18,5 +18,5 @@ class EmailHelper:
         EmailHelper._send(
             end_worker.email,
             'funcrowd nowe hasło',
-            f'lol tu masz nowe link do hasla \"{token}\"'
+            f'lol tu masz nowe link do hasla \"{token.token}\"'
         )
