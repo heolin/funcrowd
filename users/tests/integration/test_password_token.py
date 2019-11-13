@@ -22,12 +22,20 @@ def test_end_worker_reset_password(setup_user):
 
     # reset password - unauthorized
     response = client.post('/api/v1/users/reset_password', {})
-    assert response.status_code == 401
+    assert response.status_code == 400
 
-    client.login(username='user', password='password')
+    # reset password - wrong email
+    payload = {
+        'email': "beolin@gmail.com"
+    }
+    response = client.post('/api/v1/users/reset_password', payload)
+    assert response.status_code == 404
 
     # reset password - authorized
-    response = client.post('/api/v1/users/reset_password', {})
+    payload = {
+        'email': user.email
+    }
+    response = client.post('/api/v1/users/reset_password', payload)
     assert response.status_code == 204
 
     # logout user

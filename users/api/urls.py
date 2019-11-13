@@ -9,13 +9,13 @@ from users.api.views.auth import (
     EndWorkerEmailInfoView,
     EndWorkerUsernameInfoView,
     EndWorkerStatusView,
-    EndWorkerResetPasswordView
 )
 from users.api.views.change_password import ChangePasswordView
 from users.api.views.mturk import (
     MturkRegisterLoginView
 )
 from users.api.views.password_token import ResetPasswordTokenView
+from users.api.views.reset_password import EndWorkerResetPasswordView
 from users.api.views.storage import (
     EndWorkerStorageView, EndWorkerStorageBatchView
 )

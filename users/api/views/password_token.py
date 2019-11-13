@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from users.api.serializers.password_token import ResetPasswordTokenSerializer
+from users.api.serializers.reset_password import ResetPasswordTokenSerializer
 from users.api.views.errors import (
     PasswordTokenWrong, PasswordTokenUsed, PasswordTokenExpired,
     PasswordNotMatch)
