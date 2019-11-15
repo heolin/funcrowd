@@ -20,3 +20,5 @@ from users.api.serializers.change_password import ChangePasswordSerializer
 from users.api.serializers.reset_password import ResetPasswordTokenSerializer
 
 from users.api.serializers.activation_token import ActivationTokenSerializer
+
+from users.api.serializers.change_settings import ChangeSettingsSerializer

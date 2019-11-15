@@ -46,7 +46,7 @@ class EndWorkerRegistrationView(GenericAPIView):
             if password1 != password2:
                 raise PasswordNotMatch()
 
-            end_worker = EndWorker.objects.create_user(username, email, password1)
+            end_worker = EndWorker.objects.create_user(email, password1, username=username)
 
             if settings.ACCOUNT_EMAIL_VERIFICATION:
                 token = end_worker.create_activation_token()
@@ -72,16 +72,16 @@ class EndWorkerLoginView(GenericAPIView):
         serializer = EndWorkerLoginSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.data
-            username = data['username']
+            email = data['email']
             password = data['password']
 
-            end_worker = EndWorker.objects.filter(username=username).first()
+            end_worker = EndWorker.objects.filter(email=email).first()
             if end_worker is None:
                 raise NotAuthenticated()
             if not end_worker.is_active:
                 raise AccountUnactive()
 
-            end_worker = authenticate(username=username, password=password)
+            end_worker = authenticate(email=email, password=password)
             if end_worker is None:
                 raise NotAuthenticated()
 

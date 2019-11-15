@@ -15,7 +15,7 @@ def test_login_count_integration(setup_user1, setup_achievements):
 
     client = Client()
     payload = {
-        "username": "user",
+        "email": "user@mail.com",
         "password": "password",
     }
     response = client.post('/api/v1/users/login', payload)

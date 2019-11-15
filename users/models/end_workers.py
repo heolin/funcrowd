@@ -6,19 +6,28 @@ from funcrowd.settings import events_manager
 from modules.achievements.events import Events
 from modules.statistics.models import UserStats, UserMissionStats
 from users.consts import ProfileType
+from users.models.manager import EndWorkerManager
 from users.models.storage import Storage
 from users.models.utils.utils import get_group_number
+from django.utils.translation import ugettext_lazy as _
+
 
 import tasks as t
 
 
 class EndWorker(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
+
     group = models.IntegerField(default=get_group_number)
     profile = models.IntegerField(default=ProfileType.NORMAL)
 
     login_count = models.IntegerField(default=0)
     exp = models.IntegerField(default=0)
     level = models.IntegerField(default=0)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = EndWorkerManager()
 
     @property
     def token(self):

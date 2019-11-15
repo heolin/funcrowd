@@ -84,6 +84,7 @@ def test_multiple_tokens():
     # register new user
     payload = {
         "username": "newuser",
+        "email": "newuser@gmail.com",
         "password1": "password1",
         "password2": "password1",
     }
