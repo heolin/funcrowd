@@ -30,14 +30,16 @@ def test_end_worker_change_settings(user1, user2):
         "username": "user1"
     }
     response = client.post('/api/v1/users/change_settings', payload)
-    assert response.status_code == 204
+    assert response.status_code == 200
+    assert response.data["username"] == 'user1'
 
     # change username - new username
     payload = {
         "username": "new"
     }
     response = client.post('/api/v1/users/change_settings', payload)
-    assert response.status_code == 204
+    assert response.status_code == 200
+    assert response.data["username"] == 'new'
 
     user1 = EndWorker.objects.get(id=user1.id)
     assert user1.username == "new"

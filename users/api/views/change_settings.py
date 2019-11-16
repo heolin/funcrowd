@@ -5,7 +5,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from users.api.serializers import ChangeSettingsSerializer
+from users.api.serializers import ChangeSettingsSerializer, EndWorkerSerializer
 from users.api.views.errors import UsernameUsed
 from users.models import EndWorker
 
@@ -27,7 +27,8 @@ class ChangeSettingsView(GenericAPIView):
             end_worker.username = new_username
             end_worker.save()
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            serializer = EndWorkerSerializer(end_worker)
+            return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
