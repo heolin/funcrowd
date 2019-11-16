@@ -4,8 +4,8 @@ from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_feedback(setup_task_with_items, setup_users):
-    user1, user2, user3 = setup_users
+def test_feedback(task_with_items, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
 

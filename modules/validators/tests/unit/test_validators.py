@@ -11,12 +11,11 @@ from modules.validators.models.annotation import (
 
 
 @pytest.mark.django_db
-def test_source_field_values(setup_task_with_items_data_source, setup_user):
-    user = setup_user
+def test_source_field_values(task_with_items_data_source, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     is_verified, errors = SourceFieldValuesValidator().verify(annotation)
     assert is_verified is False
     assert len(errors) == 1
@@ -40,12 +39,11 @@ def test_source_field_values(setup_task_with_items_data_source, setup_user):
 
 
 @pytest.mark.django_db
-def test_source_field_values(setup_task_with_items_data_source_type_list, setup_user):
-    user = setup_user
+def test_source_field_values(task_with_items_data_source_type_list, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data['output'] = ["A"]
     is_verified, errors = SourceFieldValuesValidator().verify(annotation)
     assert is_verified is True
@@ -63,12 +61,11 @@ def test_source_field_values(setup_task_with_items_data_source_type_list, setup_
 
 
 @pytest.mark.django_db
-def test_annotation_is_done(setup_task_with_items, setup_user):
-    user = setup_user
+def test_annotation_is_done(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     is_verified, errors = AnnotationDoneValidator().verify(annotation)
     assert is_verified is False
     assert len(errors) == 1
@@ -86,12 +83,11 @@ def test_annotation_is_done(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_annotation_fields(setup_task_with_items, setup_user):
-    user = setup_user
+def test_annotation_fields(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     is_verified, errors = AnnotationFieldsValidator().verify(annotation)
     assert is_verified is True
     assert len(errors) == 0

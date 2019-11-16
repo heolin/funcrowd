@@ -8,13 +8,12 @@ from tasks.controllers.annotation_controller import AnnotationController
 
 
 @pytest.mark.django_db
-def test_annotation_controller(setup_task_with_items_data_source, setup_user):
-    user = setup_user
+def test_annotation_controller(task_with_items_data_source, user1):
     task = Task.objects.first()
     item = task.items.first()
     controller = AnnotationController()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     response = controller.process(annotation)
     assert response.is_verified is False
     assert len(response.errors) == 2
@@ -51,13 +50,12 @@ def test_annotation_controller(setup_task_with_items_data_source, setup_user):
 
 
 @pytest.mark.django_db
-def test_annotation_controller_data_source(setup_task_with_items_data_source, setup_user):
-    user = setup_user
+def test_annotation_controller_data_source(task_with_items_data_source, user1):
     task = Task.objects.first()
     item = task.items.first()
     controller = AnnotationController()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "C"}
     response = controller.process(annotation)
     assert response.is_verified is False
@@ -69,17 +67,16 @@ def test_annotation_controller_data_source(setup_task_with_items_data_source, se
     field.validate_data_source = False
     field.save()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "C"}
     response = controller.process(annotation)
     assert response.is_verified is True
 
 
 @pytest.mark.django_db
-def test_annotation_controller_feedback_autoreject(setup_task_with_items_data_source, setup_user):
+def test_annotation_controller_feedback_autoreject(task_with_items_data_source, user1):
     FeedbackScoreField.register_values()
 
-    user = setup_user
     task = Task.objects.first()
     item = task.items.first()
 
@@ -97,7 +94,7 @@ def test_annotation_controller_feedback_autoreject(setup_task_with_items_data_so
     )
 
     # correct annotation
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "A"}
     response = controller.process(annotation)
     assert response.is_verified is True
@@ -105,7 +102,7 @@ def test_annotation_controller_feedback_autoreject(setup_task_with_items_data_so
     assert response.annotation.rejected is False
 
     # wrong annotation
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "B"}
     response = controller.process(annotation)
     assert response.is_verified is True
@@ -117,7 +114,7 @@ def test_annotation_controller_feedback_autoreject(setup_task_with_items_data_so
     feedback.save()
 
     # correct annotation with autoreject
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "A"}
     response = controller.process(annotation)
     assert response.is_verified is True
@@ -125,7 +122,7 @@ def test_annotation_controller_feedback_autoreject(setup_task_with_items_data_so
     assert response.annotation.rejected is False
 
     # wrong annotation with autoreject
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": "B"}
     response = controller.process(annotation)
     assert response.is_verified is True

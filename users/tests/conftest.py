@@ -23,6 +23,6 @@ def user2():
 
 
 @pytest.fixture
-def setup_storage_data(setup_user):
-    setup_user.set_storage("test1", {"test": 1})
-    setup_user.set_storage("test2", {"test": 1})
+def setup_storage_data(user1):
+    user1.set_storage("test1", {"test": 1})
+    user1.set_storage("test2", {"test": 1})

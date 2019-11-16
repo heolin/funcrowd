@@ -1,19 +1,14 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
-from tasks.api.views.mission import (
-    MissionList, MissionDetail
-)
+from django.test import Client
 
 
 @pytest.mark.django_db
-def test_mission_list(setup_task, setup_user):
-    factory = APIRequestFactory()
+def test_mission_list(task, user1):
+    client = Client()
+    client.force_login(user1)
 
     # Mission list
-    request = factory.get('/api/v1/missions')
-    force_authenticate(request, setup_user)
-    view = MissionList.as_view()
-    response = view(request)
+    response = client.get('/api/v1/missions')
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'name': 'Test mission', 'description': '',
@@ -24,34 +19,26 @@ def test_mission_list(setup_task, setup_user):
 
     # Mission detail, mission found
     mission_id = 1
-    request = factory.get('/api/v1/missions/{0}'.format(mission_id))
-    force_authenticate(request, setup_user)
-    view = MissionDetail.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/missions/{0}'.format(mission_id))
     assert response.status_code == 200
     assert response.data == {'id': 1, 'name': 'Test mission', 'description': '',
                              'tasks_count': 1, 'achievements_count': 0, 'metadata': {}, 'total_exp': None}
 
     # Mission detail, mission not found
     mission_id = 3
-    request = factory.get('/api/v1/missions/{0}'.format(mission_id))
-    force_authenticate(request, setup_user)
-    view = MissionDetail.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/missions/{0}'.format(mission_id))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_mission_list(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
+def test_mission_list(task_with_items, user1):
+    client = Client()
+    client.force_login(user1)
 
     # Mission detail, mission found
     mission_id = 1
-    request = factory.get('/api/v1/missions/{0}'.format(mission_id))
-    force_authenticate(request, setup_user)
-    view = MissionDetail.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/missions/{0}'.format(mission_id))
     assert response.status_code == 200
     assert response.data == {'id': 1, 'name': 'Test mission', 'description': '',
                              'tasks_count': 1, 'achievements_count': 0, 'metadata': {}, 'total_exp': 10}

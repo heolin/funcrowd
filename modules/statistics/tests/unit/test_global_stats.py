@@ -25,7 +25,7 @@ def test_global_stats_no_data():
 
 
 @pytest.mark.django_db
-def test_global_stats_tasks_data(setup_user, setup_tasks):
+def test_global_stats_tasks_data(user1, tasks):
     stats = GlobalStats.objects.create()
     assert stats.total_finished_documents == 6
     assert stats.total_finished_items == 0

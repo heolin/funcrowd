@@ -25,6 +25,7 @@ def test_end_worker_registration_verification():
     # register new user
     payload = {
         "username": "newuser",
+        "email": "newuser@mail.com",
         "password1": "password1",
         "password2": "password1",
     }
@@ -42,7 +43,7 @@ def test_end_worker_registration_verification():
 
     # login not active
     payload = {
-        "username": "newuser",
+        "email": "newuser@mail.com",
         "password": "password1",
     }
 
@@ -66,7 +67,7 @@ def test_end_worker_registration_verification():
 
     # login success
     payload = {
-        "username": "newuser",
+        "email": "newuser@mail.com",
         "password": "password1",
     }
     client = Client()

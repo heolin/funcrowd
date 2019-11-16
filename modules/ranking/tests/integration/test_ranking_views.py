@@ -1,22 +1,16 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
+from django.test import Client
 
 from modules.achievements.tests.conftest import compare_without_fields
-from modules.ranking.api.views.ranking import AnnotationsRankingTop, AnnotationsRankingAround
 from users.models import EndWorker
 
 
 @pytest.mark.django_db
-def test_ranking_top_view(setup_task_annotations):
-    factory = APIRequestFactory()
-
-    user = EndWorker.objects.get(username="user4")
+def test_ranking_top_view(task_annotations):
+    client = Client()
 
     # test basic top ranking
-    request = factory.get('/api/v1/ranking/annotations/top')
-    # force_authenticate(request, user)
-    view = AnnotationsRankingTop.as_view()
-    response = view(request)
+    response = client.get('/api/v1/ranking/annotations/top')
 
     expected_data = [
         {
@@ -45,10 +39,7 @@ def test_ranking_top_view(setup_task_annotations):
         assert compare_without_fields(received, expected, ['user_id'])
 
     # test using get parameters
-    request = factory.get('/api/v1/ranking/annotations/top?size=2&page=1')
-    # force_authenticate(request, user)
-    view = AnnotationsRankingTop.as_view()
-    response = view(request)
+    response = client.get('/api/v1/ranking/annotations/top?size=2&page=1')
 
     expected_data = [
         {
@@ -68,24 +59,18 @@ def test_ranking_top_view(setup_task_annotations):
 
 
 @pytest.mark.django_db
-def test_ranking_around_view(setup_task_annotations):
-    factory = APIRequestFactory()
+def test_ranking_around_view(task_annotations):
+    user2 = EndWorker.objects.get(username="user2")
 
-    user = EndWorker.objects.get(username="user2")
+    client = Client()
+    client.force_login(user2)
 
     # test basic around ranking
-    request = factory.get('/api/v1/ranking/annotations/around/{0}'.format(user.id))
-    force_authenticate(request, user)
-    view = AnnotationsRankingAround.as_view()
-    response = view(request, user.id)
+    response = client.get('/api/v1/ranking/annotations/around/{0}'.format(user2.id))
     assert len(response.data) == 4
 
     # test basic around ranking with get params
-    request = factory.get('/api/v1/ranking/annotations/around/{0}?size=1'.format(user.id))
-    force_authenticate(request, user)
-    view = AnnotationsRankingAround.as_view()
-    response = view(request, user.id)
-
+    response = client.get('/api/v1/ranking/annotations/around/{0}?size=1'.format(user2.id))
     expected_data = [
         {
             'username': 'user3',

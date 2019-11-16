@@ -4,7 +4,7 @@ from tasks.models import Mission
 
 
 @pytest.mark.django_db
-def test_mission(setup_task):
+def test_mission(task):
     assert Mission.objects.count() == 2
     assert Mission.objects.all()[0].tasks.count() == 1
     assert Mission.objects.all()[1].tasks.count() == 0
@@ -30,6 +30,6 @@ def test_missions_order():
 
 
 @pytest.mark.django_db
-def test_mission_total_exp(setup_task_with_items):
+def test_mission_total_exp(task_with_items):
     mission = Mission.objects.first()
     assert mission.total_exp == 10

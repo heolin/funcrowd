@@ -5,8 +5,8 @@ from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_feedback(setup_task_with_items_multiple_choice_data_source, setup_users):
-    user1, user2, user3 = setup_users
+def test_feedback(task_with_items_multiple_choice_data_source, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
     field = task.items.first().template.fields.get(name='output')

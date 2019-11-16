@@ -18,13 +18,18 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_one_variable():
+def users():
     users = {}
     for i in range(14):
-        users[i] = EndWorker.objects.create_user("user{}".format(i),
-                                                 "user{}@mail.com".format(i),
-                                                 "password")
+        users[i] = EndWorker.objects.create_user("user{}@mail.com".format(i),
+                                                 "password",
+                                                 username="user{}".format(i))
+    return users
 
+
+@pytest.fixture
+@pytest.mark.django_db
+def setup_task_one_variable(users):
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy, _ = Strategy.objects.get_or_create(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
@@ -61,13 +66,7 @@ def setup_task_one_variable():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_high_agreement():
-    users = {}
-    for i in range(14):
-        users[i] = EndWorker.objects.create_user("user{}".format(i),
-                                                 "user{}@mail.com".format(i),
-                                                 "password")
-
+def setup_task_high_agreement(users):
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy, _ = Strategy.objects.get_or_create(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
@@ -127,13 +126,7 @@ def setup_task_multiple_templates():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_two_variables():
-    users = {}
-    for i in range(14):
-        users[i] = EndWorker.objects.create_user("user{}".format(i),
-                                                 "user{}@mail.com".format(i),
-                                                 "password")
-
+def setup_task_two_variables(users):
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy, _ = Strategy.objects.get_or_create(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
@@ -174,13 +167,7 @@ def setup_task_two_variables():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_missing_data():
-    users = {}
-    for i in range(14):
-        users[i] = EndWorker.objects.create_user("user{}".format(i),
-                                                 "user{}@mail.com".format(i),
-                                                 "password")
-
+def setup_task_missing_data(users):
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy, _ = Strategy.objects.get_or_create(name="StaticStrategyLogic")
     task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
@@ -213,5 +200,3 @@ def setup_task_missing_data():
                                           user=users[counter],
                                           data={annotation_field.name: j})
                 counter += 1
-
-

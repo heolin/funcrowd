@@ -12,19 +12,19 @@ from modules.order_strategy.models import Strategy
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user1():
-    return EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+def user1():
+    return EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user2():
-    return EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+def user2():
+    return EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items():
+def task_with_items():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
@@ -51,7 +51,7 @@ def setup_task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_achievements(setup_task_with_items):
+def achievements(task_with_items):
     ItemDoneAchievement.objects.create(order=1)
     ItemDoneAchievement.objects.create(order=2, mission_id=1, target=2)
     ItemDoneAchievement.objects.create(order=3, task_id=2)
@@ -62,7 +62,7 @@ def setup_achievements(setup_task_with_items):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_wrong_progress_achievement():
+def wrong_progress_achievement():
     ProgressAchievement.objects.create(order=4)
 
 

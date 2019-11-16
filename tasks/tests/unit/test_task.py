@@ -9,12 +9,12 @@ from tasks.tests.conftest import add_annotation
 
 
 @pytest.mark.django_db
-def test_tasks(setup_task):
+def test_tasks(task):
     assert Task.objects.count() == 1
 
 
 @pytest.mark.django_db
-def create_task(setup_task):
+def create_task(task):
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
 
     # task without mission
@@ -29,16 +29,13 @@ def create_task(setup_task):
 
 
 @pytest.mark.django_db
-def test_mission_total_exp(setup_task_with_items):
+def test_mission_total_exp(task_with_items):
     task = Task.objects.first()
     assert task.total_exp == 10
 
 
 @pytest.mark.django_db
-def test_exclude_items_with_user_annotations(setup_task_with_items, setup_user, setup_other_user):
-    user1 = setup_user
-    user2 = setup_other_user
-
+def test_exclude_items_with_user_annotations(task_with_items, user1, user2):
     task = Task.objects.get(id=1)
 
     items = task.exclude_items_with_user_annotations(user1)
@@ -55,10 +52,7 @@ def test_exclude_items_with_user_annotations(setup_task_with_items, setup_user, 
 
 
 @pytest.mark.django_db
-def test_annotate_annotations_done(setup_task_with_items, setup_user, setup_other_user):
-    user1 = setup_user
-    user2 = setup_other_user
-
+def test_annotate_annotations_done(task_with_items, user1, user2):
     task = Task.objects.get(id=1)
     items = task.items.all()
 

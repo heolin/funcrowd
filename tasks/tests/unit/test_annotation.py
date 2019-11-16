@@ -8,32 +8,29 @@ from tasks.models import (
 
 
 @pytest.mark.django_db
-def test_create_annotations(setup_task_with_items, setup_user, setup_other_user):
-    user = setup_user
+def test_create_annotations(task_with_items, user1, user2):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, created = item.get_or_create_annotation(user)
+    annotation, created = item.get_or_create_annotation(user1)
     assert created
-    annotation, created = item.get_or_create_annotation(user)
+    annotation, created = item.get_or_create_annotation(user1)
     assert created is False
 
     assert item.annotations.count() == 1
-    other_user = setup_other_user
-    annotation, created = item.get_or_create_annotation(other_user)
+    annotation, created = item.get_or_create_annotation(user2)
     assert created
     assert item.annotations.count() == 2
 
 
 @pytest.mark.django_db
-def test_annotation_exp_no_feedback(setup_task_with_items, setup_user):
-    user = setup_user
+def test_annotation_exp_no_feedback(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
     annotation = Annotation.objects.create(
         item=item,
-        user=user,
+        user=user1,
         data={"output": "1"},
         annotated=True
     )
@@ -47,10 +44,9 @@ def test_annotation_exp_no_feedback(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_annotation_exp_feedback(setup_task_with_items, setup_user):
+def test_annotation_exp_feedback(task_with_items, user1):
     FeedbackScoreField.register_values()
 
-    user = setup_user
     task = Task.objects.first()
     item = task.items.first()
 
@@ -68,7 +64,7 @@ def test_annotation_exp_feedback(setup_task_with_items, setup_user):
     # wrong annotation
     annotation = Annotation.objects.create(
         item=item,
-        user=user,
+        user=user1,
         data={"output": "0"},
         annotated=True
     )
@@ -93,11 +89,10 @@ def test_annotation_exp_feedback(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_annotation_exp_multiple_feedback_scenario_1(setup_task_with_items, setup_user):
+def test_annotation_exp_multiple_feedback_scenario_1(task_with_items, user1):
     # scenario 1 - right
     FeedbackScoreField.register_values()
 
-    user = setup_user
     task = Task.objects.first()
     task.multiple_annotations = True
     task.save()
@@ -116,7 +111,7 @@ def test_annotation_exp_multiple_feedback_scenario_1(setup_task_with_items, setu
 
     annotation = Annotation.objects.create(
         item=item,
-        user=user,
+        user=user1,
         data={"output": "1"},
         annotated=True
     )
@@ -128,11 +123,10 @@ def test_annotation_exp_multiple_feedback_scenario_1(setup_task_with_items, setu
 
 
 @pytest.mark.django_db
-def test_annotation_exp_multiple_feedback_scenario_2(setup_task_with_items, setup_user):
+def test_annotation_exp_multiple_feedback_scenario_2(task_with_items, user1):
     # scenario 2 - wrong x 1 + right
     FeedbackScoreField.register_values()
 
-    user = setup_user
     task = Task.objects.first()
     task.multiple_annotations = True
     task.save()
@@ -152,7 +146,7 @@ def test_annotation_exp_multiple_feedback_scenario_2(setup_task_with_items, setu
     for _ in range(1):
         annotation = Annotation.objects.create(
             item=item,
-            user=user,
+            user=user1,
             data={"output": "0"},
             annotated=True
         )
@@ -164,7 +158,7 @@ def test_annotation_exp_multiple_feedback_scenario_2(setup_task_with_items, setu
 
     annotation = Annotation.objects.create(
         item=item,
-        user=user,
+        user=user1,
         data={"output": "1"},
         annotated=True
     )
@@ -176,11 +170,10 @@ def test_annotation_exp_multiple_feedback_scenario_2(setup_task_with_items, setu
 
 
 @pytest.mark.django_db
-def test_annotation_exp_multiple_feedback_scenario_(setup_task_with_items, setup_user):
+def test_annotation_exp_multiple_feedback_scenario_(task_with_items, user1):
     # scenario 3 - wrong x 3 + right
     FeedbackScoreField.register_values()
 
-    user = setup_user
     task = Task.objects.first()
     task.multiple_annotations = True
     task.save()
@@ -200,7 +193,7 @@ def test_annotation_exp_multiple_feedback_scenario_(setup_task_with_items, setup
     for _ in range(3):
         annotation = Annotation.objects.create(
             item=item,
-            user=user,
+            user=user1,
             data={"output": "0"},
             annotated=True
         )
@@ -212,7 +205,7 @@ def test_annotation_exp_multiple_feedback_scenario_(setup_task_with_items, setup
 
     annotation = Annotation.objects.create(
         item=item,
-        user=user,
+        user=user1,
         data={"output": "1"},
         annotated=True
     )

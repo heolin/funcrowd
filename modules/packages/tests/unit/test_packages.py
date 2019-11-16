@@ -4,7 +4,7 @@ from tasks.models import Mission
 
 
 @pytest.mark.django_db
-def test_setup_tasks(setup_task_with_items):
+def test_setup_tasks(task_with_items):
     mission = Mission.objects.first()
     assert mission.packages is not None
 

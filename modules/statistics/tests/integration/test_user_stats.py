@@ -1,23 +1,20 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
+from django.test import Client
 
-from modules.statistics.api.views import UserStatsView
 from users.models import EndWorker
 
 
 @pytest.mark.django_db
-def test_user_mission_stats_view_tasks_data(setup_tasks_annotations):
-    factory = APIRequestFactory()
-    user = EndWorker.objects.get(username="user1")
+def test_user_mission_stats_view_tasks_data(tasks_annotations):
+    user1 = EndWorker.objects.get(email="user_1@mail.com")
+
+    client = Client()
 
     # User mission stats
-    request = factory.get('/api/v1/stats/users/{}'.format(user.id))
-    view = UserStatsView.as_view()
-    response = view(request, user.id)
-
+    response = client.get('/api/v1/stats/users/{}'.format(user1.id))
     assert response.status_code == 200
     assert response.data == {
-        'user_id': user.id,
+        'user_id': user1.id,
         'annotated_documents': 10,
         'high_agreement_count': 8,
         'high_agreement_percentage': 0.8,

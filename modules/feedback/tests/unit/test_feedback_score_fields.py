@@ -8,8 +8,8 @@ from modules.feedback.models.score_fields import (
 
 
 @pytest.mark.django_db
-def test_reference_score(setup_task_with_items, setup_users):
-    user1, user2, user3 = setup_users
+def test_reference_score(task_with_items, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
 
@@ -39,8 +39,8 @@ def test_reference_score(setup_task_with_items, setup_users):
 
 
 @pytest.mark.django_db
-def test_voting_score(setup_task_with_items, setup_users):
-    user1, user2, user3 = setup_users
+def test_voting_score(task_with_items, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
 
@@ -71,8 +71,8 @@ def test_voting_score(setup_task_with_items, setup_users):
 
 
 @pytest.mark.django_db
-def test_vote_ranking(setup_task_with_items_data_source, setup_users):
-    user1, user2, user3 = setup_users
+def test_vote_ranking(task_with_items_data_source, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
 
@@ -88,8 +88,8 @@ def test_vote_ranking(setup_task_with_items_data_source, setup_users):
 
 
 @pytest.mark.django_db
-def test_voting_score_list(setup_task_with_items_multiple_choice, setup_users):
-    user1, user2, user3 = setup_users
+def test_voting_score_list(task_with_items_multiple_choice, users):
+    user1, user2, user3 = users
 
     task = Task.objects.first()
 

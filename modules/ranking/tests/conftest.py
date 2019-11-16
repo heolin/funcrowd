@@ -10,20 +10,20 @@ from modules.order_strategy.models import Strategy
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_users():
+def users():
     return [
-        EndWorker.objects.create(username="user1", email="user@mail.com", password="password", exp=10),
-        EndWorker.objects.create(username="user2", email="user@mail.com", password="password", exp=20),
-        EndWorker.objects.create(username="user3", email="user@mail.com", password="password", exp=30),
-        EndWorker.objects.create(username="user4", email="user@mail.com", password="password", exp=40),
+        EndWorker.objects.create_user("user1@mail.com", "password", exp=1, username="user1"),
+        EndWorker.objects.create_user("user2@mail.com", "password", exp=2, username="user2"),
+        EndWorker.objects.create_user("user3@mail.com", "password", exp=3, username="user3"),
+        EndWorker.objects.create_user("user@4mail.com", "password", exp=4, username="user4"),
     ]
 
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_annotations(setup_users):
-    user1, user2, user3, user4 = setup_users
+def task_annotations(users):
+    user1, user2, user3, user4 = users
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")

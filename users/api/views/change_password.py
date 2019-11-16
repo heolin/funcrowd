@@ -23,7 +23,7 @@ class ChangePasswordView(GenericAPIView):
             password1 = serializer.data['new_password1']
             password2 = serializer.data['new_password2']
 
-            end_worker = authenticate(username=request.user.username, password=old_password)
+            end_worker = authenticate(email=request.user.email, password=old_password)
             if end_worker is None:
                 raise NotAuthenticated()
             if password1 != password2:

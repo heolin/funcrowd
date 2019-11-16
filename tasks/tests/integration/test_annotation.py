@@ -1,26 +1,21 @@
-import pytest, json, time
-from rest_framework.test import APIRequestFactory, force_authenticate
+import json
+import pytest
+import time
+from django.test import Client
 
-from tasks.api.views.item import TaskNextItem
-from tasks.models import (
-    Task,
-    Item)
-
-from tasks.api.views.annotation import AnnotationDetail
+from tasks.models import Task, Item
 
 
 @pytest.mark.django_db
-def test_get_annotation(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
+def test_get_annotation(task_with_items, user1):
+    client = Client()
+    client.force_login(user1)
 
     task = Task.objects.first()
     item = task.items.first()
 
     # get annotation
-    request = factory.get('/api/v1/items/{0}/annotation'.format(item.id))
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.get('/api/v1/items/{0}/annotation'.format(item.id))
     assert response.status_code == 200
     assert response.data == {
         "annotation": {
@@ -42,35 +37,27 @@ def test_get_annotation(setup_task_with_items, setup_user):
     }
 
     # annotation not found
-    request = factory.get('/api/v1/items/{0}/annotation'.format(100))
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, 100)
+    response = client.get('/api/v1/items/{0}/annotation'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_post_annotation(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
-
+def test_post_annotation(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
+    client = Client()
+    client.force_login(user1)
+
     payload = {}
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
     assert response.status_code == 400
     assert response.data[0].code == "invalid"
 
     # annotation not found
     payload = {}
-    request = factory.post('/api/v1/items/{0}/annotation'.format(100), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, 100)
+    response = client.post('/api/v1/items/{0}/annotation'.format(100), payload)
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
@@ -78,10 +65,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
     payload = {
         "data": json.dumps({})
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is False
 
@@ -89,10 +73,7 @@ def test_post_annotation(setup_task_with_items, setup_user):
     payload = {
         'data': json.dumps({'output': '', 'optional': ''}),
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is False
     assert len(response.data['errors']) == 1
@@ -103,18 +84,12 @@ def test_post_annotation(setup_task_with_items, setup_user):
     payload = {
         'data': json.dumps({'output': '1', 'optional': ''}),
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
 
     # get saved annotation
-    request = factory.get('/api/v1/items/{0}/annotation'.format(item.id))
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.get('/api/v1/items/{0}/annotation'.format(item.id))
     assert response.status_code == 200
     assert response.data == {
         "annotation": {
@@ -134,26 +109,20 @@ def test_post_annotation(setup_task_with_items, setup_user):
         'data': json.dumps({'output': '', 'optional': ''}),
         'skipped': True
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item.id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
     assert response.data["annotation"]["skipped"] is True
 
 
 @pytest.mark.django_db
-def test_annotation_time(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
+def test_annotation_time(task_with_items, user1):
+    client = Client()
+    client.force_login(user1)
 
     task = Task.objects.first()
 
-    request = factory.get('/api/v1/tasks/{0}/next_item'.format(task.id))
-    force_authenticate(request, setup_user)
-    view = TaskNextItem.as_view()
-    response = view(request, task.id)
-
+    response = client.get('/api/v1/tasks/{0}/next_item'.format(task.id))
     item_id = response.data['id']
 
     time.sleep(1)
@@ -162,15 +131,12 @@ def test_annotation_time(setup_task_with_items, setup_user):
     payload = {
         'data': json.dumps({'output': '1', 'optional': ''}),
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item_id), payload)
-    force_authenticate(request, setup_user)
-    view = AnnotationDetail.as_view()
-    response = view(request, item_id)
+    response = client.post('/api/v1/items/{0}/annotation'.format(item_id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
 
     item = Item.objects.get(id=item_id)
-    annotation, _ = item.get_or_create_annotation(setup_user)
+    annotation, _ = item.get_or_create_annotation(user1)
     annotation_time = annotation.updated - annotation.created
     assert annotation_time.total_seconds() > 1
     assert annotation.annotated

@@ -1,16 +1,16 @@
-from unittest.mock import MagicMock
 import pytest
 from django.test import Client
 
 
 @pytest.mark.django_db
-def test_end_worker_change_password(setup_user):
+def test_end_worker_change_password(user1):
+    client = Client()
+
     # login success
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password",
     }
-    client = Client()
     response = client.post('/api/v1/users/login', payload)
     assert response.status_code == 200
 
@@ -45,7 +45,7 @@ def test_end_worker_change_password(setup_user):
 
     # login with new password
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password1",
     }
     client = Client()
@@ -54,7 +54,7 @@ def test_end_worker_change_password(setup_user):
 
     # login with old password
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password",
     }
     client = Client()

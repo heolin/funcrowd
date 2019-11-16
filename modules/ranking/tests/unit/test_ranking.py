@@ -5,7 +5,7 @@ from users.models import EndWorker
 
 
 @pytest.mark.django_db
-def test_exp_ranking_top(setup_users):
+def test_exp_ranking_top(users):
     ranking = ExpRanking()
 
     results = ranking.top()
@@ -27,7 +27,7 @@ def test_exp_ranking_top(setup_users):
 
 
 @pytest.mark.django_db
-def test_exp_ranking_around(setup_users):
+def test_exp_ranking_around(users):
     ranking = ExpRanking()
 
     user = EndWorker.objects.get(username='user2')
@@ -43,7 +43,7 @@ def test_exp_ranking_around(setup_users):
 
 
 @pytest.mark.django_db
-def test_annotations_count_ranking_top(setup_task_annotations):
+def test_annotations_count_ranking_top(task_annotations):
     ranking = AnnotationsRanking()
 
     results = ranking.top()
@@ -66,16 +66,16 @@ def test_annotations_count_ranking_top(setup_task_annotations):
 
 
 @pytest.mark.django_db
-def test_annotations_count_ranking_around(setup_task_annotations):
+def test_annotations_count_ranking_around(task_annotations):
     ranking = AnnotationsRanking()
 
-    user = EndWorker.objects.get(username='user2')
-    results = ranking.around(user.id, 1)
+    user2 = EndWorker.objects.get(username='user2')
+    results = ranking.around(user2.id, 1)
     assert len(results) == 3
     assert results[0]['username'] == 'user3'
     assert results[1]['username'] == 'user2'
     assert results[2]['username'] == 'user1'
 
-    user = EndWorker.objects.get(username='user4')
-    results = ranking.around(user.id, 1)
+    user4 = EndWorker.objects.get(username='user4')
+    results = ranking.around(user4.id, 1)
     assert len(results) == 2

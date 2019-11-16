@@ -1,29 +1,19 @@
 import json
 
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
-
-from modules.achievements.api.views.user_achievement import AchievementsList, MissionAchievementsList, \
-    TaskAchievementsList, UnclosedAchievementsList
+from django.test import Client
 from modules.achievements.models import ItemDoneAchievement, UserAchievement, Achievement
 from modules.achievements.tests.conftest import compare_without_fields
-from tasks.api.views.annotation import AnnotationDetail
 from tasks.models import Item
 
 
 @pytest.mark.django_db
-def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_progress_achievement):
-    factory = APIRequestFactory()
-
-    user = setup_user1
+def test_achievements_list_view(user1, achievements, wrong_progress_achievement):
+    client = Client()
+    client.force_login(user1)
 
     # all achievements list
-    achievements = Achievement.objects.all()
-
-    request = factory.get('/api/v1/achievements')
-    force_authenticate(request, user)
-    view = AchievementsList.as_view()
-    response = view(request)
+    response = client.get('/api/v1/achievements')
     expected_data = [
         {
             'order': 0,
@@ -89,10 +79,7 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
     mission_id = 1
     achievements = Achievement.objects.filter(mission_id=mission_id)
 
-    request = factory.get('/api/v1/achievements/mission/1')
-    force_authenticate(request, user)
-    view = MissionAchievementsList.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/achievements/mission/1')
     expected_data = [
         {
             'id': achievements[0].id,
@@ -120,10 +107,7 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
     task_id = 1
     achievements = Achievement.objects.filter(task_id=task_id)
 
-    request = factory.get('/api/v1/achievements/task/1')
-    force_authenticate(request, user)
-    view = TaskAchievementsList.as_view()
-    response = view(request, task_id)
+    response = client.get('/api/v1/achievements/task/1')
     expected_data = [
         {
             'id': achievements[0].id,
@@ -140,18 +124,14 @@ def test_achievements_list_view(setup_user1, setup_achievements, setup_wrong_pro
 
 
 @pytest.mark.django_db
-def test_unclosed_achievements_list(setup_user1, setup_achievements):
-    factory = APIRequestFactory()
-
-    user = setup_user1
+def test_unclosed_achievements_list(user1, achievements):
+    client = Client()
+    client.force_login(user1)
 
     achievement = ItemDoneAchievement.objects.first()
-    UserAchievement.objects.create(user=user, achievement=achievement)
+    UserAchievement.objects.create(user=user1, achievement=achievement)
 
-    request = factory.get('/api/v1/achievements/unclosed')
-    force_authenticate(request, user)
-    view = UnclosedAchievementsList.as_view()
-    response = view(request)
+    response = client.get('/api/v1/achievements/unclosed')
     assert len(response.data) == 0
 
     # annotate one item
@@ -159,16 +139,10 @@ def test_unclosed_achievements_list(setup_user1, setup_achievements):
     payload = {
         'data': json.dumps({'output': '1'}),
     }
-    request = factory.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
-    force_authenticate(request, user)
-    view = AnnotationDetail.as_view()
-    view(request, item.id)
+    client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
 
     # achievement done
-    request = factory.get('/api/v1/achievements/unclosed')
-    force_authenticate(request, user)
-    view = UnclosedAchievementsList.as_view()
-    response = view(request)
+    response = client.get('/api/v1/achievements/unclosed')
 
     expected_data = [
         {
@@ -184,13 +158,9 @@ def test_unclosed_achievements_list(setup_user1, setup_achievements):
     for received, expected in zip(response.data, expected_data):
         assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
-    user_achievement = UserAchievement.objects.get(user=user, achievement=achievement)
+    user_achievement = UserAchievement.objects.get(user=user1, achievement=achievement)
     user_achievement.close()
 
     # achievement closed
-    request = factory.get('/api/v1/achievements/unclosed')
-    force_authenticate(request, user)
-    view = UnclosedAchievementsList.as_view()
-    response = view(request)
-
+    response = client.get('/api/v1/achievements/unclosed')
     assert len(response.data) == 0

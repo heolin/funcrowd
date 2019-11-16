@@ -6,18 +6,14 @@ from tasks.models import (
 from modules.validators.models.types import (
     FieldTypeValidator
 )
-from modules.validators.models.errors import (
-    FieldTypeError
-)
 
 
 @pytest.mark.django_db
-def test_type_field_values(setup_task_with_items, setup_user):
-    user = setup_user
+def test_type_field_values(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    annotation, _ = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user1)
     is_verified, errors = FieldTypeValidator().verify(annotation)
     assert is_verified is True
     assert len(errors) == 0

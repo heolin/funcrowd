@@ -6,11 +6,9 @@ from users.models import ActivationToken
 
 
 @pytest.mark.django_db
-def test_multiple_tokens(setup_user):
-    user = setup_user
-
+def test_multiple_tokens(user1):
     # test expiration
-    token = user.create_activation_token()
+    token = user1.create_activation_token()
     assert token.is_expired is False
 
     token.created = token.created - datetime.timedelta(hours=30)
@@ -18,7 +16,7 @@ def test_multiple_tokens(setup_user):
 
     # test multiple
     old_token_id = token.id
-    token = user.create_activation_token()
+    token = user1.create_activation_token()
 
     old_token = ActivationToken.objects.get(id=old_token_id)
 

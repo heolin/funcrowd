@@ -6,13 +6,12 @@ from users.models import EndWorker
 
 
 @pytest.mark.django_db
-def test_end_worker_change_settings(setup_user, setup_other_user):
-    user1, user2 = setup_user, setup_other_user
+def test_end_worker_change_settings(user1, user2):
     client = Client()
 
     # login success
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password",
     }
     response = client.post('/api/v1/users/login', payload)
@@ -20,7 +19,7 @@ def test_end_worker_change_settings(setup_user, setup_other_user):
 
     # change username - already used
     payload = {
-        "username": "other_user"
+        "username": "user2"
     }
     response = client.post('/api/v1/users/change_settings', payload)
     assert response.status_code == 400
@@ -28,7 +27,7 @@ def test_end_worker_change_settings(setup_user, setup_other_user):
 
     # change username - same username
     payload = {
-        "username": "user"
+        "username": "user1"
     }
     response = client.post('/api/v1/users/change_settings', payload)
     assert response.status_code == 204

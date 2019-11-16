@@ -1,18 +1,13 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
-
-from modules.statistics.api.views import GlobalStatsView
+from django.test import Client
 
 
 @pytest.mark.django_db
-def test_global_stats_view_tasks_data(setup_user, setup_tasks):
-    factory = APIRequestFactory()
+def test_global_stats_view_tasks_data(user1, tasks):
+    client = Client()
 
     # Global stats
-    request = factory.get('/api/v1/stats')
-    view = GlobalStatsView.as_view()
-    response = view(request)
-
+    response = client.get('/api/v1/stats')
     assert response.status_code == 200
     assert response.data == {
         'total_documents': 13,
@@ -27,14 +22,11 @@ def test_global_stats_view_tasks_data(setup_user, setup_tasks):
 
 
 @pytest.mark.django_db
-def test_global_stats_view_tasks_data_annotations(setup_user, setup_tasks_annotations):
-    factory = APIRequestFactory()
+def test_global_stats_view_tasks_data_annotations(user1, tasks_annotations):
+    client = Client()
 
     # Global stats
-    request = factory.get('/api/v1/stats')
-    view = GlobalStatsView.as_view()
-    response = view(request)
-
+    response = client.get('/api/v1/stats')
     assert response.status_code == 200
     assert response.data == {
         'total_documents': 10,

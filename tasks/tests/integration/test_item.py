@@ -1,22 +1,18 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
-from tasks.api.views.item import (
-    TaskNextItem, TaskNextItemWithPrevious
-)
+from django.test import Client
+
 from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_next_item(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
-
+def test_next_item(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    request = factory.get('/api/v1/tasks/{0}/next_item'.format(task.id))
-    force_authenticate(request, setup_user)
-    view = TaskNextItem.as_view()
-    response = view(request, task.id)
+    client = Client()
+    client.force_login(user1)
+
+    response = client.get('/api/v1/tasks/{0}/next_item'.format(task.id))
     assert response.status_code == 200
 
     assert response.data['id'] == item.id
@@ -26,29 +22,22 @@ def test_next_item(setup_task_with_items, setup_user):
     assert response.data['template']['id'] == item.template.id
 
     # task not found
-    request = factory.get('/api/v1/tasks/{0}/next_item'.format(100))
-    force_authenticate(request, setup_user)
-    view = TaskNextItem.as_view()
-    response = view(request, 100)
+    response = client.get('/api/v1/tasks/{0}/next_item'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_next_item_with_previous(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
-
+def test_next_item_with_previous(task_with_items, user1):
     task = Task.objects.first()
     item = task.items.first()
 
-    # next item with previous given
-    request = factory.get('/api/v1/items/{0}/next_item'.format(item.id))
-    request.user = setup_user
-    force_authenticate(request, setup_user)
-    next_item = item.task.next_item(request.user, item)
+    client = Client()
+    client.force_login(user1)
 
-    view = TaskNextItemWithPrevious.as_view()
-    response = view(request, item.id)
+    # next item with previous given
+    next_item = item.task.next_item(user1, item)
+    response = client.get('/api/v1/items/{0}/next_item'.format(item.id))
     assert response.status_code == 200
 
     assert response.data['id'] == next_item.id
@@ -58,18 +47,11 @@ def test_next_item_with_previous(setup_task_with_items, setup_user):
 
     # no next item
     last_item = task.items.all()[3]
-    request = factory.get('/api/v1/items/{0}/next_item'.format(last_item.id))
-    force_authenticate(request, setup_user)
-
-    view = TaskNextItemWithPrevious.as_view()
-    response = view(request, last_item.id)
+    response = client.get('/api/v1/items/{0}/next_item'.format(last_item.id))
     assert response.status_code == 204
     assert response.data is None
 
     # item not found
-    request = factory.get('/api/v1/items/{0}/next_item'.format(100))
-    force_authenticate(request, setup_user)
-    view = TaskNextItemWithPrevious.as_view()
-    response = view(request, 100)
+    response = client.get('/api/v1/items/{0}/next_item'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"

@@ -6,9 +6,7 @@ from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_setup_tasks_one_user(setup_task_with_items, setup_user):
-    user1 = setup_user
-
+def test_tasks_one_user(task_with_items, user1):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
@@ -43,9 +41,7 @@ def test_setup_tasks_one_user(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_setup_tasks_two_users(setup_task_with_items, setup_user, setup_other_user):
-    user1, user2 = setup_user, setup_other_user
-
+def test_tasks_two_users(task_with_items, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
@@ -85,9 +81,7 @@ def test_setup_tasks_two_users(setup_task_with_items, setup_user, setup_other_us
 
 
 @pytest.mark.django_db
-def test_max_annotations(setup_task_with_items, setup_user, setup_other_user):
-    user1, user2 = setup_user, setup_other_user
-
+def test_max_annotations(task_with_items, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
@@ -120,9 +114,7 @@ def test_max_annotations(setup_task_with_items, setup_user, setup_other_user):
 
 
 @pytest.mark.django_db
-def test_multiple_annotations(setup_task_with_items, setup_user, setup_other_user):
-    user1, user2 = setup_user, setup_other_user
-
+def test_multiple_annotations(task_with_items, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")

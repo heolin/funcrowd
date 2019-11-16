@@ -11,16 +11,15 @@ from users.models import ActivationToken, PasswordToken
 
 
 @pytest.mark.django_db
-def test_end_worker_reset_password(setup_user):
+def test_end_worker_reset_password(user1):
     EmailHelper.send_reset_password_email = MagicMock()
 
-    user = setup_user
-    user.set_password('password')
-    user.save()
+    user1.set_password('password')
+    user1.save()
 
     client = Client()
 
-    # reset password - unauthorized
+    # reset password - empty payload
     response = client.post('/api/v1/users/reset_password', {})
     assert response.status_code == 400
 
@@ -31,19 +30,16 @@ def test_end_worker_reset_password(setup_user):
     response = client.post('/api/v1/users/reset_password', payload)
     assert response.status_code == 404
 
-    # reset password - authorized
+    # reset password - correct email
     payload = {
-        'email': user.email
+        'email': user1.email
     }
     response = client.post('/api/v1/users/reset_password', payload)
     assert response.status_code == 204
 
-    # logout user
-    client.logout()
-
     # check if email was sent
-    token = PasswordToken.objects.get(user=user)
-    EmailHelper.send_reset_password_email.assert_called_once_with(user, token)
+    token = PasswordToken.objects.get(user=user1)
+    EmailHelper.send_reset_password_email.assert_called_once_with(user1, token)
 
     # reset password with a wrong token
     payload = {
@@ -68,19 +64,19 @@ def test_end_worker_reset_password(setup_user):
 
     # login with old password
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password",
     }
-    client = Client()
+
     response = client.post('/api/v1/users/login', payload)
     assert response.status_code == 403
 
     # login success
     payload = {
-        "username": "user",
+        "email": "user1@mail.com",
         "password": "password1",
     }
-    client = Client()
+
     response = client.post('/api/v1/users/login', payload)
     assert response.status_code == 200
 

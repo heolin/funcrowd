@@ -6,7 +6,7 @@ from tasks.models import Mission
 
 
 @pytest.mark.django_db
-def test_multiple_create(setup_tasks):
+def test_multiple_create(tasks):
     mission = Mission.objects.first()
     assert mission.stats
 
@@ -15,7 +15,7 @@ def test_multiple_create(setup_tasks):
 
 
 @pytest.mark.django_db
-def test_mission_stats_no_data(setup_tasks):
+def test_mission_stats_no_data(tasks):
     mission = Mission.objects.first()
     stats = mission.stats
 
@@ -27,7 +27,7 @@ def test_mission_stats_no_data(setup_tasks):
 
 
 @pytest.mark.django_db
-def test_mission_stats_task_data(setup_tasks_annotations):
+def test_mission_stats_task_data(tasks_annotations):
     mission = Mission.objects.get(name="Test mission 4")
     stats = mission.stats
 

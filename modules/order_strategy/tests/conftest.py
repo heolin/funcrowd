@@ -20,7 +20,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_db_random():
+def db_random():
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute('''SELECT setseed(0)''')
@@ -28,21 +28,21 @@ def setup_db_random():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user():
-    user = EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+def user1():
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_other_user():
-    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+def user2():
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items():
+def task_with_items():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
@@ -63,8 +63,7 @@ def setup_task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_annotations(setup_other_user):
-    user = setup_other_user
+def task_with_annotations(user2):
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
@@ -79,7 +78,7 @@ def setup_task_with_annotations(setup_other_user):
     template.fields.add(annotation_field)
 
     item = Item.objects.create(task=task, template=template, data={first_field.name: 1}, order=0)
-    add_annotation(item, user)
+    add_annotation(item, user2)
 
     Item.objects.create(task=task, template=template, data={first_field.name: 2}, order=1)
     Item.objects.create(task=task, template=template, data={first_field.name: 3}, order=2)

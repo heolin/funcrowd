@@ -6,9 +6,7 @@ from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
-    user1, user2 = setup_user, setup_other_user
-
+def test_tasks(task_with_items, user1, user2, db_random):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")
@@ -37,9 +35,7 @@ def test_setup_tasks(setup_task_with_items, setup_user, setup_other_user, setup_
 
 
 @pytest.mark.django_db
-def test_max_annotations(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
-    user1, user2 = setup_user, setup_other_user
-
+def test_max_annotations(task_with_items, user1, user2, db_random):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")
@@ -69,9 +65,7 @@ def test_max_annotations(setup_task_with_items, setup_user, setup_other_user, se
 
 
 @pytest.mark.django_db
-def test_multiple_annotations(setup_task_with_items, setup_user, setup_other_user, setup_db_random):
-    user1, user2 = setup_user, setup_other_user
-
+def test_multiple_annotations(task_with_items, user1, user2, db_random):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")

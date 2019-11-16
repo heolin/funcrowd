@@ -29,10 +29,10 @@ def setup_db_random():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_users():
-    user1 = EndWorker.objects.create_user("user1", "user@mail.com", "password")
-    user2 = EndWorker.objects.create_user("user2", "user@mail.com", "password")
-    user3 = EndWorker.objects.create_user("user3", "user@mail.com", "password")
+def users():
+    user1 = EndWorker.objects.create_user("user1@mail.com", "password", username="user1")
+    user2 = EndWorker.objects.create_user("user2@mail.com", "password", username="user2")
+    user3 = EndWorker.objects.create_user("user3@mail.com", "password", username="user3")
     return user1, user2, user3
 
 
@@ -44,11 +44,11 @@ def add_annotation(item, field_name, value, user):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items(setup_users):
+def task_with_items(users):
     FeedbackScoreField.register_values()
     FeedbackField.register_values()
 
-    user1, user2, user3 = setup_users
+    user1, user2, user3 = users
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
@@ -95,11 +95,11 @@ def setup_task_with_items(setup_users):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items_multiple_choice(setup_users):
+def task_with_items_multiple_choice(users):
     FeedbackScoreField.register_values()
     FeedbackField.register_values()
 
-    user1, user2, user3 = setup_users
+    user1, user2, user3 = users
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
@@ -147,11 +147,11 @@ def setup_task_with_items_multiple_choice(setup_users):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items_data_source(setup_users):
+def task_with_items_data_source(users):
     FeedbackScoreField.register_values()
     FeedbackField.register_values()
 
-    user1, user2, user3 = setup_users
+    user1, user2, user3 = users
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
@@ -188,11 +188,11 @@ def setup_task_with_items_data_source(setup_users):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items_multiple_choice_data_source(setup_users):
+def task_with_items_multiple_choice_data_source(users):
     FeedbackScoreField.register_values()
     FeedbackField.register_values()
 
-    user1, user2, user3 = setup_users
+    user1, user2, user3 = users
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")

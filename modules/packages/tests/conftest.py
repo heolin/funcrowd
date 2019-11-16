@@ -12,21 +12,21 @@ from modules.order_strategy.models import Strategy
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user():
-    user = EndWorker.objects.create_user("user", "user@mail.com", "password")
+def user1():
+    user = EndWorker.objects.create_user("user1@mail.com", "password", username="user")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_other_user():
-    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+def user2():
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_db_random():
+def db_random():
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute('''SELECT setseed(0)''')
@@ -34,7 +34,7 @@ def setup_db_random():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items():
+def task_with_items():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
@@ -78,9 +78,7 @@ def setup_task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_annotations(setup_task_with_items, setup_user, setup_other_user):
-    user1, user2 = setup_user, setup_other_user
-
+def annotations(task_with_items, user1, user2):
     packages = MissionPackages.objects.first()
 
     #paczka z dwoma anotacjami na wszystkich itemach

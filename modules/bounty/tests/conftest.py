@@ -10,21 +10,21 @@ from modules.order_strategy.models import Strategy
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user():
-    user = EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+def user1():
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
 def setup_other_user():
-    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task():
+def task():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
@@ -36,7 +36,7 @@ def setup_task():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items():
+def task_with_items():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")

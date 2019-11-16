@@ -1,20 +1,15 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
-from tasks.api.views.task import (
-    MissionTasksList, TaskDetail
-)
+from django.test import Client
 
 
 @pytest.mark.django_db
-def test_task_list(setup_task, setup_user):
-    factory = APIRequestFactory()
+def test_task_list(task, user1):
+    client = Client()
+    client.force_login(user1)
 
     # Task list
     mission_id = 1
-    request = factory.get('/api/v1/missions/{0}/tasks'.format(mission_id))
-    force_authenticate(request, setup_user)
-    view = MissionTasksList.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/missions/{0}/tasks'.format(mission_id))
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'name': 'Add two digits', 'description': '',
@@ -23,32 +18,23 @@ def test_task_list(setup_task, setup_user):
 
     # Task empty list
     mission_id = 2
-    request = factory.get('/api/v1/missions/{0}/tasks'.format(mission_id))
-    force_authenticate(request, setup_user)
-    view = MissionTasksList.as_view()
-    response = view(request, mission_id)
+    response = client.get('/api/v1/missions/{0}/tasks'.format(mission_id))
     assert response.status_code == 200
     assert response.data == []
 
-    request = factory.get('/api/v1/missions/{0}/tasks'.format(100))
-    force_authenticate(request, setup_user)
-    view = MissionTasksList.as_view()
-    response = view(request, 100)
+    response = client.get('/api/v1/missions/{0}/tasks'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_task_details(setup_task, setup_user):
-    factory = APIRequestFactory()
+def test_task_details(task, user1):
+    client = Client()
+    client.force_login(user1)
 
     # Task details
     task_id = 1
-    request = factory.get('/tasks/{0}'.format(task_id))
-    force_authenticate(request, setup_user)
-    view = TaskDetail.as_view()
-    response = view(request, task_id)
-    force_authenticate(request, setup_user)
+    response = client.get('/api/v1/tasks/{0}'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'name': 'Add two digits', 'description': '',
@@ -56,25 +42,19 @@ def test_task_details(setup_task, setup_user):
     }
 
     # Task details, task not found
-    request = factory.get('/tasks/{0}'.format(100))
-    force_authenticate(request, setup_user)
-    view = TaskDetail.as_view()
-    response = view(request, 100)
+    response = client.get('/api/v1//tasks/{0}'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_task_details(setup_task_with_items, setup_user):
-    factory = APIRequestFactory()
+def test_task_details(task_with_items, user1):
+    client = Client()
+    client.force_login(user1)
 
     # Task details
     task_id = 1
-    request = factory.get('/tasks/{0}'.format(task_id))
-    force_authenticate(request, setup_user)
-    view = TaskDetail.as_view()
-    response = view(request, task_id)
-    force_authenticate(request, setup_user)
+    response = client.get('/api/v1/tasks/{0}'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'name': 'Add two digits', 'description': '',

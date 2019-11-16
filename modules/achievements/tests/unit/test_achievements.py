@@ -4,7 +4,7 @@ from tasks.models import Mission, Task
 
 
 @pytest.mark.django_db
-def test_achievements_count(setup_achievements):
+def test_achievements_count(achievements):
     mission = Mission.objects.get(id=1)
     assert mission.achievements_count == 2
 

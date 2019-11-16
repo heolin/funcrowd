@@ -6,7 +6,7 @@ from tasks.models import (
 
 
 @pytest.mark.django_db
-def test_items(setup_task_with_items):
+def test_items(task_with_items):
     assert Task.objects.count() == 1
     task = Task.objects.first()
     assert task.items.count() == 4
@@ -17,7 +17,7 @@ def test_items(setup_task_with_items):
 
 
 @pytest.mark.django_db
-def test_create_items(setup_task_with_items):
+def test_create_items(task_with_items):
     task = Task.objects.first()
 
     assert task.items.count() == 4

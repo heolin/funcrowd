@@ -10,38 +10,38 @@ from modules.order_strategy.models import Strategy
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user():
-    user = EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+def user1():
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_other_user():
-    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+def user2():
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task():
+def task():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission")
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    Task.objects.create(id=1, order=1, mission=mission, name="Add two digits", strategy=strategy)
 
     Mission.objects.create(id=2, name="Test mission other")
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items():
+def task_with_items():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Test mission", order=1)
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    task = Task.objects.create(id=1, order=1, mission=mission, name="Add two digits", strategy=strategy)
 
     template = ItemTemplate.objects.create(name="Adding two")
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
@@ -67,7 +67,7 @@ def setup_task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_task_with_items_data_source():
+def task_with_items_data_source():
     Strategy.register_values()
 
     mission = Mission.objects.create(id=1, name="Mission1")
@@ -90,7 +90,7 @@ def setup_task_with_items_data_source():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_two_missions(setup_task_with_items):
+def two_missions(task_with_items):
     mission1 = Mission.objects.get(order=1)
     mission2 = Mission.objects.create(id=2, name="Mission2", order=2, parent=mission1)
     Mission.objects.create(id=3, name="Mission3", order=3)

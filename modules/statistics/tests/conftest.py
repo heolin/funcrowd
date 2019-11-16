@@ -19,21 +19,21 @@ def add_annotation(item, user, value):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_user():
-    user = EndWorker.objects.create_superuser("user", "user@mail.com", "password")
+def user1():
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_other_user():
-    user = EndWorker.objects.create_superuser("other_user", "other_user@mail.com", "password")
+def user2():
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
     return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_tasks():
+def tasks():
     Strategy.register_values()
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
 
@@ -73,7 +73,7 @@ def setup_tasks():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_tasks_items(setup_tasks):
+def tasks_items(tasks):
     task1 = Task.objects.get(name="Task 1")
     task4 = Task.objects.get(name="Task 4")
 
@@ -95,7 +95,7 @@ def setup_tasks_items(setup_tasks):
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_tasks_annotations():
+def tasks_annotations():
     data = [[0, 0, 0, 0, 14],
             [0, 0, 0, 12, 2],
             [0, 0, 0, 8, 6],
@@ -131,9 +131,9 @@ def setup_tasks_annotations():
 
     users = {}
     for i in range(14):
-        users[i] = EndWorker.objects.create_user("user{}".format(i),
-                                                 "user{}@mail.com".format(i),
-                                                 "password")
+        users[i] = EndWorker.objects.create_user("user_{}@mail.com".format(i),
+                                                 "password",
+                                                 username="user_{}".format(i))
         users[i].stats  # creates user stast
         users[i].get_mission_stats(mission.id)
 
@@ -156,10 +156,9 @@ def setup_tasks_annotations():
 
 @pytest.fixture
 @pytest.mark.django_db
-def setup_two_missions(setup_tasks_items, setup_user):
-
+def two_missions(tasks_items, user1):
     item1 = Item.objects.filter(task__name="Task 1").first()
     item4 = Item.objects.filter(task__name="Task 4").first()
 
-    add_annotation(item1, setup_user, "A")
-    add_annotation(item4, setup_user, "A")
+    add_annotation(item1, user1, "A")
+    add_annotation(item4, user1, "A")

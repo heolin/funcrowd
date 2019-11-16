@@ -1,25 +1,20 @@
 import pytest
-from rest_framework.test import APIRequestFactory, force_authenticate
+from django.test import Client
 
-from modules.bounty.api.views.bounty import BountyListView, StartBountyView
 from modules.bounty.models import Bounty
 from tasks.models import Task
 
 
 @pytest.mark.django_db
-def test_bounty_views(setup_task_with_items, setup_user):
-    user = setup_user
+def test_bounty_views(task_with_items, user1):
     task = Task.objects.first()
-
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    factory = APIRequestFactory()
+    client = Client()
+    client.force_login(user1)
 
     # user bounty is not started so it is none
-    request = factory.get('/api/v1/bounty/')
-    force_authenticate(request, user)
-    view = BountyListView.as_view()
-    response = view(request)
+    response = client.get('/api/v1/bounty/')
 
     assert len(response.data) == 1
     assert response.data[0] == {
@@ -40,27 +35,20 @@ def test_bounty_views(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_bounty_views_start(setup_task_with_items, setup_user):
-    user = setup_user
+def test_bounty_views_start(task_with_items, user1):
     task = Task.objects.first()
-
     bounty = Bounty.objects.create(task=task, annotations_target=5)
 
-    factory = APIRequestFactory()
+    client = Client()
+    client.force_login(user1)
 
     # start selected bounty
-    request = factory.get('/api/v1/bounty/start')
-    force_authenticate(request, user)
-    view = StartBountyView.as_view()
-    response = view(request, bounty.id)
+    response = client.get('/api/v1/bounty/{0}/start'.format(bounty.id))
     assert response.data['id'] == bounty.id
-    assert response.data['user_bounty']['id'] == bounty.get_user_bounty(user).id
+    assert response.data['user_bounty']['id'] == bounty.get_user_bounty(user1).id
 
     # see list of all bounties
-    request = factory.get('/api/v1/bounty/')
-    force_authenticate(request, user)
-    view = BountyListView.as_view()
-    response = view(request)
+    response = client.get('/api/v1/bounty/')
 
     assert len(response.data) == 1
     assert response.data[0] == {
@@ -86,21 +74,15 @@ def test_bounty_views_start(setup_task_with_items, setup_user):
 
 
 @pytest.mark.django_db
-def test_closed_bounty_views(setup_task_with_items, setup_user):
-    user = setup_user
+def test_closed_bounty_views(task_with_items, user1):
     task = Task.objects.first()
-
     bounty = Bounty.objects.create(task=task, annotations_target=5)
     bounty.close()
 
-    factory = APIRequestFactory()
+    client = Client()
+    client.force_login(user1)
 
-    request = factory.get('/api/v1/bounty/')
-    force_authenticate(request, user)
-    view = BountyListView.as_view()
-    response = view(request)
+    response = client.get('/api/v1/bounty/')
 
     assert len(response.data) == 1
     assert response.data[0]['user_bounty'] is None
-
-
