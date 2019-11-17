@@ -16,7 +16,7 @@ def test_tasks(task_with_items, user1):
     client.force_login(user1)
 
     # get annotation
-    response = client.get('/api/v1/missions/{0}/next_package'.format(mission.id))
+    response = client.get('/api/v1/missions/{0}/next_package/'.format(mission.id))
     assert response.status_code == 200
     assert len(response.data['items']) == 2
     assert response.data['order'] == 1
@@ -24,16 +24,16 @@ def test_tasks(task_with_items, user1):
     items = response.data['items']
     for item in items:
         payload = {'data': json.dumps({'output': '1'})}
-        response = client.post('/api/v1/items/{0}/annotation'.format(item['id']), payload)
+        response = client.post('/api/v1/items/{0}/annotation/'.format(item['id']), payload)
         assert response.status_code == 200
         assert response.data["is_verified"] is True
 
-    response = client.get('/api/v1/missions/{0}/next_package'.format(mission.id))
+    response = client.get('/api/v1/missions/{0}/next_package/'.format(mission.id))
     assert response.status_code == 200
     assert len(response.data['items']) == 2
     assert response.data['order'] == 2
 
-    response = client.get('/api/v1/missions/{0}/next_package'.format(mission.id))
+    response = client.get('/api/v1/missions/{0}/next_package/'.format(mission.id))
     assert response.status_code == 200
     assert len(response.data['items']) == 2
     assert response.data['order'] == 2

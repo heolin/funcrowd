@@ -13,7 +13,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
     client.force_login(user1)
 
     # all achievements list
-    response = client.get('/api/v1/achievements')
+    response = client.get('/api/v1/achievements/')
     expected_data = [
         {
             'order': 0,
@@ -79,7 +79,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
     mission_id = 1
     achievements = Achievement.objects.filter(mission_id=mission_id)
 
-    response = client.get('/api/v1/achievements/mission/1')
+    response = client.get('/api/v1/achievements/mission/1/')
     expected_data = [
         {
             'id': achievements[0].id,
@@ -107,7 +107,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
     task_id = 1
     achievements = Achievement.objects.filter(task_id=task_id)
 
-    response = client.get('/api/v1/achievements/task/1')
+    response = client.get('/api/v1/achievements/task/1/')
     expected_data = [
         {
             'id': achievements[0].id,
@@ -131,7 +131,7 @@ def test_unclosed_achievements_list(user1, achievements):
     achievement = ItemDoneAchievement.objects.first()
     UserAchievement.objects.create(user=user1, achievement=achievement)
 
-    response = client.get('/api/v1/achievements/unclosed')
+    response = client.get('/api/v1/achievements/unclosed/')
     assert len(response.data) == 0
 
     # annotate one item
@@ -142,7 +142,7 @@ def test_unclosed_achievements_list(user1, achievements):
     client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
 
     # achievement done
-    response = client.get('/api/v1/achievements/unclosed')
+    response = client.get('/api/v1/achievements/unclosed/')
 
     expected_data = [
         {
@@ -162,5 +162,5 @@ def test_unclosed_achievements_list(user1, achievements):
     user_achievement.close()
 
     # achievement closed
-    response = client.get('/api/v1/achievements/unclosed')
+    response = client.get('/api/v1/achievements/unclosed/')
     assert len(response.data) == 0

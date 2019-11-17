@@ -9,7 +9,7 @@ def test_task_list(task, user1):
 
     # Task list
     mission_id = 1
-    response = client.get('/api/v1/missions/{0}/tasks'.format(mission_id))
+    response = client.get('/api/v1/missions/{0}/tasks/'.format(mission_id))
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'name': 'Add two digits', 'description': '',
@@ -18,11 +18,11 @@ def test_task_list(task, user1):
 
     # Task empty list
     mission_id = 2
-    response = client.get('/api/v1/missions/{0}/tasks'.format(mission_id))
+    response = client.get('/api/v1/missions/{0}/tasks/'.format(mission_id))
     assert response.status_code == 200
     assert response.data == []
 
-    response = client.get('/api/v1/missions/{0}/tasks'.format(100))
+    response = client.get('/api/v1/missions/{0}/tasks/'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
@@ -34,7 +34,7 @@ def test_task_details(task, user1):
 
     # Task details
     task_id = 1
-    response = client.get('/api/v1/tasks/{0}'.format(task_id))
+    response = client.get('/api/v1/tasks/{0}/'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'name': 'Add two digits', 'description': '',
@@ -42,7 +42,7 @@ def test_task_details(task, user1):
     }
 
     # Task details, task not found
-    response = client.get('/api/v1//tasks/{0}'.format(100))
+    response = client.get('/api/v1//tasks/{0}/'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
@@ -54,7 +54,7 @@ def test_task_details(task_with_items, user1):
 
     # Task details
     task_id = 1
-    response = client.get('/api/v1/tasks/{0}'.format(task_id))
+    response = client.get('/api/v1/tasks/{0}/'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'name': 'Add two digits', 'description': '',

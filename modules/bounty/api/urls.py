@@ -5,8 +5,8 @@ from modules.bounty.api.views.bounty import BountyListView, BountyDetailsView, S
 
 
 urlpatterns = [
-    path('bounty/<int:bounty_id>/status', BountyStatusView.as_view(), name='bounty_status'),
-    path('bounty/<int:bounty_id>/start', StartBountyView.as_view(), name='bounty_start'),
-    path('bounty/<int:bounty_id>', BountyDetailsView.as_view(), name='bounty_view'),
+    path('bounty/<int:bounty_id>/status/', BountyStatusView.as_view(), name='bounty_status'),
+    path('bounty/<int:bounty_id>/start/', StartBountyView.as_view(), name='bounty_start'),
+    path('bounty/<int:bounty_id>/', BountyDetailsView.as_view(), name='bounty_view'),
     path('bounty/', BountyListView.as_view(), name='bounty_list'),
 ]

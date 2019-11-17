@@ -13,7 +13,7 @@ def test_user_mission_stats_view_tasks_data(tasks_annotations):
     user1 = EndWorker.objects.get(email="user_1@mail.com")
 
     # User mission stats
-    response = client.get('/api/v1/stats/users/{}/missions/{}'.format(user1.id, mission.id))
+    response = client.get('/api/v1/stats/users/{}/missions/{}/'.format(user1.id, mission.id))
     assert response.status_code == 200
     assert response.data == {
         'user_id': user1.id,

@@ -7,7 +7,7 @@ def test_global_stats_view_tasks_data(user1, tasks):
     client = Client()
 
     # Global stats
-    response = client.get('/api/v1/stats')
+    response = client.get('/api/v1/stats/')
     assert response.status_code == 200
     assert response.data == {
         'total_documents': 13,
@@ -26,7 +26,7 @@ def test_global_stats_view_tasks_data_annotations(user1, tasks_annotations):
     client = Client()
 
     # Global stats
-    response = client.get('/api/v1/stats')
+    response = client.get('/api/v1/stats/')
     assert response.status_code == 200
     assert response.data == {
         'total_documents': 10,

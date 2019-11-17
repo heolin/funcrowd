@@ -11,7 +11,7 @@ def test_end_worker_change_password(user1):
         "email": "user1@mail.com",
         "password": "password",
     }
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # change password - old password wrong
@@ -20,7 +20,7 @@ def test_end_worker_change_password(user1):
         "new_password1": "password1",
         "new_password2": "password1",
     }
-    response = client.post('/api/v1/users/change_password', payload)
+    response = client.post('/api/v1/users/change_password/', payload)
     assert response.status_code == 401
     assert response.data['detail'].code == "not_authenticated"
 
@@ -30,7 +30,7 @@ def test_end_worker_change_password(user1):
         "new_password1": "password1",
         "new_password2": "password2",
     }
-    response = client.post('/api/v1/users/change_password', payload)
+    response = client.post('/api/v1/users/change_password/', payload)
     assert response.status_code == 400
     assert response.data['detail'].code == "password_not_match"
 
@@ -40,7 +40,7 @@ def test_end_worker_change_password(user1):
         "new_password1": "password1",
         "new_password2": "password1",
     }
-    response = client.post('/api/v1/users/change_password', payload)
+    response = client.post('/api/v1/users/change_password/', payload)
     assert response.status_code == 204
 
     # login with new password
@@ -49,7 +49,7 @@ def test_end_worker_change_password(user1):
         "password": "password1",
     }
     client = Client()
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # login with old password
@@ -58,5 +58,5 @@ def test_end_worker_change_password(user1):
         "password": "password",
     }
     client = Client()
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 403

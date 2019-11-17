@@ -11,7 +11,7 @@ def test_end_worker_view(user1, user2):
     # get user1 stats
     client = Client()
     client.force_login(user1)
-    response = client.get('/api/v1/users/current')
+    response = client.get('/api/v1/users/current/')
     assert response.status_code == 200
     assert response.data['id'] == user1.id
     assert response.data['username'] == user1.username
@@ -20,7 +20,7 @@ def test_end_worker_view(user1, user2):
 
     # get user2 stats
     client.force_login(user2)
-    response = client.get('/api/v1/users/current')
+    response = client.get('/api/v1/users/current/')
     assert response.status_code == 200
     assert response.data['id'] == user2.id
     assert response.data['username'] == user2.username
@@ -40,7 +40,7 @@ def test_end_worker_registration_not_verification():
         "password2": "password1",
         'email': 'newuser1@mail.com'
     }
-    response = client.post('/api/v1/users/register', payload)
+    response = client.post('/api/v1/users/register/', payload)
     end_worker = EndWorker.objects.last()
     assert response.status_code == 201
     assert end_worker.username == "newuser1"
@@ -58,7 +58,7 @@ def test_end_worker_registration_not_verification():
         "password2": "password1",
         'email': 'newuser2@mail.com'
     }
-    response = client.post('/api/v1/users/register', payload)
+    response = client.post('/api/v1/users/register/', payload)
     end_worker = EndWorker.objects.last()
     assert response.status_code == 201
     assert end_worker.username == "newuser2"
@@ -74,7 +74,7 @@ def test_end_worker_registration_not_verification():
         "password2": "password1",
         'email': 'newuser3@mail.com'
     }
-    response = client.post('/api/v1/users/register', payload)
+    response = client.post('/api/v1/users/register/', payload)
 
     assert response.data['detail'].code == "username_used"
     assert response.status_code == 400
@@ -86,7 +86,7 @@ def test_end_worker_registration_not_verification():
         "password2": "password1",
         'email': 'newuser1@mail.com'
     }
-    response = client.post('/api/v1/users/register', payload)
+    response = client.post('/api/v1/users/register/', payload)
 
     assert response.data['detail'].code == "email_used"
     assert response.status_code == 400
@@ -98,7 +98,7 @@ def test_end_worker_registration_not_verification():
         "password2": "password2",
         'email': 'newuser5@mail.com'
     }
-    response = client.post('/api/v1/users/register', payload)
+    response = client.post('/api/v1/users/register/', payload)
     assert response.data['detail'].code == "password_not_match"
     assert response.status_code == 400
 
@@ -114,7 +114,7 @@ def test_end_worker_login(user1):
     }
 
     client = Client()
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.data['detail'].code == "not_authenticated"
     assert response.status_code == 403
 
@@ -123,11 +123,11 @@ def test_end_worker_login(user1):
         "email": "user1@mail.com",
         "password": "password",
     }
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # get data of current user
-    response = client.get('/api/v1/users/current')
+    response = client.get('/api/v1/users/current/')
     end_worker = EndWorker.objects.last()
     assert response.status_code == 200
     assert end_worker.username == "user1"
@@ -145,20 +145,20 @@ def test_end_worker_logout(user1):
         "email": "user1@mail.com",
         "password": "password",
     }
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # get data of current user
-    response = client.get('/api/v1/users/current')
+    response = client.get('/api/v1/users/current/')
     end_worker = EndWorker.objects.last()
     assert response.status_code == 200
     assert response.data['username'] == end_worker.username
     assert end_worker.username == "user1"
 
-    client.get('/api/v1/users/logout')
+    client.get('/api/v1/users/logout/')
 
     # get data of current user
-    response = client.get('/api/v1/users/current')
+    response = client.get('/api/v1/users/current/')
     assert response.status_code == 401
 
 
@@ -168,7 +168,7 @@ def test_end_worker_status_view(user1):
     client.force_login(user1)
 
     # get user1 stats
-    response = client.get('/api/v1/users/status')
+    response = client.get('/api/v1/users/status/')
     assert response.status_code == 200
     assert response.data['id'] == user1.id
     assert response.data['username'] == user1.username

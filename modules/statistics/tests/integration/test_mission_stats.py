@@ -11,7 +11,7 @@ def test_mission_stats_view_tasks_data(tasks_annotations):
     mission = Mission.objects.get(name="Test mission 4")
 
     # Mission stats
-    response = client.get('/api/v1/stats/missions/{}'.format(mission.id))
+    response = client.get('/api/v1/stats/missions/{}/'.format(mission.id))
     assert response.status_code == 200
     assert response.data == {
         'mission_id': mission.id,

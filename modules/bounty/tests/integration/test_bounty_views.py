@@ -43,7 +43,7 @@ def test_bounty_views_start(task_with_items, user1):
     client.force_login(user1)
 
     # start selected bounty
-    response = client.get('/api/v1/bounty/{0}/start'.format(bounty.id))
+    response = client.get('/api/v1/bounty/{0}/start/'.format(bounty.id))
     assert response.data['id'] == bounty.id
     assert response.data['user_bounty']['id'] == bounty.get_user_bounty(user1).id
 

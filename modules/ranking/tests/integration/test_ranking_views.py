@@ -10,7 +10,7 @@ def test_ranking_top_view(task_annotations):
     client = Client()
 
     # test basic top ranking
-    response = client.get('/api/v1/ranking/annotations/top')
+    response = client.get('/api/v1/ranking/annotations/top/')
 
     expected_data = [
         {
@@ -39,7 +39,7 @@ def test_ranking_top_view(task_annotations):
         assert compare_without_fields(received, expected, ['user_id'])
 
     # test using get parameters
-    response = client.get('/api/v1/ranking/annotations/top?size=2&page=1')
+    response = client.get('/api/v1/ranking/annotations/top/?size=2&page=1')
 
     expected_data = [
         {
@@ -66,11 +66,11 @@ def test_ranking_around_view(task_annotations):
     client.force_login(user2)
 
     # test basic around ranking
-    response = client.get('/api/v1/ranking/annotations/around/{0}'.format(user2.id))
+    response = client.get('/api/v1/ranking/annotations/around/{0}/'.format(user2.id))
     assert len(response.data) == 4
 
     # test basic around ranking with get params
-    response = client.get('/api/v1/ranking/annotations/around/{0}?size=1'.format(user2.id))
+    response = client.get('/api/v1/ranking/annotations/around/{0}/?size=1'.format(user2.id))
     expected_data = [
         {
             'username': 'user3',

@@ -20,21 +20,21 @@ def test_end_worker_reset_password(user1):
     client = Client()
 
     # reset password - empty payload
-    response = client.post('/api/v1/users/reset_password', {})
+    response = client.post('/api/v1/users/reset_password/', {})
     assert response.status_code == 400
 
     # reset password - wrong email
     payload = {
         'email': "beolin@gmail.com"
     }
-    response = client.post('/api/v1/users/reset_password', payload)
+    response = client.post('/api/v1/users/reset_password/', payload)
     assert response.status_code == 404
 
     # reset password - correct email
     payload = {
         'email': user1.email
     }
-    response = client.post('/api/v1/users/reset_password', payload)
+    response = client.post('/api/v1/users/reset_password/', payload)
     assert response.status_code == 204
 
     # check if email was sent
@@ -48,7 +48,7 @@ def test_end_worker_reset_password(user1):
         "password2": "password1",
     }
 
-    response = client.post('/api/v1/users/reset_password/token', payload)
+    response = client.post('/api/v1/users/reset_password/token/', payload)
     assert response.status_code == 400
     assert response.data['detail'].code == "password_token_wrong"
 
@@ -59,7 +59,7 @@ def test_end_worker_reset_password(user1):
         "password2": "password1",
     }
 
-    response = client.post('/api/v1/users/reset_password/token', payload)
+    response = client.post('/api/v1/users/reset_password/token/', payload)
     assert response.status_code == 204
 
     # login with old password
@@ -68,7 +68,7 @@ def test_end_worker_reset_password(user1):
         "password": "password",
     }
 
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 403
 
     # login success
@@ -77,7 +77,7 @@ def test_end_worker_reset_password(user1):
         "password": "password1",
     }
 
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # reset password with an old token
@@ -87,6 +87,6 @@ def test_end_worker_reset_password(user1):
         "password2": "password1",
     }
 
-    response = client.post('/api/v1/users/reset_password/token', payload)
+    response = client.post('/api/v1/users/reset_password/token/', payload)
     assert response.status_code == 400
     assert response.data['detail'].code == "password_token_used"

@@ -15,7 +15,7 @@ def test_get_annotation(task_with_items, user1):
     item = task.items.first()
 
     # get annotation
-    response = client.get('/api/v1/items/{0}/annotation'.format(item.id))
+    response = client.get('/api/v1/items/{0}/annotation/'.format(item.id))
     assert response.status_code == 200
     assert response.data == {
         "annotation": {
@@ -37,7 +37,7 @@ def test_get_annotation(task_with_items, user1):
     }
 
     # annotation not found
-    response = client.get('/api/v1/items/{0}/annotation'.format(100))
+    response = client.get('/api/v1/items/{0}/annotation/'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
@@ -51,13 +51,13 @@ def test_post_annotation(task_with_items, user1):
     client.force_login(user1)
 
     payload = {}
-    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
     assert response.status_code == 400
     assert response.data[0].code == "invalid"
 
     # annotation not found
     payload = {}
-    response = client.post('/api/v1/items/{0}/annotation'.format(100), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(100), payload)
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
@@ -65,7 +65,7 @@ def test_post_annotation(task_with_items, user1):
     payload = {
         "data": json.dumps({})
     }
-    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is False
 
@@ -73,7 +73,7 @@ def test_post_annotation(task_with_items, user1):
     payload = {
         'data': json.dumps({'output': '', 'optional': ''}),
     }
-    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is False
     assert len(response.data['errors']) == 1
@@ -84,12 +84,12 @@ def test_post_annotation(task_with_items, user1):
     payload = {
         'data': json.dumps({'output': '1', 'optional': ''}),
     }
-    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
 
     # get saved annotation
-    response = client.get('/api/v1/items/{0}/annotation'.format(item.id))
+    response = client.get('/api/v1/items/{0}/annotation/'.format(item.id))
     assert response.status_code == 200
     assert response.data == {
         "annotation": {
@@ -109,7 +109,7 @@ def test_post_annotation(task_with_items, user1):
         'data': json.dumps({'output': '', 'optional': ''}),
         'skipped': True
     }
-    response = client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
     assert response.data["annotation"]["skipped"] is True
@@ -122,7 +122,7 @@ def test_annotation_time(task_with_items, user1):
 
     task = Task.objects.first()
 
-    response = client.get('/api/v1/tasks/{0}/next_item'.format(task.id))
+    response = client.get('/api/v1/tasks/{0}/next_item/'.format(task.id))
     item_id = response.data['id']
 
     time.sleep(1)
@@ -131,7 +131,7 @@ def test_annotation_time(task_with_items, user1):
     payload = {
         'data': json.dumps({'output': '1', 'optional': ''}),
     }
-    response = client.post('/api/v1/items/{0}/annotation'.format(item_id), payload)
+    response = client.post('/api/v1/items/{0}/annotation/'.format(item_id), payload)
     assert response.status_code == 200
     assert response.data["is_verified"] is True
 

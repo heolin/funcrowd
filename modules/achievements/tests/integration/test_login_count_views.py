@@ -17,7 +17,7 @@ def test_login_count_integration(user1, achievements):
         "email": "user1@mail.com",
         "password": "password",
     }
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     user_achievement = UserAchievement.objects.get(user=user1, achievement=achievement)

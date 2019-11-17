@@ -14,14 +14,14 @@ def test_end_worker_change_settings(user1, user2):
         "email": "user1@mail.com",
         "password": "password",
     }
-    response = client.post('/api/v1/users/login', payload)
+    response = client.post('/api/v1/users/login/', payload)
     assert response.status_code == 200
 
     # change username - already used
     payload = {
         "username": "user2"
     }
-    response = client.post('/api/v1/users/change_settings', payload)
+    response = client.post('/api/v1/users/change_settings/', payload)
     assert response.status_code == 400
     assert response.data['detail'].code == "username_used"
 
@@ -29,7 +29,7 @@ def test_end_worker_change_settings(user1, user2):
     payload = {
         "username": "user1"
     }
-    response = client.post('/api/v1/users/change_settings', payload)
+    response = client.post('/api/v1/users/change_settings/', payload)
     assert response.status_code == 200
     assert response.data["username"] == 'user1'
 
@@ -37,7 +37,7 @@ def test_end_worker_change_settings(user1, user2):
     payload = {
         "username": "new"
     }
-    response = client.post('/api/v1/users/change_settings', payload)
+    response = client.post('/api/v1/users/change_settings/', payload)
     assert response.status_code == 200
     assert response.data["username"] == 'new'
 
