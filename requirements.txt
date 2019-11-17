@@ -10,6 +10,7 @@ django-suit-ckeditor
 django-suit-redactor
 djangorestframework>=3.9.1
 djangorestframework-filters==0.10.2
+django-unslashed>=0.3.0
 gunicorn==19.9.0
 psycopg2-binary==2.7.5
 python-dotenv==0.8.2

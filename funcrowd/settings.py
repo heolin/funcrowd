@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'unslashed.middleware.RemoveSlashMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -102,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation'
                 '.CommonPasswordValidator',
+
     },
     {
         'NAME': 'django.contrib.auth.password_validation'
@@ -130,6 +132,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
 ]
+
+APPEND_SLASH = False
+REMOVE_SLASH = True
 
 NOTEBOOK_ARGUMENTS = [
     '--ip', '0.0.0.0',
