@@ -32,6 +32,7 @@ services:
     volumes:
       - funcrowd_db:/var/lib/postgresql/data
       - ./backups:/var/lib/backups
+      - ./notabooks:/app/notebooks
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD

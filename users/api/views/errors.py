@@ -46,13 +46,13 @@ class ActivationTokenUsed(APIException):
 
 class UsernameNotFound(APIException):
     status_code = status.HTTP_404_NOT_FOUND
-    default_detail = 'User with following username not found.'
+    default_detail = 'User with following username not found'
     default_code = 'username_not_found'
 
 
 class EmailNotFound(APIException):
     status_code = status.HTTP_404_NOT_FOUND
-    default_detail = 'User with following email not found.'
+    default_detail = 'User with following email not found'
     default_code = 'email_not_found'
 
 
