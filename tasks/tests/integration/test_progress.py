@@ -16,14 +16,16 @@ def test_task_progress(task, user1):
     response = client.get('/api/v1/missions/{0}/tasks/progress/'.format(task.mission.id))
     assert response.status_code == 200
     assert response.data == [
-        {'id': ut.id, 'task': ut.task.id, 'items_done': 0, 'items_count': 0, 'progress': None, 'status': "UNLOCKED"}
+        {'id': ut.id, 'task': ut.task.id, 'items_done': 0, 'items_count': 0,
+         'progress': None, 'status': "UNLOCKED", 'max_score':  None, 'score': None}
     ]
 
-    # Task progress detail, task foun.
+    # Task progress detail, task found.
     response = client.get('/api/v1/tasks/{0}/progress/'.format(task.id))
     assert response.status_code == 200
     assert response.data == {'id': ut.id, 'task': ut.task.id, 'items_done': 0,
-                             'items_count': 0, 'progress': None, "status": "UNLOCKED"}
+                             'items_count': 0, 'progress': None, "status": "UNLOCKED",
+                             'max_score': None, 'score': None}
 
     # Task progress detail, task not found
     task_id = 3

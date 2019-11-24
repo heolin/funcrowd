@@ -18,6 +18,8 @@ def test_task_progress(task_with_items, user1):
     assert progress.items_done == 0
     assert progress.progress == 0
     assert progress.status == TaskStatus.UNLOCKED
+    assert progress.max_score == 4
+    assert progress.score is None
 
     item = task.items.first()
     controller = AnnotationController()
@@ -180,3 +182,73 @@ def test_mission_progress(two_missions, user1):
     assert progress.tasks_done == 2
     assert progress.progress == 1.0
     assert progress.status == MissionStatus.FINISHED
+
+
+@pytest.mark.django_db
+def test_task_progress_with_feedback(task_with_items_with_multiple_annotation_fields, user1):
+    task = Task.objects.first()
+
+    progress = user1.get_task_progress(task=task)
+
+    assert progress.items_count == 3
+    assert progress.items_done == 0
+    assert progress.progress == 0
+    assert progress.status == TaskStatus.UNLOCKED
+    assert progress.max_score == 6
+    assert progress.score is None
+
+    item = task.items.first()
+    controller = AnnotationController()
+
+    # creating an annotation for the first item
+    annotation = Annotation.objects.create(item=item, user=user1, annotated=True,
+                                           data={"first": 1, "second": 1})
+    controller.process(annotation)
+
+    progress = user1.get_task_progress(task=task)
+    assert progress.items_count == 3
+    assert progress.items_done == 1
+    assert progress.score == 2
+
+    # creating second annotation for the same item
+    annotation = Annotation.objects.create(item=item, user=user1, annotated=True,
+                                           data={"first": 1, "second": 0})
+    controller.process(annotation)
+
+    progress = user1.get_task_progress(task=task)
+    assert progress.items_count == 3
+    assert progress.items_done == 1
+    assert progress.score == 1
+    assert item.annotations.filter(user=user1).count() == 2
+
+    # creating an annotation for the second item
+    item = task.items.all()[1]
+    annotation = Annotation.objects.create(item=item, user=user1, annotated=True,
+                                           data={"first": 1, "second": 1})
+    controller.process(annotation)
+
+    progress = user1.get_task_progress(task=task)
+    assert progress.items_count == 3
+    assert progress.items_done == 2
+    assert progress.score == 3
+
+    # creating an annotation for the third item
+    item = task.items.all()[2]
+    annotation = Annotation.objects.create(item=item, user=user1, annotated=True,
+                                           data={"first": 0, "second": 0})
+    controller.process(annotation)
+
+    progress = user1.get_task_progress(task=task)
+    assert progress.items_count == 3
+    assert progress.items_done == 3
+    assert progress.score == 3
+
+    # creating second annotation for the third item
+    annotation = Annotation.objects.create(item=item, user=user1, annotated=True,
+                                           data={"first": 1, "second": 1})
+    controller.process(annotation)
+
+    progress = user1.get_task_progress(task=task)
+    assert progress.items_count == 3
+    assert progress.items_done == 3
+    assert progress.score == 5

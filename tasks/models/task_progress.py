@@ -60,3 +60,21 @@ class UserTaskProgress(models.Model):
     @property
     def items_count(self):
         return self.task.items.count()
+
+    @property
+    def max_score(self):
+        return self.task.items.filter(template__fields__editable=True, template__fields__required=True).annotate(
+            annotations_fields=models.Count("template__fields")).aggregate(
+            models.Sum("annotations_fields"))['annotations_fields__sum']
+
+    @property
+    def score(self):
+        score_values = self.task.items.filter(annotations__user_id=self.user.id, annotations__annotated=True).values(
+            "annotations__id", "annotations__item_id", "annotations__feedback__score").order_by("annotations__id")
+
+        scores = {}
+        for values in score_values:
+            scores[values["annotations__item_id"]] = values["annotations__feedback__score"]
+
+        if score_values:
+            return sum(scores.values())

@@ -1,5 +1,7 @@
 import pytest
 
+from modules.feedback.models import FeedbackScoreField, Feedback
+from modules.feedback.models.fields import FeedbackField
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
@@ -103,6 +105,48 @@ def two_missions(task_with_items):
 
     task2 = Task.objects.create(id=3, mission=mission2, name="Add two digits", strategy=strategy)
     Item.objects.create(task=task2, template=template, order=1, data={"test": 1}, exp=10)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def task_with_items_with_multiple_annotation_fields():
+    Strategy.register_values()
+    FeedbackScoreField.register_values()
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    task.multiple_annotations = True
+    task.save()
+
+    feedback = Feedback.objects.create(task=task)
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="ReferenceScore"))
+
+    template = ItemTemplate.objects.create(name="Adding two")
+    annotation_field1 = ItemTemplateField.objects.create(name="first", widget="TextLabel",
+                                                         required=True, editable=True, feedback=True)
+    template.fields.add(annotation_field1)
+    annotation_field2 = ItemTemplateField.objects.create(name="second", widget="TextLabel",
+                                                         required=True, editable=True, feedback=True)
+    template.fields.add(annotation_field2)
+
+    item = Item.objects.create(task=task, template=template, data={}, order=0)
+    Annotation.objects.create(item=item, user=None, data={
+        annotation_field1.name: 1,
+        annotation_field2.name: 1
+    })
+
+    item = Item.objects.create(task=task, template=template, data={}, order=1)
+    Annotation.objects.create(item=item, user=None, data={
+        annotation_field1.name: 1,
+        annotation_field2.name: 1
+    })
+
+    item = Item.objects.create(task=task, template=template, data={}, order=2)
+    Annotation.objects.create(item=item, user=None, data={
+        annotation_field1.name: 1,
+        annotation_field2.name: 1
+    })
 
 
 def add_annotation(item, user):
