@@ -51,11 +51,9 @@ class Feedback(models.Model):
     def aggregate_scores(self, scores):
         score_values = []
         for field_values in scores.values():
-            for value in field_values.values():
-                score_values.append(value)
-        if score_values:
-            score_value = np.average(score_values)
-            return score_value
+            field_score_values = np.average(list(field_values.values()))
+            score_values.append(field_score_values)
+        return np.sum(score_values)
 
     def create_feedback(self, annotation):
         scores = self.score(annotation)
