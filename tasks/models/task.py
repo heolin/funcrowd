@@ -23,7 +23,7 @@ class Task(models.Model):
     name = models.CharField(max_length=300)
     keywords = models.CharField(max_length=100, default="", blank=True)
     description = models.CharField(max_length=1000, default="", blank=True)
-    instruction = models.TextField(default="", blank="")
+    instruction = models.TextField(default="", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
 
