@@ -12,7 +12,7 @@ def test_task_list(task, user1):
     response = client.get('/api/v1/missions/{0}/tasks/'.format(mission_id))
     assert response.status_code == 200
     assert response.data == [
-        {'id': 1, 'name': 'Add two digits', 'description': '',
+        {'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '',
          'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None}
     ]
 
@@ -37,7 +37,7 @@ def test_task_details(task, user1):
     response = client.get('/api/v1/tasks/{0}/'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
-        'id': 1, 'name': 'Add two digits', 'description': '',
+        'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '',
         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None
     }
 
@@ -57,6 +57,6 @@ def test_task_details(task_with_items, user1):
     response = client.get('/api/v1/tasks/{0}/'.format(task_id))
     assert response.status_code == 200
     assert response.data == {
-        'id': 1, 'name': 'Add two digits', 'description': '',
+        'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '',
         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10
     }

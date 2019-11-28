@@ -21,6 +21,7 @@ def test_bounty_views(task_with_items, user1):
         'id': bounty.id,
         'task': {
             'id': task.id,
+            'mission': task.mission.id,
             'name': task.name,
             'description': task.description,
             'instruction': task.instruction,
@@ -55,6 +56,7 @@ def test_bounty_views_start(task_with_items, user1):
         'id': bounty.id,
         'task': {
             'id': task.id,
+            'mission': task.mission.id,
             'name': task.name,
             'description': task.description,
             'instruction': task.instruction,
