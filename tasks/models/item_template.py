@@ -11,7 +11,7 @@ from sortedm2m.fields import SortedManyToManyField
 
 class ItemTemplateField(models.Model):
     name = models.CharField(max_length=30)
-    label = models.CharField(max_length=100, default="", blank=True)
+    label = models.CharField(max_length=200, default="", blank=True)
     type = models.CharField(max_length=10, choices=TYPES, default=STR)
     widget = models.CharField(max_length=30)
     comment = models.CharField(max_length=30, default="", blank=True, null=True)
