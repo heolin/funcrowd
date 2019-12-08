@@ -33,6 +33,7 @@ def test_task_progress(task_with_items, user1):
     progress = user1.get_task_progress(task=task)
     assert progress.items_done == 1
     assert progress.progress == 0.25
+    assert progress.score is None
     assert progress.status == TaskStatus.IN_PROGRESS
 
     # creating new annotation for the first item

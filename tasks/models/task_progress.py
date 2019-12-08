@@ -69,12 +69,14 @@ class UserTaskProgress(models.Model):
 
     @property
     def score(self):
-        score_values = self.task.items.filter(annotations__user_id=self.user.id, annotations__annotated=True).values(
+        score_values = self.task.items.filter(
+            annotations__user_id=self.user.id, annotations__annotated=True).values(
             "annotations__id", "annotations__item_id", "annotations__feedback__score").order_by("annotations__id")
 
         scores = {}
         for values in score_values:
-            scores[values["annotations__item_id"]] = values["annotations__feedback__score"]
+            if values["annotations__feedback__score"]:
+                scores[values["annotations__item_id"]] = values["annotations__feedback__score"]
 
-        if score_values:
+        if scores:
             return sum(scores.values())
