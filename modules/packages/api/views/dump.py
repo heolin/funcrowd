@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework.exceptions import NotFound
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.http import HttpResponse, Http404
+from django.views import View
 
 from modules.packages.api.views.utils import get_data_dump, create_workbook
 from tasks.models import Mission
@@ -10,8 +9,8 @@ from tasks.models import Mission
 import pandas as pd
 
 
-class MissionDumpView(APIView):
-    def get(self, request, mission_id, *args, **kwargs):
+class MissionDumpView(View):
+    def get(self, request, mission_id, file_name, *args, **kwargs):
         mission = Mission.objects.filter(id=mission_id).first()
         if mission:
             data = get_data_dump(mission)
@@ -19,9 +18,9 @@ class MissionDumpView(APIView):
             report_path = create_workbook(report)
 
             report_file = open(report_path, 'rb')
-            response = Response(content=report_file)
+            response = HttpResponse(content=report_file)
             response['Content-Type'] = 'application/pdf'
-            response['Content-Disposition'] = f'attachment; filename="report_{mission.id}.xlsx"'
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
             return response
 
-        raise NotFound("No Mission found for given id.")
+        raise Http404("No Mission found for given id.")
