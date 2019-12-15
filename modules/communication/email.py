@@ -13,7 +13,7 @@ class EmailHelper:
             'Aktywacja konta SpaceCalc',
             f"""
                 <p>Witaj {end_worker.username}!</p>
-                <p>Dziękujemy za rejestrację na portalu <a target="_blank" href="https://spacecalc-course.herokuapp.com/#/activation?activationToken={token}">https://spacecalc-course.herokuapp.com/#/activation?activationToken={token}</a>
+                <p>Dziękujemy za rejestrację na portalu <a target="_blank" href="https://spacecalc-course.herokuapp.com/#/activation?activationToken={token.token}">https://spacecalc-course.herokuapp.com/#/activation?activationToken={token}</a>
                 </p>
                 <p>Jeśli link nie działa, skopiuj go i wklej w okno adresu przeglądarki.</p>
                 <p>Jeśli nie oczekiwałeś/łaś na tą wiadomość, oznacza to że ktoś podał twój email w trakcie rejestracji. W takim przypadku zignoruj tę wiadomość.</p>
@@ -29,7 +29,7 @@ class EmailHelper:
             f"""
                 <p>Cześć {end_worker.username}!</p>
                 <p>Otrzymaliśmy prośbę dotyczącą zresetowania Twojego hasła na portalu  https://spacecalc-course.herokuapp.com/. Kliknij w link, aby ustawić nowe hasło dla swojego konta: 
-                    <a target="_blank" href="https://spacecalc-course.herokuapp.com/#/reset_password_token?resetPasswordToken={token}">https://spacecalc-course.herokuapp.com/#/reset_password_token?resetPasswordToken={token}</a>
+                    <a target="_blank" href="https://spacecalc-course.herokuapp.com/#/reset_password_token?resetPasswordToken={token.token}">https://spacecalc-course.herokuapp.com/#/reset_password_token?resetPasswordToken={token}</a>
                 </p>
                 <p>Pozdrawiamy,<br/>Zespół Space Calc</p>
             """
