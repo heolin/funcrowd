@@ -25,6 +25,7 @@ Pillow>=6.2.0
 boto3==1.9.143
 django-polymorphic==2.1.2
 tqdm
+xlsxwriter
 
 
 # development requirements
