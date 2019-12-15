@@ -55,15 +55,15 @@ def achievements(task_with_items):
     ItemDoneAchievement.objects.create(order=1, exp=10)
     ItemDoneAchievement.objects.create(order=2, mission_id=1, target=2, exp=10)
     ItemDoneAchievement.objects.create(order=3, task_id=2, exp=10)
-    ProgressAchievement.objects.create(order=5, task_id=1, exp=10)
+    ProgressAchievement.objects.create(order=5, task_id=1, exp=0)
     ProgressAchievement.objects.create(order=6, mission_id=1, exp=10)
-    LoginCountAchievement.objects.create(order=0, exp=0)
+    LoginCountAchievement.objects.create(order=0, exp=10)
 
 
 @pytest.fixture
 @pytest.mark.django_db
 def wrong_progress_achievement():
-    ProgressAchievement.objects.create(order=4, exp=0)
+    ProgressAchievement.objects.create(order=4, exp=10)
 
 
 def compare_without_fields(dict1, dict2, excluded_fields=['id']):

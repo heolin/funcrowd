@@ -32,6 +32,8 @@ class UserAchievement(models.Model):
         if self.status == Status.FINISHED:
             self.status = Status.CLOSED
             self.save()
+            self.user.exp += self.exp
+            self.user.save()
             self.achievement.on_close(self)
 
     @staticmethod

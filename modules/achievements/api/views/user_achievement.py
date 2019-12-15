@@ -24,8 +24,7 @@ class UnclosedAchievementsList(GenericAPIView):
     def get(self, request):
         user_achievements = UserAchievement.objects.filter(user=request.user, status=Status.FINISHED)
         for a in user_achievements:
-            a.status = Status.CLOSED
-            a.save()
+            a.close()
         serializer = self.serializer_class(user_achievements, many=True)
         return Response(serializer.data)
 

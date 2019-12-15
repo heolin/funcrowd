@@ -5,6 +5,7 @@ from django.test import Client
 from modules.achievements.models import ItemDoneAchievement, UserAchievement, Achievement
 from modules.achievements.tests.conftest import compare_without_fields
 from tasks.models import Item
+from users.models import EndWorker
 
 
 @pytest.mark.django_db
@@ -21,7 +22,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
-            'exp': 0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -57,7 +58,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
-            'exp': 0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -66,7 +67,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
-            'exp': 10,
+            'exp': 0,
             'metadata': {}
         },
         {
@@ -125,7 +126,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
-            'exp': 10,
+            'exp': 0,
             'metadata': {}
         },
     ]
@@ -141,6 +142,8 @@ def test_unclosed_achievements_list(user1, achievements):
     achievement = ItemDoneAchievement.objects.first()
     UserAchievement.objects.create(user=user1, achievement=achievement)
 
+    assert user1.exp == 0
+
     response = client.get('/api/v1/achievements/unclosed/')
     assert len(response.data) == 0
 
@@ -149,7 +152,7 @@ def test_unclosed_achievements_list(user1, achievements):
     payload = {
         'data': json.dumps({'output': '1'}),
     }
-    client.post('/api/v1/items/{0}/annotation'.format(item.id), payload)
+    client.post('/api/v1/items/{0}/annotation/'.format(item.id), payload)
 
     # achievement done
     response = client.get('/api/v1/achievements/unclosed/')
@@ -158,18 +161,21 @@ def test_unclosed_achievements_list(user1, achievements):
         {
             'id': achievement.id,
             'order': achievement.order,
-            'status': 'FINISHED',
+            'status': 'CLOSED',
             'value': 1.0,
             'target': 1.0,
             'progress': 1.0,
+            'exp': 10,
             'metadata': {}
         },
     ]
+
+    assert len(response.data) == len(expected_data)
     for received, expected in zip(response.data, expected_data):
         assert compare_without_fields(received, expected, excluded_fields=['id', 'updated'])
 
-    user_achievement = UserAchievement.objects.get(user=user1, achievement=achievement)
-    user_achievement.close()
+    user1 = EndWorker.objects.get(id=user1.id)
+    assert user1.exp == achievement.exp
 
     # achievement closed
     response = client.get('/api/v1/achievements/unclosed/')
