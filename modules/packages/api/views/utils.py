@@ -13,5 +13,9 @@ def get_data_dump(mission):
         if row:
             row['index'] = package.name
             row['status'] = package.status
+
+            if package.metadata:
+                for key, value in package.metadata.items():
+                    row[key] = value
             data.append(row)
     return data
