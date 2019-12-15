@@ -1,7 +1,9 @@
 from django.urls import path
 
-from modules.achievements.api.views.user_achievement import AchievementsList, MissionAchievementsList, \
-    UnclosedAchievementsList, TaskAchievementsList
+from modules.achievements.api.views.user_achievement import (
+    AchievementsList, MissionAchievementsList, TaskAchievementsList,
+    UnclosedAchievementsList
+)
 
 
 urlpatterns = [

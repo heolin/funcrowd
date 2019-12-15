@@ -21,6 +21,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 0,
             'metadata': {}
         },
         {
@@ -29,6 +30,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -37,6 +39,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 2.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -45,6 +48,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -53,6 +57,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 0,
             'metadata': {}
         },
         {
@@ -61,6 +66,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -69,6 +75,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
     ]
@@ -88,6 +95,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 2.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
         {
@@ -97,6 +105,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
     ]
@@ -116,6 +125,7 @@ def test_achievements_list_view(user1, achievements, wrong_progress_achievement)
             'value': 0.0,
             'target': 1.0,
             'progress': 0.0,
+            'exp': 10,
             'metadata': {}
         },
     ]

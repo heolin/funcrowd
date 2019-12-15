@@ -56,3 +56,7 @@ class UserAchievement(models.Model):
     @property
     def order(self):
         return self.achievement.order
+
+    @property
+    def exp(self):
+        return self.achievement.exp
