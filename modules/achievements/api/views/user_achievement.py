@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.db.models import Q
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -36,7 +37,7 @@ class MissionAchievementsList(GenericAPIView):
         mission = Mission.objects.filter(id=mission_id).first()
         if mission:
             user_achievements = UserAchievement.get_user_achievements(
-                request.user).filter(achievement__mission=mission)
+                request.user).filter(Q(achievement__mission=mission) | Q(achievement__task__mission=mission))
             serializer = self.serializer_class(user_achievements, many=True)
             return Response(serializer.data)
         else:
