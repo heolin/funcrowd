@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.db import models
-from django.contrib.postgres.fields import JSONField
 
-import modules.statistics as s
+from django.contrib.postgres.fields import JSONField
+from django.db import models
+from django.db.models import Q
+
 import modules.achievements as a
+import modules.statistics as s
 import tasks as t
 
 """
@@ -41,7 +43,7 @@ class Mission(models.Model):
     @property
     def achievements_count(self):
         Achievement = a.models.Achievement
-        return Achievement.objects.filter(mission=self).count()
+        return Achievement.objects.filter(Q(mission=self) | Q(task__mission=self)).count()
 
     @property
     def total_exp(self):
