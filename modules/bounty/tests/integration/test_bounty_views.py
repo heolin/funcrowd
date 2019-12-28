@@ -27,6 +27,7 @@ def test_bounty_views(task_with_items, user1):
             'instruction': task.instruction,
             'keywords': task.keywords,
             'metadata': task.metadata,
+            'achievements_count': task.achievements_count,
             'total_exp': 0
         },
         'closed': False,
@@ -62,6 +63,7 @@ def test_bounty_views_start(task_with_items, user1):
             'instruction': task.instruction,
             'keywords': task.keywords,
             'metadata': task.metadata,
+            'achievements_count': task.achievements_count,
             'total_exp': 0
         },
         'closed': False,

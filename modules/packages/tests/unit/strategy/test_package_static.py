@@ -8,6 +8,7 @@ def test_tasks(task_with_items, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    mp.multiple_annotations = True
 
     package = mp.next_package(user1, None)
     assert package.order == 1
@@ -31,6 +32,7 @@ def test_annotations(annotations, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    mp.multiple_annotations = True
 
     package = mp.next_package(user1, None)
     assert package.order == 1
@@ -47,6 +49,7 @@ def test_max_annotations(annotations, user1, user2):
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mp.max_annotations = 1
+    mp.multiple_annotations = True
 
     package = mp.next_package(user1, None)
     assert package.order == 1
@@ -62,12 +65,12 @@ def test_multiple_annotations(annotations, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    mp.multiple_annotations = True
+    mp.multiple_annotations = False
 
     package = mp.next_package(user1, None)
-    assert package.order == 1
+    assert package.order == 3
     package = mp.next_package(user1, package)
-    assert package.order == 2
+    assert package.order == 4
 
     package = mp.next_package(user2, None)
-    assert package.order == 1
+    assert package.order == 2
