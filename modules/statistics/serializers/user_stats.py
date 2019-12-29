@@ -8,5 +8,5 @@ class UserStatsSerializer(serializers.ModelSerializer):
         model = UserStats
         fields = ('user_id', 'annotated_documents', 'high_agreement_count', 'high_agreement_percentage',
                   'agreement_ranking_position', 'agreement_ranking_percentage',
-                  'annotated_missions')
+                  'annotated_missions', 'annotated_tasks')
 

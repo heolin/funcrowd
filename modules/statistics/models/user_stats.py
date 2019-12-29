@@ -17,6 +17,7 @@ class UserStats(models.Model):
 
     annotated_missions = models.IntegerField(default=0)
     annotated_items = models.IntegerField(default=0)
+    annotated_tasks = models.IntegerField(default=0)
     high_agreement_count = models.IntegerField(default=0)
     annotated_documents = models.IntegerField(default=0)
     high_agreement_percentage = models.FloatField(default=0)
@@ -36,6 +37,9 @@ class UserStats(models.Model):
 
         self.annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).values("item__package").distinct().count()
+
+        self.annotated_tasks = t.models.Annotation.objects.filter(
+            user=self.user).values("item__task").distinct().count()
 
         self.high_agreement_count = f.models.annotation_feedback.AnnotationFeedback.objects.filter(
             annotation__user=self.user).filter(

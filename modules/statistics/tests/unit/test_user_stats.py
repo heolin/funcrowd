@@ -27,6 +27,7 @@ def test_user_stats_annotation_data(tasks_annotations):
         assert round(stats.agreement_ranking_percentage, 2) == \
             round(stats.agreement_ranking_position / EndWorker.objects.count(), 2)
         assert stats.annotated_missions == 1
+        assert stats.annotated_tasks == 1
 
 
 @pytest.mark.django_db
