@@ -9,7 +9,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Annotation
-        fields = ('item_id', 'data', 'skipped', 'feedback')
+        fields = ('item_id', 'data', 'skipped', 'feedback', 'attempt')
 
 
 class AnnotationDataSerializer(serializers.ModelSerializer):
@@ -17,4 +17,4 @@ class AnnotationDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Annotation
-        fields = ('data', "skipped")
+        fields = ('data', "skipped", "attempt")

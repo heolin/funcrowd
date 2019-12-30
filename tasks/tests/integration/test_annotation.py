@@ -22,7 +22,8 @@ def test_get_annotation(task_with_items, user1):
             'item_id': item.id,
             'data': {'output': '', 'optional': ''},
             'skipped': False,
-            'feedback': None
+            'feedback': None,
+            'attempt': 1
         },
         'is_verified': False,
         'exp_base': None,
@@ -96,7 +97,8 @@ def test_post_annotation(task_with_items, user1):
             'item_id': item.id,
             'data': {'output': '1', 'optional': ''},
             'skipped': False,
-            'feedback': None
+            'feedback': None,
+            'attempt': 1
         },
         'exp_base': 0,
         'exp_bonus': 0,

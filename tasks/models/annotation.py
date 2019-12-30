@@ -67,3 +67,7 @@ class Annotation(models.Model):
             self.save()
 
         return exp, bonus
+
+    @property
+    def attempt(self):
+        return self.item.annotations.filter(user=self.user).count()
