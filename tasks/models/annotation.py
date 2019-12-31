@@ -54,11 +54,11 @@ class Annotation(models.Model):
                 exp = self.item.exp * feedback_score
 
                 if prev_annotations.count() == 0:
-                    bonus = exp + EXP_BONUS_1
+                    bonus = EXP_BONUS_1
                 elif prev_annotations.count() <= 3:
-                    bonus = exp + EXP_BONUS_3
+                    bonus = EXP_BONUS_3
                 else:
-                    bonus = exp + EXP_BONUS_5
+                    bonus = EXP_BONUS_5
         else:
             exp = self.item.exp * feedback_score
 
