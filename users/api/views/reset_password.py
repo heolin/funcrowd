@@ -21,7 +21,8 @@ class ResetPasswordView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            end_worker = EndWorker.objects.filter(email=serializer.data['email']).first()
+            email = serializer.data['email'].lower()
+            end_worker = EndWorker.objects.filter(email=email).first()
             if not end_worker:
                 raise EmailNotFound()
 

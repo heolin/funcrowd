@@ -91,6 +91,18 @@ def test_end_worker_registration_not_verification():
     assert response.data['detail'].code == "email_used"
     assert response.status_code == 400
 
+    # register - email case sensitive
+    payload = {
+        "username": "newuser4",
+        "password1": "password1",
+        "password2": "password1",
+        'email': 'NEWUSER1@mail.com'
+    }
+    response = client.post('/api/v1/users/register/', payload)
+
+    assert response.data['detail'].code == "email_used"
+    assert response.status_code == 400
+
     # register passwords not match
     payload = {
         "username": "newuser5",

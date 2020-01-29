@@ -11,7 +11,7 @@ class RankingSerializer(serializers.Serializer):
         fields = ('user_id', 'username', 'value', 'row_number')
 
 
-class MPRankingSerializer(serializers.Serializer):
+class MPRankingRowSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     username = serializers.CharField(max_length=32)
     annotated_documents = serializers.IntegerField()
@@ -20,5 +20,13 @@ class MPRankingSerializer(serializers.Serializer):
     row_number = serializers.IntegerField()
 
     class Meta:
-        fields = ('user_id', 'username', 'annotated_documents', 'high_agreement_percentage', 'value', 'row_number')
+        fields = ('user_id', 'username', 'annotated_documents',
+                  'high_agreement_percentage', 'value', 'row_number')
 
+
+class MissionRankingSerializer(serializers.Serializer):
+    mission_id = serializers.IntegerField()
+    rows = MPRankingRowSerializer(many=True, read_only=True)
+
+    class Meta:
+        fields = ('mission_id', 'rows')

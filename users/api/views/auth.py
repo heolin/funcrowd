@@ -37,7 +37,7 @@ class EndWorkerRegistrationView(GenericAPIView):
             username = data['username']
             password1 = data['password1']
             password2 = data['password2']
-            email = data.get('email')
+            email = data['email'].lower()
 
             if EndWorker.objects.filter(username=username).first():
                 raise UsernameUsed()
@@ -72,7 +72,7 @@ class EndWorkerLoginView(GenericAPIView):
         serializer = EndWorkerLoginSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.data
-            email = data['email']
+            email = data['email'].lower()
             password = data['password']
 
             end_worker = EndWorker.objects.filter(email=email).first()
@@ -115,7 +115,7 @@ class EndWorkerEmailInfoView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            email = serializer.data['email']
+            email = serializer.data['email'].lower()
             end_worker = EndWorker.objects.filter(email=email).first()
             if not end_worker:
                 raise EmailNotFound()

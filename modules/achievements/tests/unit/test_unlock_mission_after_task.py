@@ -1,26 +1,30 @@
 import pytest
 
 from modules.achievements.models import UserAchievement, ProgressAchievement
+from modules.achievements.models.unlock_mission_after_task import UnlockMissionAfterTaskAchievement
 from tasks.models import Item
 
 
 @pytest.mark.django_db
-def test_required_fields():
+def test_progress_logic(user1, wrong_progress_achievement):
+    achievement = ProgressAchievement.objects.filter(order=4).first()
+    user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
     with pytest.raises(ValueError):
-        ProgressAchievement.objects.create(order=4, exp=10)
+        user_achievement.update()
 
 
 @pytest.mark.django_db
 def test_create_object(user1, task_with_items):
-    # create achievement for task
-    assert ProgressAchievement.objects.create(order=5, task_id=1, exp=0)
+    # create achievement with only task
+    with pytest.raises(ValueError):
+        UnlockMissionAfterTaskAchievement.objects.create(order=5, task_id=1, exp=0)
 
     # create achievement for mission
     assert ProgressAchievement.objects.create(order=6, mission_id=1, exp=10)
 
     # create achievement without mission or task field
     with pytest.raises(ValueError):
-        ProgressAchievement.objects.create(order=6, exp=10)
+        assert ProgressAchievement.objects.create(order=6, exp=10)
 
 
 @pytest.mark.django_db

@@ -60,12 +60,6 @@ def achievements(task_with_items):
     LoginCountAchievement.objects.create(order=0, exp=10)
 
 
-@pytest.fixture
-@pytest.mark.django_db
-def wrong_progress_achievement():
-    ProgressAchievement.objects.create(order=4, exp=10)
-
-
 def compare_without_fields(dict1, dict2, excluded_fields=['id']):
     dict1 = {k: v for (k, v) in dict1.items() if k not in excluded_fields}
     dict2 = {k: v for (k, v) in dict2.items() if k not in excluded_fields}

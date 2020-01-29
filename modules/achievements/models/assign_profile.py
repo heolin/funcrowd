@@ -3,9 +3,11 @@ from django.db import models
 from modules.achievements.models.achievement import Achievement
 from modules.achievements.events import Events
 from tasks.models import Annotation, UserTaskProgress, UserMissionProgress
+from users.consts import ProfileType
+from users.models import EndWorker
 
 
-class ProgressAchievement(Achievement):
+class AssignProfileAchievement(Achievement):
     trigger_events = [
         Events.ON_ITEM_DONE
     ]
@@ -23,7 +25,20 @@ class ProgressAchievement(Achievement):
             if progress:
                 user_achievement.value = progress.progress
 
+    def on_close(self, user_achievement):
+        user = user_achievement.user
+        profile2 = EndWorker.objects.filter(profile=ProfileType.GAMIFICATION).count()
+        profile3 = EndWorker.objects.filter(profile=ProfileType.ELEARNING).count()
+
+        if user.profile == ProfileType.NORMAL:
+            if profile2 > profile3:
+                user.profile = ProfileType.ELEARNING
+            else:
+                user.profile = ProfileType.GAMIFICATION
+            user.save()
+
     def save(self, *args, **kwargs):
         if not self.task and not self.mission:
             raise ValueError("Required value for Task or Mission field")
-        super(ProgressAchievement, self).save(*args, **kwargs)
+        super(AssignProfileAchievement, self).save(*args, **kwargs)
+

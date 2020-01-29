@@ -3,7 +3,7 @@ import pytest
 from modules.feedback.models import Feedback, FeedbackScoreField
 from tasks.consts import EXP_BONUS_1, EXP_BONUS_3
 from tasks.models import (
-    Task, Item, Annotation
+    Task, Annotation
 )
 
 
@@ -119,7 +119,7 @@ def test_annotation_exp_multiple_feedback_scenario_1(task_with_items, user1):
     feedback.create_feedback(annotation)
     exp_base, exp_bonus = annotation.get_exp()
     assert exp_base == item.exp
-    assert exp_bonus == item.exp + EXP_BONUS_1
+    assert exp_bonus == EXP_BONUS_1
 
 
 @pytest.mark.django_db
@@ -166,7 +166,7 @@ def test_annotation_exp_multiple_feedback_scenario_2(task_with_items, user1):
     feedback.create_feedback(annotation)
     exp_base, exp_bonus = annotation.get_exp()
     assert exp_base == item.exp
-    assert exp_bonus == item.exp + EXP_BONUS_3
+    assert exp_bonus == EXP_BONUS_3
 
 
 @pytest.mark.django_db
@@ -213,4 +213,4 @@ def test_annotation_exp_multiple_feedback_scenario_(task_with_items, user1):
     feedback.create_feedback(annotation)
     exp_base, exp_bonus = annotation.get_exp()
     assert exp_base == item.exp
-    assert exp_bonus == item.exp + EXP_BONUS_3
+    assert exp_bonus == EXP_BONUS_3

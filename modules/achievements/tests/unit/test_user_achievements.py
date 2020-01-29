@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from modules.achievements.consts import Status
@@ -30,6 +32,8 @@ def test_update_state(user1, achievements):
     user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
     assert user_achievement.status == Status.NEW
 
+    user_achievement.achievement.on_close = MagicMock()
+
     user_achievement.value = 1
     user_achievement.update()
     assert user_achievement.status == Status.IN_PROGRESS
@@ -40,3 +44,5 @@ def test_update_state(user1, achievements):
 
     user_achievement.close()
     assert user_achievement.status == Status.CLOSED
+
+    user_achievement.achievement.on_close.assert_called_with(user_achievement)

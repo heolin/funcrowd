@@ -5,19 +5,21 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from modules.packages.models import MissionPackages
-from modules.ranking.api.serializers.ranking import RankingSerializer, MPRankingSerializer
+from modules.ranking.api.serializers.ranking import(
+    RankingSerializer, MPRankingRowSerializer, MissionRankingSerializer
+)
 from modules.ranking.models import AnnotationsRanking, ExpRanking
 from modules.ranking.models.mission_packages_ranking import MissionPackagesRanking
 
 
 class RankingTop(GenericAPIView):
-    RankingType = None
+    rankingType = None
     serializer_class = RankingSerializer
     permission_classes = (AllowAny,)
     authentication_classes = []
 
     def get(self, request, *args, **kwargs):
-        ranking = self.RankingType()
+        ranking = self.rankingType()
 
         size = int(request.GET.get('size', 10))
         page = int(request.GET.get('page', 0))
@@ -28,70 +30,107 @@ class RankingTop(GenericAPIView):
 
 
 class RankingAround(GenericAPIView):
-    RankingType = None
+    rankingType = None
     serializer_class = RankingSerializer
 
     def get(self, request, user_id, *args, **kwargs):
-        ranking = self.RankingType()
+        ranking = self.rankingType()
 
         size = int(request.GET.get('size', 2))
 
         results = ranking.around(user_id, size)
+
         serializer = self.serializer_class(results, many=True)
         return Response(serializer.data)
 
 
 # Annotations Ranking
 class AnnotationsRankingTop(RankingTop):
-    RankingType = AnnotationsRanking
+    rankingType = AnnotationsRanking
 
 
 class AnnotationsRankingAround(RankingAround):
-    RankingType = AnnotationsRanking
+    rankingType = AnnotationsRanking
 
 
 # Exp Ranking
 class ExpRankingTop(RankingTop):
-    RankingType = ExpRanking
+    rankingType = ExpRanking
 
 
 class ExpRankingAround(RankingAround):
-    RankingType = ExpRanking
+    rankingType = ExpRanking
 
 
 # Mission Package ranking
 class MissionPackagesRankingTop(RankingTop):
-    RankingType = MissionPackagesRanking
-    serializer_class = MPRankingSerializer
+    rankingType = MissionPackagesRanking
+    serializer_class = MissionRankingSerializer
 
     def get(self, request, mission_id, *args, **kwargs):
         mp = MissionPackages.objects.get(mission_id=mission_id)
         if mp:
-            ranking = self.RankingType(mp)
+            ranking = self.rankingType(mp)
 
             size = int(request.GET.get('size', 10))
             page = int(request.GET.get('page', 0))
 
             results = ranking.top(size, page)
-            serializer = self.serializer_class(results, many=True)
+            rows = MPRankingRowSerializer(results, many=True).data
+
+            result = {
+                "mission_id": mission_id,
+                "rows": rows
+            }
+            serializer = self.serializer_class(result)
             return Response(serializer.data)
         else:
             return NotFound("Mission with this id not found")
 
 
 class MissionPackagesRankingAround(RankingAround):
-    RankingType = MissionPackagesRanking
-    serializer_class = MPRankingSerializer
+    rankingType = MissionPackagesRanking
+    serializer_class = MissionRankingSerializer
 
     def get(self, request, mission_id, user_id, *args, **kwargs):
         mp = MissionPackages.objects.get(mission_id=mission_id)
         if mp:
-            ranking = self.RankingType(mp)
+            ranking = self.rankingType(mp)
 
             size = int(request.GET.get('size', 2))
 
-            results = ranking.around(user_id, size)
-            serializer = self.serializer_class(results, many=True)
+            rows_ranking = ranking.around(user_id, size)
+            rows = MPRankingRowSerializer(rows_ranking, many=True).data
+
+            result = {
+                "mission_id": mission_id,
+                "rows": rows
+            }
+            serializer = self.serializer_class(result)
             return Response(serializer.data)
         else:
             return NotFound("Mission with this id not found")
+
+
+class MissionRankingList(RankingAround):
+    rankingType = MissionPackagesRanking
+    serializer_class = MissionRankingSerializer
+
+    def get(self, request, user_id, *args, **kwargs):
+        results = []
+
+        for mp in MissionPackages.objects.all():
+            ranking = self.rankingType(mp)
+
+            size = int(request.GET.get('size', 0))
+
+            rows_ranking = ranking.around(user_id, size)
+            rows = MPRankingRowSerializer(rows_ranking, many=True).data
+
+            results.append({
+                "mission_id": mp.mission_id,
+                "rows": rows
+            })
+
+        serializer = self.serializer_class(results, many=True)
+        return Response(serializer.data)

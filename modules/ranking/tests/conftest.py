@@ -1,5 +1,6 @@
 import pytest
 
+from modules.packages.models import MissionPackages, Package
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
@@ -36,6 +37,16 @@ def task_annotations(users):
     item2 = Item.objects.create(task=task, template=template, data={})
     item3 = Item.objects.create(task=task, template=template, data={})
 
+    mp = MissionPackages.objects.create(mission=mission, strategy=strategy)
+    package1 = Package.objects.create(parent=mp, order=0)
+    package1.items.add(item1)
+    package1.items.add(item2)
+    package1.save()
+
+    package2 = Package.objects.create(parent=mp, order=1)
+    package2.items.add(item3)
+    package2.save()
+
     Annotation.objects.create(user=user4, item=item1, data={}, annotated=True)
     Annotation.objects.create(user=user4, item=item2, data={}, annotated=True)
     Annotation.objects.create(user=user4, item=item3, data={}, annotated=True)
@@ -44,3 +55,7 @@ def task_annotations(users):
     Annotation.objects.create(user=user3, item=item2, data={}, annotated=True)
 
     Annotation.objects.create(user=user2, item=item1, data={}, annotated=True)
+
+    for user in users:
+        stats = user.get_mission_stats(mission.id)
+        stats.update()
