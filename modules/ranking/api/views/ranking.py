@@ -66,6 +66,8 @@ class ExpRankingAround(RankingAround):
 class MissionPackagesRankingTop(RankingTop):
     rankingType = MissionPackagesRanking
     serializer_class = MissionRankingSerializer
+    permission_classes = (AllowAny,)
+    authentication_classes = []
 
     def get(self, request, mission_id, *args, **kwargs):
         mp = MissionPackages.objects.get(mission_id=mission_id)
