@@ -13,6 +13,7 @@ STATUSES = (
 
 
 class MissionStatus:
+    HIDDEN = "HIDDEN"
     LOCKED = "LOCKED"
     UNLOCKED = "UNLOCKED"
     IN_PROGRESS = "IN_PROGRESS"
@@ -20,6 +21,7 @@ class MissionStatus:
 
 
 MISSION_STATUSES = (
+    (MissionStatus.HIDDEN, "Hidden"),
     (MissionStatus.LOCKED, "Locked"),
     (MissionStatus.UNLOCKED, "Unlocked"),
     (MissionStatus.IN_PROGRESS, "InProgress"),

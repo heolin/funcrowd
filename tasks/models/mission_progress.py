@@ -12,7 +12,15 @@ class UserMissionProgress(models.Model):
     user = models.ForeignKey(EndWorker, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     tasks_done = models.IntegerField(default=0)
-    status = models.CharField(default=MissionStatus.LOCKED, choices=MISSION_STATUSES, max_length=32)
+    status = models.CharField(choices=MISSION_STATUSES, max_length=32)
+
+    def save(self, *args, **kwargs):
+        if not self.status:
+            if self.mission.initial_status:
+                self.status = self.mission.initial_status
+            else:
+                self.status = MissionStatus.LOCKED
+        super(UserMissionProgress, self).save(*args, **kwargs)
 
     def update(self):
         self.tasks_done = UserTaskProgress.objects.filter(

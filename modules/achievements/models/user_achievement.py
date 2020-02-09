@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 
 from modules.achievements.consts import Status
+from modules.achievements.events import Events
 from modules.achievements.models.achievement import Achievement
 from users.models import EndWorker
+from funcrowd.settings import events_manager
 
 
 class UserAchievement(models.Model):
@@ -38,6 +40,8 @@ class UserAchievement(models.Model):
 
     @staticmethod
     def get_user_achievements(user):
+        events_manager.on_event(user, Events.ALWAYS)
+
         user_achievements = UserAchievement.objects.filter(user=user)
         achievements = Achievement.objects.exclude(id__in=user_achievements.values("achievement"))
         if achievements:

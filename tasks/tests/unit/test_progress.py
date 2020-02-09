@@ -184,6 +184,15 @@ def test_mission_progress(two_missions, user1):
     assert progress.progress == 1.0
     assert progress.status == MissionStatus.FINISHED
 
+@pytest.mark.django_db
+def test_mission_progress_with_initial_status(task, user1):
+    mission = Mission.objects.first()
+    mission.initial_status = MissionStatus.HIDDEN
+    mission.save()
+
+    progress = user1.get_mission_progress(mission=mission)
+    assert progress.status == MissionStatus.HIDDEN
+
 
 @pytest.mark.django_db
 def test_task_progress_with_feedback(task_with_items_with_multiple_annotation_fields, user1):

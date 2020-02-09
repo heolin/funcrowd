@@ -2,6 +2,7 @@ import pytest
 
 from modules.achievements.models import ItemDoneAchievement, LoginCountAchievement
 from modules.achievements.models.progress import ProgressAchievement
+from tasks.consts import MissionStatus
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField
 )
@@ -47,6 +48,13 @@ def task_with_items():
     task = Task.objects.create(id=2, mission=mission, name="Test", strategy=strategy)
     Item.objects.create(task=task, template=template, order=1,
                         data={input_field.name: 1})
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def hidden_mission(task_with_items):
+    return Mission.objects.create(
+        id=2, name="Other mission", initial_status=MissionStatus.HIDDEN)
 
 
 @pytest.fixture

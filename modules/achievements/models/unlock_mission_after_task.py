@@ -7,13 +7,13 @@ from django.utils.timezone import now
 
 class UnlockMissionAfterTaskAchievement(Achievement):
     trigger_events = [
-        Events.ON_LOGIN
+        Events.ON_ITEM_DONE,
+        Events.ALWAYS
     ]
 
     def update(self, user_achievement):
-        progress = UserTaskProgress.objects.filter(user=user_achievement.user,
-                                                   task=self.task).first()
-        if progress == 1.0:
+        user_progress = user_achievement.user.get_task_progress(self.task)
+        if user_progress.progress == 1.0:
             last_annotation = Annotation.objects.filter(user=user_achievement.user,
                                                         item__task=self.task).last()
 
@@ -23,7 +23,7 @@ class UnlockMissionAfterTaskAchievement(Achievement):
     def on_close(self, user_achievement):
         user = user_achievement.user
         progress = user.get_mission_progress(self.mission)
-        if progress.status == MissionStatus.LOCKED:
+        if progress.status in [MissionStatus.LOCKED, MissionStatus.HIDDEN]:
             progress.status = MissionStatus.UNLOCKED
             progress.save()
 

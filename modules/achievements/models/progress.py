@@ -12,16 +12,11 @@ class ProgressAchievement(Achievement):
 
     def update(self, user_achievement):
         if self.task:
-            progress = UserTaskProgress.objects.filter(user=user_achievement.user,
-                                                       task=self.task).first()
-            if progress:
-                user_achievement.value = progress.progress
-
+            user_progress = user_achievement.user.get_task_progress(self.task)
         elif self.mission:
-            progress = UserMissionProgress.objects.filter(user=user_achievement.user,
-                                                          mission=self.mission).first()
-            if progress:
-                user_achievement.value = progress.progress
+            user_progress = user_achievement.user.get_mission_progress(self.mission)
+
+        user_achievement.value = user_progress.progress
 
     def save(self, *args, **kwargs):
         if not self.task and not self.mission:

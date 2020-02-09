@@ -9,6 +9,7 @@ from django.db.models import Q
 import modules.achievements as a
 import modules.statistics as s
 import tasks as t
+from tasks.consts import MISSION_STATUSES
 
 """
 Mission are the base object used for story logic.
@@ -23,6 +24,8 @@ class Mission(models.Model):
     metadata = JSONField(blank=True, default=dict)
     order = models.IntegerField(default=0)
     parent = models.ForeignKey('Mission', blank=True, null=True, on_delete=models.CASCADE)
+    initial_status = models.CharField(blank=True, null=True,
+                                     choices=MISSION_STATUSES, max_length=32)
 
     class Meta:
         ordering = ['order']

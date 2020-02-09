@@ -11,7 +11,7 @@ from users.models import EndWorker
 
 
 @pytest.mark.django_db
-def test_achievements_list_view(user1, achievements, wrong_progress_achievement):
+def test_achievements_list_view(user1, achievements):
     client = Client()
     client.force_login(user1)
 
