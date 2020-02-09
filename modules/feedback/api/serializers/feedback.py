@@ -8,7 +8,7 @@ class AnnotationFeedbackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnnotationFeedback
-        fields = ('values', 'scores', 'score', 'type')
+        fields = ('values', 'scores', 'score')
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
