@@ -1,7 +1,7 @@
 
-
 class FeedbackTypes:
     NONE = "NONE"
+    SAVED = "SAVED"
     BINARY = "BINARY"
     QUIZ = "QUIZ"
     QUESTIONNAIRE = "QUESTIONNAIRE"
@@ -12,6 +12,7 @@ class FeedbackTypes:
 
 FEEDBACK_TYPES = (
     (FeedbackTypes.NONE, "None"),
+    (FeedbackTypes.SAVED, "Saved"),
     (FeedbackTypes.BINARY, "Binary"),
     (FeedbackTypes.QUIZ, "Quiz"),
     (FeedbackTypes.QUESTIONNAIRE, "Questionnaire"),
