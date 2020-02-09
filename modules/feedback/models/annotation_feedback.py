@@ -14,7 +14,3 @@ class AnnotationFeedback(models.Model):
     scores = JSONField(default=dict)
     score = models.FloatField(default=0, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def type(self):
-        return self.annotation.item.task.feedback.type

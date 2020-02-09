@@ -13,7 +13,7 @@ def test_task_list(task, user1):
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None}
+         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None, 'feedback': None}
     ]
 
     # Task empty list
@@ -38,17 +38,17 @@ def test_task_details(task, user1):
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None, 'feedback': None
     }
 
     # Task details, task not found
-    response = client.get('/api/v1//tasks/{0}/'.format(100))
+    response = client.get('/api/v1/tasks/{0}/'.format(100))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
 
 
 @pytest.mark.django_db
-def test_task_details(task_with_items, user1):
+def test_task_details_with_exp(task_with_items, user1):
     client = Client()
     client.force_login(user1)
 
@@ -58,5 +58,21 @@ def test_task_details(task_with_items, user1):
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10, 'feedback': None
+    }
+
+
+@pytest.mark.django_db
+def test_task_details_with_feedback(task_with_items_with_multiple_annotation_fields, user1):
+    client = Client()
+    client.force_login(user1)
+
+    # Task details
+    task_id = 1
+    response = client.get('/api/v1/tasks/{0}/'.format(task_id))
+    assert response.status_code == 200
+    assert response.data == {
+        'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 0,
+        'feedback': {'type': "BINARY", 'autoreject': False}
     }

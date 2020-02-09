@@ -24,9 +24,6 @@ class TaskDetail(GenericAPIView):
     serializer_class = TaskSerializer
 
     def get(self, request, task_id, *args, **kwargs):
-        print("LOOL")
-        print(Task.objects.all())
-        print(task_id)
         task = Task.objects.filter(id=task_id).first()
         if task:
             serializer = TaskSerializer(task)

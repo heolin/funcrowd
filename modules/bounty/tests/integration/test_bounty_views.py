@@ -28,7 +28,8 @@ def test_bounty_views(task_with_items, user1):
             'keywords': task.keywords,
             'metadata': task.metadata,
             'achievements_count': task.achievements_count,
-            'total_exp': 0
+            'total_exp': 0,
+            'feedback': None
         },
         'closed': False,
         'annotations_target': bounty.annotations_target,
@@ -64,7 +65,8 @@ def test_bounty_views_start(task_with_items, user1):
             'keywords': task.keywords,
             'metadata': task.metadata,
             'achievements_count': task.achievements_count,
-            'total_exp': 0
+            'total_exp': 0,
+            'feedback': None
         },
         'closed': False,
         'annotations_target': bounty.annotations_target,

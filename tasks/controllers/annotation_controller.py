@@ -15,7 +15,8 @@ class AnnotationController(object):
 
     def process(self, annotation):
         # processing validators
-        is_verified, exp_base, exp_bonus, errors = True, None, None, []
+        is_verified, exp_base, exp_bonus, errors, next_item_id\
+            = True, None, None, [], None
         user = annotation.user
 
         if not annotation.skipped:
@@ -49,6 +50,12 @@ class AnnotationController(object):
             if exp_base:
                 user.add_exp(exp_base + exp_bonus)
 
-        response = AnnotationResponse(annotation, is_verified, exp_base, exp_bonus, errors)
+            # get next item id
+            next_item = task.next_item(annotation.user, annotation.item)
+            if next_item:
+                next_item_id = next_item.id
+
+        response = AnnotationResponse(annotation, is_verified, exp_base, exp_bonus,
+                                      errors, next_item_id)
         return response
 

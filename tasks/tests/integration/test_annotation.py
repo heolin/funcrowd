@@ -28,6 +28,7 @@ def test_get_annotation(task_with_items, user1):
         'is_verified': False,
         'exp_base': None,
         'exp_bonus': None,
+        'next_item_id': None,
         'errors': [
             {
                 'name': 'RequiredFieldEmptyError',
@@ -91,6 +92,8 @@ def test_post_annotation(task_with_items, user1):
 
     # get saved annotation
     response = client.get('/api/v1/items/{0}/annotation/'.format(item.id))
+    next_item = task.next_item(user1, item)
+
     assert response.status_code == 200
     assert response.data == {
         "annotation": {
@@ -103,6 +106,7 @@ def test_post_annotation(task_with_items, user1):
         'exp_base': 0,
         'exp_bonus': 0,
         'is_verified': True,
+        'next_item_id': next_item.id,
         'errors': []
     }
 

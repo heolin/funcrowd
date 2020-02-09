@@ -1,5 +1,6 @@
 import pytest
 
+from modules.feedback.consts import FeedbackTypes
 from modules.feedback.models import FeedbackScoreField, Feedback
 from modules.feedback.models.fields import FeedbackField
 from tasks.models import (
@@ -67,6 +68,7 @@ def task_with_items():
     Item.objects.create(task=task, template=template, order=4,
                         data={first_field.name: 2, second_field.name: 2})
 
+
 @pytest.fixture
 @pytest.mark.django_db
 def task_with_items_data_source():
@@ -119,7 +121,7 @@ def task_with_items_with_multiple_annotation_fields():
     task.multiple_annotations = True
     task.save()
 
-    feedback = Feedback.objects.create(task=task)
+    feedback = Feedback.objects.create(task=task, type=FeedbackTypes.BINARY)
     feedback.score_fields.add(FeedbackScoreField.objects.get(name="ReferenceScore"))
 
     template = ItemTemplate.objects.create(name="Adding two")
