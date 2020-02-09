@@ -14,6 +14,9 @@ class UserMissionProgress(models.Model):
     tasks_done = models.IntegerField(default=0)
     status = models.CharField(choices=MISSION_STATUSES, max_length=32)
 
+    def __str__(self):
+        return f"UserMissionProgress({self.user}, {self.mission}, {self.status})"
+
     def save(self, *args, **kwargs):
         if not self.status:
             if self.mission.initial_status:

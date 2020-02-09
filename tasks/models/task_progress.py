@@ -15,6 +15,9 @@ class UserTaskProgress(models.Model):
     items_done = models.IntegerField(default=0)
     status = models.CharField(default=TaskStatus.LOCKED, choices=TASK_STATUSES, max_length=32)
 
+    def __str__(self):
+        return f"UserTaskProgress({self.user}, {self.task}, {self.status})"
+
     def update(self):
         self.items_done = Annotation.objects.filter(
             annotated=True, skipped=False, rejected=False,
