@@ -185,3 +185,4 @@ def test_end_worker_status_view(user1):
     assert response.data['id'] == user1.id
     assert response.data['username'] == user1.username
     assert response.data['exp'] == 0
+    assert response.data['profile'] == 1
