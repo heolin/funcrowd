@@ -5,6 +5,7 @@ from django.db import models
 
 from django.contrib.postgres.fields import JSONField
 
+import modules.packages as p
 import modules.aggregation as a
 from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
 from modules.packages.models.mission_packages import MissionPackages
@@ -19,7 +20,7 @@ class Package(models.Model):
     metadata = JSONField(blank=True, null=True)
 
     def __str__(self):
-        return "Package {} {} {}".format(self.parent.mission.id, self.name, self.order)
+        return "Package(mission={}, name={}, order={})".format(self.parent.mission.id, self.name, self.order)
 
     class Meta:
         ordering = ['order']
@@ -40,3 +41,11 @@ class Package(models.Model):
             elif support >= 1:
                 self.status = IN_PROGRESS
                 self.save()
+
+    def get_user_progress(self, user):
+        package, _ = p.models.UserPackageProgress.objects.get_or_create(
+            package=self,
+            user=user
+        )
+        return package
+

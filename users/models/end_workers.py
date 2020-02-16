@@ -66,7 +66,8 @@ class EndWorker(AbstractUser):
 
     def get_task_progress(self, task):
         # move this part to Task
-        progress, _ = t.models.task_progress.UserTaskProgress.objects.get_or_create(task=task, user=self)
+        progress, _ = t.models.task_progress.UserTaskProgress.objects.get_or_create(
+            task=task, user=self)
         progress.update_status()
         return progress
 
@@ -77,7 +78,8 @@ class EndWorker(AbstractUser):
 
     def get_mission_progress(self, mission):
         # move this part to Mission
-        progress, _ = t.models.mission_progress.UserMissionProgress.objects.get_or_create(mission=mission, user=self)
+        progress, _ = t.models.mission_progress.UserMissionProgress.objects.get_or_create(
+            mission=mission, user=self)
         progress.update_status()
         return progress
 
@@ -92,6 +94,10 @@ class EndWorker(AbstractUser):
 
         mission_progress = self.get_mission_progress(annotation.item.task.mission)
         mission_progress.update()
+
+        if annotation.item.package:
+            package_progress = annotation.item.package.get_user_progress(self)
+            package_progress.update()
 
         events_manager.on_event(self, Events.ON_ITEM_DONE)
 

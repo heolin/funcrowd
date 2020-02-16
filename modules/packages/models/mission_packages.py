@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from modules.order_strategy.models import Strategy
 from modules.order_strategy.models.strategy_client import IStrategyClient
+from modules.packages.consts import UserPackageStatus
 from tasks.models.mission import Mission
 from modules.packages.models.utils.query import UNFINISHED_PACKAGES_QUERY
 
@@ -38,9 +39,8 @@ class MissionPackages(models.Model, IStrategyClient):
         return self.strategy.prev(self, user, item)
 
     def exclude_items_with_user_annotations(self, user):
-        packages = self.packages.filter(items__annotations__user=user)
-        packages = packages.annotate(count=models.Count("items__annotations__user") / self.items_in_package)
-        packages = packages.filter(count__gte=1)
+        packages = self.packages.filter(progress__user=user)
+        packages = packages.filter(progress__status=UserPackageStatus.FINISHED)
         packages = self.packages.exclude(id__in=packages)
         return packages
 

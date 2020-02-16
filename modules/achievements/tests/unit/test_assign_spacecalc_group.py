@@ -5,33 +5,32 @@ from modules.achievements.models.unlock_mission_after_task import UnlockMissionA
 from tasks.consts import MissionStatus
 from tasks.models import Item, Task, Annotation
 from datetime import timedelta
+from modules.achievements.models.assign_spacecalc_group import AssignSpaceCalcGroupAchievement
+
+from users.consts import ProfileType
+from users.models import EndWorker
 
 
 @pytest.mark.django_db
 def test_create_object(user1, task_with_items):
-    # create achievement with only task
+    # create achievement without the task or mission field
     with pytest.raises(ValueError):
-        UnlockMissionAfterTaskAchievement.objects.create(order=5, task_id=1, exp=0)
-
-    # create achievement with only mission
-    with pytest.raises(ValueError):
-        assert UnlockMissionAfterTaskAchievement.objects.create(order=5, mission_id=1, exp=0)
+        AssignSpaceCalcGroupAchievement.objects.create(order=5, exp=0)
 
     # create achievement with all required fields
-    achievement = UnlockMissionAfterTaskAchievement.objects.create(
-        order=5, task_id=1, mission_id=1, exp=0)
+    achievement = AssignSpaceCalcGroupAchievement.objects.create(
+        order=5, task_id=1, exp=0)
     assert achievement
 
 
 @pytest.mark.django_db
-def test_progress_logic(user1, hidden_mission):
-    days = 30
-    mission = hidden_mission
-    progress = user1.get_mission_progress(mission)
-    assert progress.status == MissionStatus.HIDDEN
+def test_progress_logic(user1, task_with_items):
+    assert user1.profile == ProfileType.NORMAL
 
-    achievement = UnlockMissionAfterTaskAchievement.objects.create(
-        order=5, task_id=1, mission=hidden_mission, exp=0, target=days)
+    task = Task.objects.first()
+
+    achievement = AssignSpaceCalcGroupAchievement.objects.create(
+        order=0, task=task, exp=0, target=1)
 
     user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
     user_achievement.update()
@@ -45,7 +44,6 @@ def test_progress_logic(user1, hidden_mission):
             annotated=True,
             user=user1
         )
-        annotation.created = annotation.created - timedelta(days=days)
         annotation.save()
         user1.on_annotation(annotation)
 
@@ -54,5 +52,5 @@ def test_progress_logic(user1, hidden_mission):
 
     user_achievement.close()
 
-    progress = user1.get_mission_progress(mission)
-    assert progress.status == MissionStatus.UNLOCKED
+    user1 = EndWorker.objects.get(id=user1.id)
+    assert user1.profile == ProfileType.GAMIFICATION

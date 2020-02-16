@@ -84,49 +84,34 @@ def annotations(task_with_items, user1, user2):
     #paczka z dwoma anotacjami na wszystkich itemach
     package = packages.packages.all()[0]
     item = package.items.all()[0]
-    annotation, created = item.get_or_create_annotation(user1)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user1)
 
     item = package.items.all()[1]
-    annotation, created = item.get_or_create_annotation(user1)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user1)
 
     item = package.items.all()[0]
-    annotation, created = item.get_or_create_annotation(user2)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user2)
 
     item = package.items.all()[1]
-    annotation, created = item.get_or_create_annotation(user2)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user2)
 
     # paczka z jedna anotacja na wszystkich itemach
-
     package = packages.packages.all()[1]
     item = package.items.all()[0]
-    annotation, created = item.get_or_create_annotation(user1)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user1)
 
     item = package.items.all()[1]
-    annotation, created = item.get_or_create_annotation(user1)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user1)
 
     # paczka z jedna anotacja na jednym itemie
-
     package = packages.packages.all()[2]
     item = package.items.all()[0]
-    annotation, created = item.get_or_create_annotation(user1)
-    annotation.data = {"output": "1"}
-    annotation.save()
+    add_annotation(package, item, user1)
 
 
 def add_annotation(package, item, user):
-    annotation, created = item.get_or_create_annotation(user)
+    annotation, _ = item.get_or_create_annotation(user)
     annotation.data = {"output": "1"}
     annotation.annotated = True
     annotation.save()
+    user.on_annotation(annotation)
