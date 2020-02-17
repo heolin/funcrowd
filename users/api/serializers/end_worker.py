@@ -22,4 +22,4 @@ class EndWorkerStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EndWorker
-        fields = ('id', 'username', 'exp', 'profile')
+        fields = ('id', 'username', 'exp')

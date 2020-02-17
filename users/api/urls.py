@@ -9,6 +9,7 @@ from users.api.views.auth import (
     EndWorkerEmailInfoView,
     EndWorkerUsernameInfoView,
     EndWorkerStatusView,
+    EndWorkerDetailsView
 )
 from users.api.views.change_password import ChangePasswordView
 from users.api.views.change_settings import ChangeSettingsView
@@ -35,6 +36,7 @@ urlpatterns = [
     path('register/', EndWorkerRegistrationView.as_view(), name='register_end_worker'),
     path('current/', EndWorkerView.as_view(), name='current_end_worker'),
     path('status/', EndWorkerStatusView.as_view(), name='end_worker_status'),
+    path('details/', EndWorkerDetailsView.as_view(), name='end_worker_details'),
     path('logout/', EndWorkerLogoutView.as_view(), name='end_worker_logout'),
     path('storage/<str:key>/', EndWorkerStorageView.as_view(), name='end_worker_storage'),
     path('storage/', EndWorkerStorageBatchView.as_view(), name='end_worker_storage_batch'),

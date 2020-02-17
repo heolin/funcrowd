@@ -146,3 +146,11 @@ class EndWorkerStatusView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
         return Response(serializer.data)
+
+
+class EndWorkerDetailsView(GenericAPIView):
+    serializer_class = EndWorkerSimpleSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data)

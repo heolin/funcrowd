@@ -185,4 +185,18 @@ def test_end_worker_status_view(user1):
     assert response.data['id'] == user1.id
     assert response.data['username'] == user1.username
     assert response.data['exp'] == 0
-    assert response.data['profile'] == 1
+
+
+@pytest.mark.django_db
+def test_end_worker_details_view(user1):
+    client = Client()
+    client.force_login(user1)
+
+    # get user1 stats
+    response = client.get('/api/v1/users/details/')
+    assert response.status_code == 200
+    assert response.data['id'] == user1.id
+    assert response.data['username'] == user1.username
+    assert response.data['exp'] == 0
+    assert response.data['profile'] == user1.profile
+    assert response.data['group'] == user1.group
