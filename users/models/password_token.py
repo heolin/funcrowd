@@ -6,7 +6,7 @@ from users.models.utils.utils import get_reward_token
 
 
 class PasswordToken(models.Model):
-    token = models.CharField(max_length=32, default=get_reward_token())
+    token = models.CharField(max_length=32, default="")
     user = models.ForeignKey("EndWorker", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     token_used = models.BooleanField(default=False)
@@ -19,3 +19,8 @@ class PasswordToken(models.Model):
     def activate(self):
         self.token_used = True
         self.save()
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = get_reward_token()
+        super(ActivationToken, self).save(*args, **kwargs)
