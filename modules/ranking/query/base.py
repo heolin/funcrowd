@@ -21,7 +21,7 @@ from (
         group by 1
     ) ac on ac.user_id = id
     where
-        profile > 0
+        profile >= 0
 ) acu
 """
 
@@ -33,6 +33,8 @@ select
     id as user_id, username, exp as value, row_number() over (order by exp desc)
 from
     users_endworker
+where
+    profile > 0
 """
 
 
