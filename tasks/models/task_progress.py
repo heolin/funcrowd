@@ -29,6 +29,8 @@ class UserTaskProgress(models.Model):
 
     def update_status(self, commit=True):
         parent_progress = self._get_parent_progress()
+        if not parent_progress and self.task.parent:
+            return
 
         last_status = self.status
 

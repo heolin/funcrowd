@@ -105,7 +105,7 @@ def two_missions(task_with_items):
     task1 = Task.objects.create(id=2, mission=mission2, name="Add two digits", strategy=strategy)
     Item.objects.create(task=task1, template=template, order=1, data={"test": 1}, exp=10)
 
-    task2 = Task.objects.create(id=3, mission=mission2, name="Add two digits", strategy=strategy)
+    task2 = Task.objects.create(id=3, mission=mission2, name="Add two digits", strategy=strategy, parent=task1)
     Item.objects.create(task=task2, template=template, order=1, data={"test": 1}, exp=10)
 
 
@@ -149,6 +149,22 @@ def task_with_items_with_multiple_annotation_fields():
         annotation_field1.name: 1,
         annotation_field2.name: 1
     })
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def two_dependent_tasks():
+    Strategy.register_values()
+    mission1 = Mission.objects.create(id=1, name="Test mission")
+
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    template = ItemTemplate.objects.create(name="Adding two")
+
+    task1 = Task.objects.create(id=1, order=1, mission=mission1, name="Add two digits", strategy=strategy)
+    Item.objects.create(task=task1, template=template, order=1, data={"test": 1}, exp=10)
+
+    task2 = Task.objects.create(id=2, order=2, mission=mission1, name="Add two digits", strategy=strategy, parent=task1)
+    Item.objects.create(task=task2, template=template, order=1, data={"test": 1}, exp=10)
 
 
 def add_annotation(item, user):

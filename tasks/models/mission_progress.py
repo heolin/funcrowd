@@ -37,6 +37,8 @@ class UserMissionProgress(models.Model):
 
     def update_status(self, commit=True):
         parent_progress = self._get_parent_progress()
+        if not parent_progress and self.mission.parent:
+            return
 
         last_status = self.status
 

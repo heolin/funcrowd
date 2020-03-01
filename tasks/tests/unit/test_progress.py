@@ -262,3 +262,49 @@ def test_task_progress_with_feedback(task_with_items_with_multiple_annotation_fi
     assert progress.items_count == 3
     assert progress.items_done == 3
     assert progress.score == 5
+
+
+@pytest.mark.django_db
+def test_task_progress_non_empty_parent(two_dependent_tasks, user1):
+    mission = Mission.objects.first()
+    task1 = mission.tasks.all()[0]
+    task2 = mission.tasks.all()[1]
+
+    progress = user1.get_task_progress(task=task2)
+    assert progress.status == TaskStatus.LOCKED
+
+    progress = user1.get_task_progress(task=task1)
+    assert progress.status == TaskStatus.UNLOCKED
+
+    progress = user1.get_task_progress(task=task2)
+    assert progress.status == TaskStatus.LOCKED
+
+    progress = user1.get_task_progress(task=task1)
+    progress.status = TaskStatus.FINISHED
+    progress.save()
+
+    progress = user1.get_task_progress(task=task2)
+    assert progress.status == TaskStatus.UNLOCKED
+
+
+@pytest.mark.django_db
+def test_mission_progress_non_empty_parent(two_missions, user1):
+    mission1 = Mission.objects.all()[0]
+    mission2 = Mission.objects.all()[1]
+
+    progress = user1.get_mission_progress(mission=mission2)
+    assert progress.status == MissionStatus.LOCKED
+
+    progress = user1.get_mission_progress(mission=mission1)
+    assert progress.status == MissionStatus.UNLOCKED
+
+    progress = user1.get_mission_progress(mission=mission2)
+    assert progress.status == MissionStatus.LOCKED
+
+    progress = user1.get_mission_progress(mission=mission1)
+    progress.status = MissionStatus.FINISHED
+    progress.save()
+
+    progress = user1.get_mission_progress(mission=mission2)
+    assert progress.status == MissionStatus.UNLOCKED
+
