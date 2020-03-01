@@ -21,7 +21,7 @@ from (
         group by 1
     ) ac on ac.user_id = id
     where
-        profile >= 0
+        profile > 0
 ) acu
 """
 
