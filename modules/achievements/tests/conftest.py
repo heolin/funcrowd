@@ -52,6 +52,21 @@ def task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
+def missions_with_tasks():
+    Strategy.register_values()
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+
+    mission1 = Mission.objects.create(name="Test mission")
+    Task.objects.create(mission=mission1, name="Test", strategy=strategy)
+    Task.objects.create(mission=mission1, name="Test", strategy=strategy)
+
+    mission2 = Mission.objects.create(name="Test mission")
+    Task.objects.create(mission=mission2, name="Test", strategy=strategy)
+    Task.objects.create(mission=mission2, name="Test", strategy=strategy)
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def hidden_mission(task_with_items):
     return Mission.objects.create(
         id=2, name="Other mission", initial_status=MissionStatus.HIDDEN)

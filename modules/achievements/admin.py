@@ -8,12 +8,15 @@ from modules.achievements.models import (
     ItemDoneAchievement,
     LoginCountAchievement,
     AssignSpaceCalcGroupAchievement,
-    UnlockMissionAfterTaskAchievement
+    UnlockMissionAfterTaskAchievement,
+    MissionsDoneAchievement,
+    TasksDoneAchievement
 )
-
 
 admin.site.register(ProgressAchievement)
 admin.site.register(ItemDoneAchievement)
+admin.site.register(MissionsDoneAchievement)
+admin.site.register(TasksDoneAchievement)
 admin.site.register(LoginCountAchievement)
 admin.site.register(AssignSpaceCalcGroupAchievement)
 admin.site.register(UnlockMissionAfterTaskAchievement)

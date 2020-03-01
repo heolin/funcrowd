@@ -7,6 +7,8 @@ from modules.achievements.models.progress import ProgressAchievement
 from modules.achievements.models.assign_profile import AssignProfileAchievement
 from modules.achievements.models.unlock_mission_after_task import UnlockMissionAfterTaskAchievement
 from modules.achievements.models.assign_spacecalc_group import AssignSpaceCalcGroupAchievement
+from modules.achievements.models.tasks_done import TasksDoneAchievement
+from modules.achievements.models.missions_done import MissionsDoneAchievement
 
 from funcrowd.settings import events_manager
 
@@ -16,3 +18,5 @@ events_manager.register_achievements(ProgressAchievement)
 events_manager.register_achievements(AssignProfileAchievement)
 events_manager.register_achievements(UnlockMissionAfterTaskAchievement)
 events_manager.register_achievements(AssignSpaceCalcGroupAchievement)
+events_manager.register_achievements(TasksDoneAchievement)
+events_manager.register_achievements(MissionsDoneAchievement)
