@@ -23,6 +23,13 @@ class UnclosedAchievementsList(GenericAPIView):
     serializer_class = UserAchievementSerializer
 
     def get(self, request):
+        user_achievements = UserAchievement.get_user_achievements()
+        for user_achievement in user_achievements:
+            current = user_achievement.value
+            user_achievement.update()
+            if current != user_achievement.value:
+                user_achievement.save()
+
         user_achievements = UserAchievement.objects.filter(user=request.user, status=Status.FINISHED)
         for a in user_achievements:
             a.close()
@@ -39,6 +46,13 @@ class MissionAchievementsList(GenericAPIView):
             user_achievements = UserAchievement.get_user_achievements(
                 request.user).filter(Q(achievement__mission=mission) | Q(achievement__task__mission=mission))
             serializer = self.serializer_class(user_achievements, many=True)
+
+            for user_achievement in user_achievements:
+                current = user_achievement.value
+                user_achievement.update()
+                if current != user_achievement.value:
+                    user_achievement.save()
+
             return Response(serializer.data)
         else:
             raise NotFound("No Mission found for given id.")
@@ -52,6 +66,13 @@ class TaskAchievementsList(GenericAPIView):
         if task:
             user_achievements = UserAchievement.get_user_achievements(
                 request.user).filter(achievement__task=task)
+
+            for user_achievement in user_achievements:
+                current = user_achievement.value
+                user_achievement.update()
+                if current != user_achievement.value:
+                    user_achievement.save()
+
             serializer = self.serializer_class(user_achievements, many=True)
             return Response(serializer.data)
         else:
