@@ -17,7 +17,7 @@ def test_unlock_mission_after_login(user1, hidden_mission):
     assert progress.status == MissionStatus.LOCKED
 
     achievement = UnlockMissionAfterTaskAchievement.objects.create(
-        order=5, task_id=1, mission=hidden_mission, exp=0, target=days, auto_close=True)
+        order=5, task_id=1, mission=hidden_mission, exp=0, target=days)
 
     user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
     user_achievement.update()
@@ -45,7 +45,7 @@ def test_unlock_mission_after_login(user1, hidden_mission):
 
     user_achievement = UserAchievement.objects.get(user=user1, achievement=achievement)
     assert user_achievement.progress == 1
-    assert user_achievement.status == Status.CLOSED
+    assert user_achievement.status == Status.FINISHED
 
     progress = user1.get_mission_progress(mission)
     assert progress.status == MissionStatus.UNLOCKED
@@ -59,7 +59,7 @@ def test_unlock_mission_after_list(user1, hidden_mission):
     assert progress.status == MissionStatus.LOCKED
 
     achievement = UnlockMissionAfterTaskAchievement.objects.create(
-        order=5, task_id=1, mission=hidden_mission, exp=0, target=days, auto_close=True)
+        order=5, task_id=1, mission=hidden_mission, exp=0, target=days)
 
     user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
     user_achievement.update()
@@ -84,7 +84,7 @@ def test_unlock_mission_after_list(user1, hidden_mission):
 
     user_achievement = UserAchievement.objects.get(user=user1, achievement=achievement)
     assert user_achievement.progress == 1
-    assert user_achievement.status == Status.CLOSED
+    assert user_achievement.status == Status.FINISHED
 
     progress = user1.get_mission_progress(mission)
     assert progress.status == MissionStatus.UNLOCKED

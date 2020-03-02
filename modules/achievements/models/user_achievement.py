@@ -29,8 +29,6 @@ class UserAchievement(models.Model):
         if self.status == Status.IN_PROGRESS:
             if self.value >= self.achievement.target:
                 self.status = Status.FINISHED
-                if self.achievement.auto_close:
-                    self.close()
 
     def close(self):
         if self.status == Status.FINISHED:

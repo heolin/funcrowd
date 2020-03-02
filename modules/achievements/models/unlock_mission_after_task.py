@@ -1,3 +1,4 @@
+from modules.achievements.consts import Status
 from modules.achievements.events import Events
 from modules.achievements.models.achievement import Achievement
 from tasks.consts import MissionStatus
@@ -20,7 +21,11 @@ class UnlockMissionAfterTaskAchievement(Achievement):
             days = (now() - last_annotation.created).days
             user_achievement.value = min(days, self.target)
 
-    def on_close(self, user_achievement):
+            if user_achievement.status not in [Status.FINISHED, Status.CLOSED] and \
+                    user_achievement.value >= self.target:
+                self._close(user_achievement)
+
+    def _close(self, user_achievement):
         user = user_achievement.user
         progress = user.get_mission_progress(self.mission)
         if progress.status in [MissionStatus.LOCKED, MissionStatus.HIDDEN]:
