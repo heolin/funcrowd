@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
-from tasks.consts import MissionStatus, MISSION_STATUSES
+from tasks.consts import MissionStatus, MISSION_STATUSES, TaskStatus
 from tasks.models import Mission, UserTaskProgress
 from users.models.end_workers import EndWorker
 
@@ -27,10 +27,7 @@ class UserMissionProgress(models.Model):
 
     def update(self):
         self.tasks_done = UserTaskProgress.objects.filter(
-            user=self.user, task__mission=self.mission).annotate(
-            items_count=models.Count('task__items')).annotate(
-            progress=models.F('items_done') / models.F('items_count')).values(
-            "progress").filter(progress=1).count()
+            user=self.user, task__mission=self.mission, status=TaskStatus.FINISHED).count()
 
         self.update_status(False)
         self.save()

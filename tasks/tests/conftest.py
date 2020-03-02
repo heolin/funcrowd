@@ -105,7 +105,7 @@ def two_missions(task_with_items):
     task1 = Task.objects.create(id=2, mission=mission2, name="Add two digits", strategy=strategy)
     Item.objects.create(task=task1, template=template, order=1, data={"test": 1}, exp=10)
 
-    task2 = Task.objects.create(id=3, mission=mission2, name="Add two digits", strategy=strategy, parent=task1)
+    task2 = Task.objects.create(id=3, order=2, mission=mission2, name="Add two digits", strategy=strategy, parent=task1)
     Item.objects.create(task=task2, template=template, order=1, data={"test": 1}, exp=10)
 
 
