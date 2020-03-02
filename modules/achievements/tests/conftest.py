@@ -68,8 +68,10 @@ def missions_with_tasks():
 @pytest.fixture
 @pytest.mark.django_db
 def hidden_mission(task_with_items):
-    return Mission.objects.create(
-        id=2, name="Other mission", initial_status=MissionStatus.HIDDEN)
+    mission = Mission.objects.create(id=2, name="Other mission")
+    mission.parent = mission
+    mission.save()
+    return mission
 
 
 @pytest.fixture

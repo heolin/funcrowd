@@ -100,6 +100,7 @@ class EndWorker(AbstractUser):
             package_progress.update()
 
         events_manager.on_event(self, Events.ON_ITEM_DONE)
+        events_manager.on_event(self, Events.ALWAYS)
 
     def add_exp(self, exp):
         self.exp += exp

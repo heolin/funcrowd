@@ -1,9 +1,9 @@
 import pytest
 
-from modules.achievements.models import UserAchievement, ProgressAchievement
+from modules.achievements.models import UserAchievement
 from modules.achievements.models.unlock_mission_after_task import UnlockMissionAfterTaskAchievement
 from tasks.consts import MissionStatus
-from tasks.models import Item, Task, Annotation
+from tasks.models import Annotation
 from datetime import timedelta
 
 
@@ -28,7 +28,7 @@ def test_progress_logic(user1, hidden_mission):
     days = 30
     mission = hidden_mission
     progress = user1.get_mission_progress(mission)
-    assert progress.status == MissionStatus.HIDDEN
+    assert progress.status == MissionStatus.LOCKED
 
     achievement = UnlockMissionAfterTaskAchievement.objects.create(
         order=5, task_id=1, mission=hidden_mission, exp=0, target=days)
@@ -37,7 +37,7 @@ def test_progress_logic(user1, hidden_mission):
     user_achievement.update()
     assert user_achievement.progress == 0
 
-    task = Task.objects.get(id=1)
+    task = achievement.task
     for item in task.items.all():
         annotation = Annotation.objects.create(
             item=item,
