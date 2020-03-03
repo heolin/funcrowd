@@ -1,8 +1,5 @@
 from modules.achievements.events import Events
 from modules.achievements.models.achievement import Achievement
-from tasks.consts import MissionStatus
-from tasks.models import UserTaskProgress, Annotation, UserMissionProgress
-from django.utils.timezone import now
 
 from users.consts import ProfileType
 from users.models import EndWorker
