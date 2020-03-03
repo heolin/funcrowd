@@ -21,6 +21,33 @@ def test_item_done_logic(user1, achievements):
     annotation.data = {"output": 1}
     annotation.save()
 
+    # annotated=False rejected=False skipped=False
+    user_achievement.update()
+    assert user_achievement.value == 0
+    assert user_achievement.status == Status.NEW
+
+    # annotated=True rejected=True skipped=False
+    annotation.annotated = True
+    annotation.rejected = True
+    annotation.save()
+
+    user_achievement.update()
+    assert user_achievement.value == 0
+
+    # annotated=True rejected=False skipped=True
+    annotation.rejected = False
+    annotation.skipped = True
+    annotation.save()
+
+    user_achievement.update()
+    assert user_achievement.value == 0
+
+    # annotated=True rejected=False skipped=False
+    annotation.annotated = True
+    annotation.rejected = False
+    annotation.skipped = False
+    annotation.save()
+
     user_achievement.update()
     assert user_achievement.value == 1
     assert user_achievement.status == Status.FINISHED
@@ -34,6 +61,7 @@ def test_item_done_logic(user1, achievements):
 
     item = Item.objects.filter(task__mission_id=1, order=2).first()
     annotation, _ = item.get_or_create_annotation(user1)
+    annotation.annotated = True
     annotation.data = {"output": 1}
     annotation.save()
 
@@ -51,6 +79,7 @@ def test_item_done_logic(user1, achievements):
     item = Item.objects.filter(task_id=2, order=1).first()
     annotation, _ = item.get_or_create_annotation(user1)
     annotation.data = {"output": 1}
+    annotation.annotated = True
     annotation.save()
 
     user_achievement.update()

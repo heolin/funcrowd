@@ -23,4 +23,4 @@ class PasswordToken(models.Model):
     def save(self, *args, **kwargs):
         if not self.token:
             self.token = get_reward_token()
-        super(ActivationToken, self).save(*args, **kwargs)
+        super(PasswordToken, self).save(*args, **kwargs)

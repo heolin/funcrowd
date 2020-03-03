@@ -11,7 +11,9 @@ class ItemDoneAchievement(Achievement):
     ]
 
     def update(self, user_achievement):
-        annotations = Annotation.objects.filter(user=user_achievement.user)
+        annotations = Annotation.objects.filter(
+            user=user_achievement.user, annotated=True).exclude(
+            skipped=True).exclude(rejected=True)
 
         if self.mission:
             annotations = annotations.filter(item__task__mission=self.mission)
