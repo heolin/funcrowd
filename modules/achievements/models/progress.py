@@ -17,7 +17,7 @@ class ProgressAchievement(Achievement):
 
         elif self.mission:
             user_progress = UserMissionProgress.objects.filter(
-                user=user_achievement.user, task=self.mission).first()
+                user=user_achievement.user, mission=self.mission).first()
 
         if user_progress:
             user_achievement.value = user_progress.progress
