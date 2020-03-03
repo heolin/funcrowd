@@ -16,14 +16,11 @@ class AssignProfileAchievement(Achievement):
         if self.task:
             progress = UserTaskProgress.objects.filter(user=user_achievement.user,
                                                        task=self.task).first()
-            if progress:
-                user_achievement.value = progress.progress
-
         elif self.mission:
             progress = UserMissionProgress.objects.filter(user=user_achievement.user,
                                                           mission=self.mission).first()
-            if progress:
-                user_achievement.value = progress.progress
+        if progress:
+            user_achievement.value = progress.progress
 
     def on_close(self, user_achievement):
         user = user_achievement.user

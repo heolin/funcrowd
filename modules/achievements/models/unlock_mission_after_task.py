@@ -13,17 +13,20 @@ class UnlockMissionAfterTaskAchievement(Achievement):
     ]
 
     def update(self, user_achievement):
-        user_progress = user_achievement.user.get_task_progress(self.task)
-        if user_progress.progress == 1.0:
-            last_annotation = Annotation.objects.filter(user=user_achievement.user,
-                                                        item__task=self.task).last()
+        user_progress = UserTaskProgress.objects.filter(
+            user=user_achievement.user, task=self.task).first()
 
-            days = (now() - last_annotation.created).days
-            user_achievement.value = min(days, self.target)
+        if user_progress:
+            if user_progress.progress == 1.0:
+                last_annotation = Annotation.objects.filter(user=user_achievement.user,
+                                                            item__task=self.task).last()
 
-            if user_achievement.status not in [Status.FINISHED, Status.CLOSED] and \
-                    user_achievement.value >= self.target:
-                self._close(user_achievement)
+                days = (now() - last_annotation.created).days
+                user_achievement.value = min(days, self.target)
+
+                if user_achievement.status not in [Status.FINISHED, Status.CLOSED] and \
+                        user_achievement.value >= self.target:
+                    self._close(user_achievement)
 
     def _close(self, user_achievement):
         user = user_achievement.user

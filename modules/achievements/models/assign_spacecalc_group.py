@@ -1,5 +1,6 @@
 from modules.achievements.events import Events
 from modules.achievements.models.achievement import Achievement
+from tasks.models import UserTaskProgress
 
 from users.consts import ProfileType
 from users.models import EndWorker
@@ -23,8 +24,10 @@ class AssignSpaceCalcGroupAchievement(Achievement):
     ]
 
     def update(self, user_achievement):
-        user_progress = user_achievement.user.get_task_progress(self.task)
-        user_achievement.value = user_progress.progress
+        user_progress = UserTaskProgress.objects.filter(
+            user=user_achievement.user, task=self.task).first()
+        if user_progress:
+            user_achievement.value = user_progress.progress
 
     def on_close(self, user_achievement):
         user = user_achievement.user
