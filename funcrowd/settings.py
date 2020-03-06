@@ -1,6 +1,8 @@
 import os
 import environ
-import raven
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from corsheaders.defaults import default_headers
 
 from modules.achievements.events_manager import EventsManager
@@ -30,7 +32,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ] + [
-    'raven.contrib.django.raven_compat',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
@@ -164,11 +165,11 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL=True
 
 
-RAVEN_CONFIG = {}
-if 'SENTRY_DNS' in env:
-    RAVEN_CONFIG = {
-        'dsn': env('SENTRY_DNS'),
-    }
+sentry_sdk.init(
+    dsn=env('SENTRY_DNS'),
+    integrations=[DjangoIntegration()],
+    send_default_pii=True
+)
 
 
 # File storage
