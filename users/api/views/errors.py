@@ -72,3 +72,9 @@ class PasswordTokenUsed(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'Password token is already used'
     default_code = 'password_token_used'
+
+
+class UserAlreadyActive(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'User is already active'
+    default_code = 'user_active'

@@ -123,3 +123,59 @@ def test_multiple_tokens():
     response = client.post('/api/v1/users/activate/', payload)
     assert response.status_code == 400
     assert response.data['detail'].code == "activation_token_used"
+
+
+@pytest.mark.django_db
+def test_renew_token():
+    settings.ACCOUNT_EMAIL_VERIFICATION = True
+    EmailHelper.send_activation_email = MagicMock()
+
+    factory = APIRequestFactory()
+
+    assert ActivationToken.objects.count() == 0
+
+    # register new user
+    payload = {
+        "username": "newuser",
+        "email": "newuser@gmail.com",
+        "password1": "password1",
+        "password2": "password1",
+    }
+    request = factory.post('/api/v1/users/register/', payload)
+    view = EndWorkerRegistrationView.as_view()
+    response = view(request)
+    assert response.status_code == 204
+
+    assert ActivationToken.objects.count() == 1
+
+    end_worker = EndWorker.objects.last()
+
+    client = Client()
+
+    # activate wrong token
+    token = ActivationToken.objects.get(user=end_worker)
+    payload = {
+        "token": "TEST"
+    }
+    response = client.post('/api/v1/users/activate/renew/', payload)
+    assert response.status_code == 400
+    assert response.data['detail'].code == "activation_token_wrong"
+
+    # activate correct token
+    payload = {
+        "token": token.token
+    }
+    response = client.post('/api/v1/users/activate/renew/', payload)
+    assert response.status_code == 201
+
+    assert ActivationToken.objects.count() == 2
+    assert ActivationToken.objects.all()[0].token_used is True
+    assert ActivationToken.objects.all()[1].token_used is False
+
+    # activate used token
+    payload = {
+        "token": token.token
+    }
+    response = client.post('/api/v1/users/activate/renew/', payload)
+    assert response.status_code == 400
+    assert response.data['detail'].code == "activation_token_used"
