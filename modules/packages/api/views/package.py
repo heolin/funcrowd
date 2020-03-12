@@ -10,7 +10,7 @@ from tasks.models import Mission
 from modules.packages.api.serializers.package import PackageSerializer
 
 
-class NextPackage(GenericAPIView):
+class NextPackageView(GenericAPIView):
     serializer_class = PackageSerializer
 
     def get(self, request, mission_id, *args, **kwargs):
@@ -21,5 +21,5 @@ class NextPackage(GenericAPIView):
                 serializer = self.serializer_class(next_package)
                 return Response(serializer.data)
             return Response(None, status.HTTP_204_NO_CONTENT)
-        raise NotFound("No Task found for given id.")
+        raise NotFound("No Mission found for given id.")
 

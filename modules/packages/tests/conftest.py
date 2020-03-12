@@ -1,6 +1,7 @@
 import pytest
 
-from tasks.consts import FINISHED
+from modules.packages.consts import UserPackageStatus
+from tasks.consts import FINISHED, TaskStatus
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
@@ -107,6 +108,55 @@ def annotations(task_with_items, user1, user2):
     package = packages.packages.all()[2]
     item = package.items.all()[0]
     add_annotation(package, item, user1)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def annotated_packages():
+    Strategy.register_values()
+    mission = Mission.objects.create(name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(mission=mission, name="task1", strategy=strategy)
+    template = ItemTemplate.objects.create(name="task1")
+    packages = MissionPackages.objects.create(mission=mission, strategy=strategy)
+
+    for order, metadata in enumerate([
+        {"country": "Country1", "city": "City1"},
+        {"country": "Country1", "city": "City1"},
+        {"country": "Country1", "city": "City2"},
+        {"country": "Country2", "city": "City3"},
+        {"country": "Country2", "city": "City4"},
+        {"country": "Country3", "city": "City5"},
+    ]):
+        package = Package.objects.create(parent=packages, order=order, metadata=metadata)
+        for index in range(2):
+            Item.objects.create(task=task, template=template, order=order, data={}, package=package)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def annotated_packages_with_status(annotated_packages, user1, user2):
+    # package 1
+    package = Package.objects.all()[0]
+    package.status = TaskStatus.FINISHED
+    package.save()
+
+    progress = package.get_user_progress(user1)
+    progress.status = UserPackageStatus.IN_PROGRESS
+    progress.save()
+
+    progress = package.get_user_progress(user2)
+    progress.status = UserPackageStatus.FINISHED
+    progress.save()
+
+    # package 2
+    package = Package.objects.all()[1]
+    package.status = TaskStatus.IN_PROGRESS
+    package.save()
+
+    progress = package.get_user_progress(user1)
+    progress.status = UserPackageStatus.FINISHED
+    progress.save()
 
 
 def add_annotation(package, item, user):
