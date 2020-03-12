@@ -48,9 +48,11 @@ class PackageSearchStatsAggregator(PackagesMetadataSearch):
             user=user, package__in=self.get_query()).values(
             f"package__metadata__{aggregation_field}", 'status', 'package__status')
         df = pd.DataFrame(list(data))
-        df_user_status = df.groupby(
-            f"package__metadata__{aggregation_field}")['status'].value_counts(
-        ).unstack().fillna(0)
+        df_user_status = pd.DataFrame()
+        if f"package__metadata__{aggregation_field}" in df:
+            df_user_status = df.groupby(
+                f"package__metadata__{aggregation_field}")['status'].value_counts(
+            ).unstack().fillna(0)
 
         for column, _ in USER_PACKAGE_STATUSES:
             if column not in df_user_status:
