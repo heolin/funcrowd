@@ -24,7 +24,7 @@ class UserPackageProgress(models.Model):
 
     def update(self):
         self.items_done = Annotation.objects.filter(
-            annotated=True, skipped=False, rejected=False,
+            annotated=True, rejected=False,
             item__package=self.package, user=self.user
         ).values("item").distinct().count()
 

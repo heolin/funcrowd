@@ -1,6 +1,8 @@
 from modules.aggregation.models import ItemAggregation
 import xlsxwriter
 
+from modules.packages.api.exceptions import SearchGetParamMalformed
+
 SEPARATOR = "<NEXT>"
 EMPTY = "<EMPTY>"
 URL = "https://funcrowd-documents.sprawdzamyjakjest.pl/static/pdf/{}.pdf"
@@ -114,3 +116,21 @@ def create_workbook(report):
 
     workbook.close()
     return report_path
+
+
+def _parse_search_params(search):
+    params = search.split(':')
+    if len(params) != 2:
+        raise ValueError
+    return {params[0]: params[1]}
+
+
+def get_search_query(request):
+    search = {}
+    if 'search' in request.GET:
+        try:
+            for params in request.GET["search"].split(','):
+                search.update(_parse_search_params(params))
+        except ValueError:
+            raise SearchGetParamMalformed()
+    return search

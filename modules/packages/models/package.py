@@ -30,12 +30,13 @@ class Package(models.Model):
 
         probability = np.min([a.get_probability() for a in aggregations])
         support = np.max([a.get_support() for a in aggregations])
+        max_annotations = self.parent.max_annotations
 
         if self.status in [NEW, IN_PROGRESS]:
-            if support >= 4 and probability > 0.5:
+            if support >= int(max_annotations / 2) and probability > 0.5:
                 self.status = FINISHED
                 self.save()
-            elif support >= 7:
+            elif support >= max_annotations:
                 self.status = VERIFICATION
                 self.save()
             elif support >= 1:

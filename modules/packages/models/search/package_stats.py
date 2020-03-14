@@ -2,21 +2,24 @@ import pandas as pd
 from modules.packages.consts import USER_PACKAGE_STATUSES
 from modules.packages.models import UserPackageProgress
 from tasks.consts import TASK_STATUSES
-from modules.packages.models.search.packages_search import PackagesMetadataSearch
+from modules.packages.models.search.packages_search import PackagesSearch
 
 
-class PackageSearchStatsAggregator(PackagesMetadataSearch):
+class PackageSearchStatsAggregator(PackagesSearch):
     def __init__(self, mission_packages, search):
         super().__init__(mission_packages, search)
 
     def get_aggregation(self, user, aggregation_field):
-        if self.get_query().count() == 0:
+        if self.items.count() == 0:
             return
 
         df_package_status = self._get_package_status_data(aggregation_field)
-        df_user_status = self._get_user_progress_status_data(user, aggregation_field)
 
-        user_statuses = df_user_status.to_dict(orient='index')
+        user_statuses = {}
+        if user.is_authenticated:
+            df_user_status = self._get_user_progress_status_data(user, aggregation_field)
+            user_statuses = df_user_status.to_dict(orient='index')
+
         data = []
         for index, row in df_package_status.iterrows():
             data.append({
@@ -30,7 +33,7 @@ class PackageSearchStatsAggregator(PackagesMetadataSearch):
 
     def _get_package_status_data(self, aggregation_field):
         # aggregate package status data
-        data = self.get_query().values(f"metadata__{aggregation_field}", "status")
+        data = self.items.values(f"metadata__{aggregation_field}", "status")
         df = pd.DataFrame(list(data))
         df_package_status = df.groupby(
             f"metadata__{aggregation_field}")['status'].value_counts(
@@ -45,7 +48,7 @@ class PackageSearchStatsAggregator(PackagesMetadataSearch):
     def _get_user_progress_status_data(self, user, aggregation_field):
         # aggregate user progress status data
         data = UserPackageProgress.objects.filter(
-            user=user, package__in=self.get_query()).values(
+            user=user, package__in=self.items).values(
             f"package__metadata__{aggregation_field}", 'status', 'package__status')
         df = pd.DataFrame(list(data))
         df_user_status = pd.DataFrame()

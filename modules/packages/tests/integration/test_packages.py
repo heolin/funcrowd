@@ -37,3 +37,26 @@ def test_tasks(task_with_items, user1):
     assert response.status_code == 200
     assert len(response.data['items']) == 2
     assert response.data['order'] == 2
+
+
+@pytest.mark.django_db
+def test_tasks(packages_with_metadata, user1):
+    mission = Mission.objects.first()
+    mp = mission.packages
+    mp.max_annotations = 1
+    mp.strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
+    mp.save()
+
+    client = Client()
+    client.force_login(user1)
+
+    # with one filter
+    response = client.get('/api/v1/missions/{0}/next_package/?search=country:Country2'.format(mission.id))
+    assert response.data['order'] == 3
+
+    response = client.get('/api/v1/missions/{0}/next_package/?search=country:Country3'.format(mission.id))
+    assert response.data['order'] == 5
+
+    # with two filters
+    response = client.get('/api/v1/missions/{0}/next_package/?search=country:Country2,city:City4'.format(mission.id))
+    assert response.data['order'] == 4

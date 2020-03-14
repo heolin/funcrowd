@@ -82,7 +82,7 @@ def task_with_items():
 def annotations(task_with_items, user1, user2):
     packages = MissionPackages.objects.first()
 
-    #paczka z dwoma anotacjami na wszystkich itemach
+    # package with two annotations in all items
     package = packages.packages.all()[0]
     item = package.items.all()[0]
     add_annotation(package, item, user1)
@@ -96,7 +96,7 @@ def annotations(task_with_items, user1, user2):
     item = package.items.all()[1]
     add_annotation(package, item, user2)
 
-    # paczka z jedna anotacja na wszystkich itemach
+    # package with one annotation in all items
     package = packages.packages.all()[1]
     item = package.items.all()[0]
     add_annotation(package, item, user1)
@@ -104,7 +104,7 @@ def annotations(task_with_items, user1, user2):
     item = package.items.all()[1]
     add_annotation(package, item, user1)
 
-    # paczka z jedna anotacja na jednym itemie
+    # package with one annotation in one item
     package = packages.packages.all()[2]
     item = package.items.all()[0]
     add_annotation(package, item, user1)
@@ -112,10 +112,10 @@ def annotations(task_with_items, user1, user2):
 
 @pytest.fixture
 @pytest.mark.django_db
-def annotated_packages():
+def packages_with_metadata():
     Strategy.register_values()
     mission = Mission.objects.create(name="Test mission")
-    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
     task = Task.objects.create(mission=mission, name="task1", strategy=strategy)
     template = ItemTemplate.objects.create(name="task1")
     packages = MissionPackages.objects.create(mission=mission, strategy=strategy)
@@ -135,7 +135,7 @@ def annotated_packages():
 
 @pytest.fixture
 @pytest.mark.django_db
-def annotated_packages_with_status(annotated_packages, user1, user2):
+def annotated_packages_with_status(packages_with_metadata, user1, user2):
     # package 1
     package = Package.objects.all()[0]
     package.status = TaskStatus.FINISHED
