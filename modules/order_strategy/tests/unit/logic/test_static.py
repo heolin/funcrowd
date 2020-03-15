@@ -72,3 +72,34 @@ def test_max_annotations(task_with_annotations, user1, user2):
     assert item.order == 2
     item = task.next_item(user1, item)
     assert item is None
+
+
+@pytest.mark.django_db
+def tests_single_annotations(task_with_items, user1, user2):
+    task = Task.objects.first()
+    task.strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task.multiple_annotations = False
+
+    item = task.next_item(user1, None)
+    assert item.order == 0
+
+    annotation, _ = add_annotation(item, user1)
+
+    item = task.next_item(user2, None)
+    assert item.order == 0
+
+    item = task.next_item(user1, None)
+    assert item.order == 1
+
+    prev_item = item
+
+    item = task.next_item(user1, prev_item)
+    assert item.order == 2
+
+    item = task.next_item(user1, prev_item)
+    assert item.order == 2
+
+    annotation, _ = add_annotation(item, user1)
+
+    item = task.next_item(user1, item)
+    assert item is None

@@ -162,7 +162,7 @@ CORS_ALLOW_HEADERS = default_headers + (
 )
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 sentry_sdk.init(

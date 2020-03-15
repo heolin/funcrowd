@@ -73,22 +73,23 @@ class Item(models.Model):
         if not self.annotations.count():
             return
 
-        a.models.VotingAggregation(self.task, self).aggregate()
-        aggregation = a.models.ItemAggregation.objects.filter(item=self).first()
+        if self.template.annotations_fields.count():
+            a.models.VotingAggregation(self.task, self).aggregate()
+            aggregation = a.models.ItemAggregation.objects.filter(item=self).first()
 
-        probability = aggregation.get_probability()
-        support = aggregation.get_probability()
+            probability = aggregation.get_probability()
+            support = aggregation.get_probability()
 
-        if self.status in [NEW, IN_PROGRESS]:
-            if support >= 4 and probability > 0.7:
-                self.status = FINISHED
-                self.save()
-            elif support >= 7:
-                self.status = VERIFICATION
-                self.save()
-            elif support >= 1:
-                self.status = IN_PROGRESS
-                self.save()
+            if self.status in [NEW, IN_PROGRESS]:
+                if support >= 4 and probability > 0.7:
+                    self.status = FINISHED
+                    self.save()
+                elif support >= 7:
+                    self.status = VERIFICATION
+                    self.save()
+                elif support >= 1:
+                    self.status = IN_PROGRESS
+                    self.save()
 
-        if self.package:
-            self.package.update_status()
+            if self.package:
+                self.package.update_status()

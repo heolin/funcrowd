@@ -37,29 +37,12 @@ def test_annotations(annotations, user1, user2):
     searcher = PackagesSearch(mp, {})
 
     package = searcher.next_package(user1, None)
-    assert package.order == 1
+    assert package.order == 3
     package = searcher.next_package(user1, package)
-    assert package.order == 2
+    assert package.order == 4
 
     package = searcher.next_package(user2, None)
-    assert package.order == 1
-
-
-@pytest.mark.django_db
-def test_max_annotations(annotations, user1, user2):
-    mission = Mission.objects.first()
-    mp = mission.packages
-    mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    mp.max_annotations = 1
-    searcher = PackagesSearch(mp, {})
-
-    package = searcher.next_package(user1, None)
-    assert package.order == 1
-    package = searcher.next_package(user1, package)
     assert package.order == 2
-
-    package = searcher.next_package(user2, None)
-    assert package.order == 1
 
 
 @pytest.mark.django_db
