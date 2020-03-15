@@ -13,7 +13,7 @@ class UserTaskProgress(models.Model):
     user = models.ForeignKey(EndWorker, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     items_done = models.IntegerField(default=0)
-    status = models.CharField(default=TaskStatus.LOCKED, choices=TASK_STATUSES, max_length=32)
+    status = models.CharField(choices=TASK_STATUSES, max_length=32)
 
     def __str__(self):
         return f"UserTaskProgress({self.user}, {self.task}, {self.status})"
