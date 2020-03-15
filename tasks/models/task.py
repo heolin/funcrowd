@@ -28,7 +28,6 @@ class Task(models.Model):
     parent = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
     initial_status = models.CharField(blank=True, null=True,
                                       choices=TASK_STATUSES, max_length=32)
-
     metadata = JSONField(blank=True, default=dict)
 
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name="tasks")
@@ -36,6 +35,7 @@ class Task(models.Model):
 
     max_annotations = models.IntegerField(default=0)
     multiple_annotations = models.BooleanField(default=False)
+    permanent_task = models.BooleanField(default=False)
 
     order = models.IntegerField(default=0)
 
