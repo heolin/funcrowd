@@ -43,7 +43,7 @@ class UserTaskProgress(models.Model):
         last_status = self.status
 
         if self.status == TaskStatus.LOCKED:
-            if parent_progress:
+            if not parent_progress:
                 self.status = TaskStatus.UNLOCKED
             elif parent_progress.status == TaskStatus.FINISHED:
                 self.status = TaskStatus.UNLOCKED
