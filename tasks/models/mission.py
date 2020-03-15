@@ -25,7 +25,7 @@ class Mission(models.Model):
     order = models.IntegerField(default=0)
     parent = models.ForeignKey('Mission', blank=True, null=True, on_delete=models.CASCADE)
     initial_status = models.CharField(blank=True, null=True,
-                                     choices=MISSION_STATUSES, max_length=32)
+                                      choices=MISSION_STATUSES, max_length=32)
 
     class Meta:
         ordering = ['order']

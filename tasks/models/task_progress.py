@@ -18,6 +18,14 @@ class UserTaskProgress(models.Model):
     def __str__(self):
         return f"UserTaskProgress({self.user}, {self.task}, {self.status})"
 
+    def save(self, *args, **kwargs):
+        if not self.status:
+            if self.task.initial_status:
+                self.status = self.task.initial_status
+            else:
+                self.status = TaskStatus.LOCKED
+        super(UserTaskProgress, self).save(*args, **kwargs)
+
     def update(self):
         self.items_done = Annotation.objects.filter(
             annotated=True, skipped=False, rejected=False,

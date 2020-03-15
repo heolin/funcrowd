@@ -2,10 +2,10 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.db.models import IntegerField, FloatField
-from django.db.models.functions import Cast, Coalesce, Greatest
-from django.db.models.functions import Ceil
+from django.db.models import IntegerField
 from django.contrib.postgres.fields import JSONField
+
+from tasks.consts import TASK_STATUSES
 from tasks.models.mission import Mission
 
 from modules.order_strategy.models import Strategy
@@ -26,6 +26,8 @@ class Task(models.Model):
     instruction = models.TextField(default="", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('Task', blank=True, null=True, on_delete=models.CASCADE)
+    initial_status = models.CharField(blank=True, null=True,
+                                      choices=TASK_STATUSES, max_length=32)
 
     metadata = JSONField(blank=True, default=dict)
 

@@ -34,6 +34,7 @@ class TaskStatus:
     UNLOCKED = "UNLOCKED"
     IN_PROGRESS = "IN_PROGRESS"
     FINISHED = "FINISHED"
+    PERMANENT = "PERMANENT"
 
 
 TASK_STATUSES = (
@@ -41,6 +42,7 @@ TASK_STATUSES = (
     (TaskStatus.UNLOCKED, "Unlocked"),
     (TaskStatus.IN_PROGRESS, "InProgress"),
     (TaskStatus.FINISHED, "Finished"),
+    (TaskStatus.PERMANENT, "Permanent"),
 )
 
 
