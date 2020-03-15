@@ -43,9 +43,7 @@ class UserTaskProgress(models.Model):
         last_status = self.status
 
         if self.status == TaskStatus.LOCKED:
-            if self.task.permanent_task:
-                self.status = TaskStatus.PERMANENT
-            elif not parent_progress:
+            if parent_progress:
                 self.status = TaskStatus.UNLOCKED
             elif parent_progress.status == TaskStatus.FINISHED:
                 self.status = TaskStatus.UNLOCKED
@@ -55,6 +53,9 @@ class UserTaskProgress(models.Model):
         if self.status == TaskStatus.IN_PROGRESS:
             if self.items_done == self.items_count:
                 self.status = TaskStatus.FINISHED
+
+        if self.task.permanent_task and self.status == TaskStatus.UNLOCKED:
+            self.status = TaskStatus.PERMANENT
 
         if commit and last_status != self.status:
             self.save()
