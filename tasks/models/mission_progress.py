@@ -27,7 +27,8 @@ class UserMissionProgress(models.Model):
 
     def update(self):
         self.tasks_done = UserTaskProgress.objects.filter(
-            user=self.user, task__mission=self.mission, status=TaskStatus.FINISHED).count()
+            user=self.user, task__mission=self.mission,
+            status__in=[TaskStatus.FINISHED, TaskStatus.PERMANENT]).count()
 
         self.update_status(False)
         self.save()
