@@ -24,7 +24,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 1,
                 'NEW': 0,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 2
@@ -37,7 +38,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -62,7 +64,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 1,
                 'NEW': 0,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {
                 'FINISHED': 1,
@@ -79,7 +82,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -104,7 +108,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 1,
                 'NEW': 0,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {
                 'FINISHED': 1,
@@ -121,7 +126,8 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -142,7 +148,6 @@ def test_stats_packages(annotated_packages_with_status, user1):
     # get stats for not logged user
     response = client.get(f'/api/v1/missions/{mission.id}/search/stats/?aggregation=city')
     assert response.status_code == 200
-    print(response.data)
 
     expected_values = [
         {
@@ -153,7 +158,8 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'IN_PROGRESS': 1,
                 'NEW': 0,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 2
@@ -166,7 +172,8 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -179,7 +186,8 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -192,7 +200,8 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
@@ -205,7 +214,8 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'IN_PROGRESS': 0,
                 'NEW': 1,
                 'LOCKED': 0,
-                'UNLOCKED': 0
+                'UNLOCKED': 0,
+                'PERMANENT': 0
             },
             'user_status': {},
             'total': 1
