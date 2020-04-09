@@ -1,7 +1,7 @@
 import pandas as pd
 from modules.packages.consts import USER_PACKAGE_STATUSES
 from modules.packages.models import UserPackageProgress
-from tasks.consts import TASK_STATUSES
+from tasks.consts import TASK_STATUSES, STATUSES
 from modules.packages.models.search.packages_search import PackagesSearch
 
 
@@ -57,7 +57,7 @@ class PackageSearchStatsAggregator(PackagesSearch):
                 f"package__metadata__{aggregation_field}")['status'].value_counts(
             ).unstack().fillna(0)
 
-        for column, _ in USER_PACKAGE_STATUSES:
+        for column in STATUSES:
             if column not in df_user_status:
                 df_user_status[column] = 0
 

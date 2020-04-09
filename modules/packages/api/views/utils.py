@@ -96,7 +96,7 @@ def create_workbook(report):
             group_start_row = current_row
             max_rows = 0
             for question_index, question in enumerate(questions):
-                answers = data_row[question].split(SEPARATOR)
+                answers = str(data_row[question]).split(SEPARATOR)
                 probs = str(data_row[question+"_prob"]).split(SEPARATOR)
                 max_rows = max(max_rows, len(answers))
                 for answer_row, values in enumerate(zip(answers, probs)):
