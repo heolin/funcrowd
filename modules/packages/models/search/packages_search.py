@@ -43,16 +43,15 @@ class PackagesSearch(IStrategyClient):
     def prev_item(self, user, item):
         return self.mission_packages.strategy.prev(self, user, item)
 
-    def exclude_items_with_user_annotations(self, user):
+    def exclude_items_with_user_annotations(self, packages, user):
         # excluded packages already finished by the user
-        packages = self.mission_packages.packages.filter(
+        user_packages = self.mission_packages.packages.filter(
             progress__user=user, progress__status=UserPackageStatus.FINISHED)
-        packages = self.items.exclude(id__in=packages)
+        packages = packages.exclude(id__in=user_packages)
         return packages
 
     def exclude_max_annotations(self, packages):
         # collects all unfinished packages
-        packages = packages.filter(**self.search)
         packages = packages.annotate(
             packages_done=Count("progress", only=Q(progress__status=UserPackageStatus.FINISHED)))
         if self.mission_packages.max_annotations > 0:
@@ -61,5 +60,6 @@ class PackagesSearch(IStrategyClient):
         return packages
 
     def annotate_annotations_done(self, packages):
-        return packages.annotate(
-            annotations_done=models.Count('items__annotations__user') / self.items_in_package)
+        return packages.annotate(annotations_done=models.Value(0, models.IntegerField()))
+        # return packages.annotate(
+        #     annotations_done=models.Count('items__annotations__user') / self.items_in_package)

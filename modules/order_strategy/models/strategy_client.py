@@ -13,7 +13,7 @@ class IStrategyClient:
         raise NotImplemented
 
     @abstractmethod
-    def exclude_items_with_user_annotations(self, user):
+    def exclude_items_with_user_annotations(self, items, user):
         raise NotImplemented
 
     @abstractmethod
