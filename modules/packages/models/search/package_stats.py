@@ -1,4 +1,6 @@
+import locale
 import pandas as pd
+
 from modules.packages.consts import USER_PACKAGE_STATUSES
 from modules.packages.models import UserPackageProgress
 from tasks.consts import STATUSES
@@ -43,6 +45,9 @@ class PackageSearchStatsAggregator(PackagesSearch):
             if column not in df_package_status:
                 df_package_status[column] = 0
 
+        df_package_status = df_package_status.loc[
+            sorted(df_package_status.index, key=locale.strxfrm)]
+
         return df_package_status
 
     def _get_user_progress_status_data(self, user, aggregation_field):
@@ -60,6 +65,9 @@ class PackageSearchStatsAggregator(PackagesSearch):
         for column, _ in USER_PACKAGE_STATUSES:
             if column not in df_user_status:
                 df_user_status[column] = 0
+
+        df_user_status = df_user_status.loc[
+            sorted(df_user_status.index, key=locale.strxfrm)]
 
         return df_user_status
 
