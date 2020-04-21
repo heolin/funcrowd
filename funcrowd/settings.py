@@ -1,4 +1,5 @@
 import os
+import locale
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -193,3 +194,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
 events_manager = EventsManager()
+
+# Locale
+locale.setlocale(locale.LC_ALL, env('LC_ALL'))
