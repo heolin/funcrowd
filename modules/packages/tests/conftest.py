@@ -164,4 +164,5 @@ def add_annotation(package, item, user):
     annotation.data = {"output": "1"}
     annotation.annotated = True
     annotation.save()
+    annotation.item.update_status()
     user.on_annotation(annotation)

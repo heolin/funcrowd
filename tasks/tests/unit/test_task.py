@@ -38,16 +38,18 @@ def test_mission_total_exp(task_with_items):
 def test_exclude_items_with_user_annotations(task_with_items, user1, user2):
     task = Task.objects.get(id=1)
 
-    items = task.exclude_items_with_user_annotations(user1)
+    items = task.items.all()
+    items = task.exclude_items_with_user_annotations(items, user1)
     assert items.count() == 4
 
     item = task.items.first()
     annotation, _ = add_annotation(item, user1)
 
-    items = task.exclude_items_with_user_annotations(user1)
+    items = task.exclude_items_with_user_annotations(items, user1)
     assert items.count() == 3
 
-    items = task.exclude_items_with_user_annotations(user2)
+    items = task.items.all()
+    items = task.exclude_items_with_user_annotations(items, user2)
     assert items.count() == 4
 
 

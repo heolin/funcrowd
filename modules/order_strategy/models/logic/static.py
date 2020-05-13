@@ -6,7 +6,7 @@ class StaticStrategyLogic(BaseStrategyLogic):
     def next(self):
         items = self.task.items
         if not self.task.multiple_annotations:
-            items = self.task.exclude_items_with_user_annotations(self.user)
+            items = self.task.exclude_items_with_user_annotations(items, self.user)
 
         if self.item:
             return items.filter(order__gt=self.item.order).first()

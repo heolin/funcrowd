@@ -33,7 +33,10 @@ class Package(models.Model):
         max_annotations = self.parent.max_annotations
 
         if self.status in [NEW, IN_PROGRESS]:
-            if support >= int(max_annotations / 2) and probability > 0.5:
+            if max_annotations == 0 and support >= 1:
+                self.status = IN_PROGRESS
+                self.save()
+            elif support >= int(max_annotations / 2) and probability > 0.5:
                 self.status = FINISHED
                 self.save()
             elif support >= max_annotations:

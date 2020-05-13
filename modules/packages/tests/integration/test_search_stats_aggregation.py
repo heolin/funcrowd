@@ -23,9 +23,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
                 'NEW': 0,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 2
@@ -37,9 +35,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -63,9 +59,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
                 'NEW': 0,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {
                 'FINISHED': 1,
@@ -81,9 +75,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -107,9 +99,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
                 'NEW': 0,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {
                 'FINISHED': 1,
@@ -125,9 +115,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -157,9 +145,7 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
                 'NEW': 0,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 2
@@ -171,9 +157,7 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -185,9 +169,7 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -199,9 +181,7 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1
@@ -213,9 +193,7 @@ def test_stats_packages(annotated_packages_with_status, user1):
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
                 'NEW': 1,
-                'LOCKED': 0,
-                'UNLOCKED': 0,
-                'PERMANENT': 0
+                'VERIFICATION': 0,
             },
             'user_status': {},
             'total': 1

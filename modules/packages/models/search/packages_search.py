@@ -1,10 +1,11 @@
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 
 from modules.packages.consts import UserPackageStatus
 from modules.packages.models.utils.query import UNFINISHED_PACKAGES_QUERY
 from modules.packages.models.package import Package
 from modules.order_strategy.models.strategy_client import IStrategyClient
+from tasks.consts import VERIFICATION, FINISHED
 
 
 class PackagesSearch(IStrategyClient):
@@ -52,14 +53,17 @@ class PackagesSearch(IStrategyClient):
 
     def exclude_max_annotations(self, packages):
         # collects all unfinished packages
-        packages = packages.annotate(
-            packages_done=Count("progress", only=Q(progress__status=UserPackageStatus.FINISHED)))
-        if self.mission_packages.max_annotations > 0:
-            packages = packages.filter(packages_done__lt=self.mission_packages.max_annotations)
         packages = self.annotate_annotations_done(packages)  # adding items done by user, used for sorting
         return packages
 
     def annotate_annotations_done(self, packages):
-        return packages.annotate(annotations_done=models.Value(0, models.IntegerField()))
-        # return packages.annotate(
-        #     annotations_done=models.Count('items__annotations__user') / self.items_in_package)
+        packages = packages.annotate(
+            annotations_done=Sum(
+                models.Case(
+                    models.When(progress__status=UserPackageStatus.FINISHED, then=1),
+                    default=0,
+                    output_field=models.IntegerField()
+                )
+            )
+        )
+        return packages

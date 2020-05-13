@@ -4,6 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get -y install git locales locales-all
 
+
 COPY requirements.txt /app
 RUN pip install -r requirements.txt --no-cache-dir
 

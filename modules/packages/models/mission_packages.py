@@ -8,7 +8,7 @@ from tasks.models.mission import Mission
 
 class MissionPackages(models.Model):
     mission = models.OneToOneField(Mission, on_delete=models.CASCADE, related_name="packages")
-    max_annotations = models.IntegerField(default=0)
+    max_annotations = models.IntegerField()
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
 
     def __str__(self):

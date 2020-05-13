@@ -111,6 +111,8 @@ def tasks_annotations():
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mission = Mission.objects.create(name="Test mission 4")
     mission_package = MissionPackages.objects.create(mission=mission, strategy=strategy)
+    mission_package.max_annotations = 7
+    mission_package.save()
     task = Task.objects.create(mission=mission, name="Task 1", strategy=strategy)
     template = ItemTemplate.objects.create(name="Test template")
     first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
