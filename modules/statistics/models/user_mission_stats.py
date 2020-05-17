@@ -31,21 +31,27 @@ class UserMissionStats(models.Model):
     def update(self):
         self.annotated_items = t.models.Annotation.objects.filter(
             user=self.user).filter(item__task__mission=self.mission).filter(
-            skipped=False).values("item").distinct().count()
+            skipped=False, annotated=True).values("item").distinct().count()
 
-        self.annotated_documents = t.models.Annotation.objects.filter(
+        annotated_documents = t.models.Annotation.objects.filter(
             user=self.user).filter(item__task__mission=self.mission).filter(
-            skipped=False).values("item__package").distinct().count()
+            skipped=False, annotated=True)
+
+        self.annotated_documents = annotated_documents.values("item__package").distinct().count()
 
         self.high_agreement_count = f.models.annotation_feedback.AnnotationFeedback.objects.filter(
             annotation__item__task__mission=self.mission).filter(
             annotation__user=self.user).filter(
+            annotation__annotated=True).filter(
             annotation__skipped=False).filter(
             score__gte=HIGH_AGREEMENT_THRESHOLD).count()
 
         self.high_agreement_percentage = 0
         if self.annotated_items:
-            self.high_agreement_percentage = self.high_agreement_count / self.annotated_items
+            annotated_documents_feedback = annotated_documents.exclude(
+                item__task__feedback=None).count()
+            self.high_agreement_percentage = \
+                self.high_agreement_count / annotated_documents_feedback
 
         self.save()
 
