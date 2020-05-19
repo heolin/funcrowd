@@ -7,5 +7,5 @@ class PackageProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserPackageProgress
-        fields = ('user', 'package', 'item_done', 'status')
+        fields = ('user', 'package', 'item_done', 'status', 'reward')
 

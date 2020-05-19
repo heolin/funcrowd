@@ -1,17 +1,21 @@
-# -*- coding: utf-8 -*-annotationannotation
+# -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 from modules.aggregation.consts import SEPARATOR
-from tasks.models.item import Item
 import numpy as np
 
 
 class ItemAggregation(models.Model):
+    """
+    ItemAggregation stores aggregated information about EndWorkers answers.
+    Data stored in this object are output from Aggregators
+    """
+
     data = JSONField(blank=True, null=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="aggregations")
+    item = models.ForeignKey("tasks.Item", on_delete=models.CASCADE, related_name="aggregations")
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=20, choices=None)
 

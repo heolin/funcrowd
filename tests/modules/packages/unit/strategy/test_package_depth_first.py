@@ -1,7 +1,7 @@
 import pytest
 
 from modules.packages.models.search.packages_search import PackagesSearch
-from modules.packages.tests.conftest import add_annotation
+from tests.modules.packages.conftest import add_annotation
 from tasks.models import Mission
 from modules.order_strategy.models import Strategy
 

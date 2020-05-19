@@ -1,8 +1,8 @@
 import pandas as pd
 
 from modules.aggregation.consts import SEPARATOR
-from modules.aggregation.models.aggregations.base import BaseAggregation, AggregationResult
-from tasks.models import Item
+from modules.aggregation.aggregators.base import BaseAggregator, AggregationResult
+from django.apps import apps
 
 MIN_PROBABILITY_THRESHOLD = 0.5
 
@@ -32,11 +32,13 @@ def get_list_column_values(group, column):
     probability = SEPARATOR.join(map(str, (top_counts / counts.sum()).round(2)))
     support = SEPARATOR.join(map(str, top_counts))
     return answer, probability, support
-  
 
-class VotingAggregation(BaseAggregation):
+
+class VotingAggregator(BaseAggregator):
 
     def _logic(self, df):
+        Item = apps.get_model("tasks.Item")
+
         columns = [c for c in list(df) if c not in ['user', 'item']]
         df_results = pd.DataFrame()
         for index, group in df.groupby('item'):

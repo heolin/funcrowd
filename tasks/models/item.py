@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.db import models
-from django.contrib.postgres.fields import JSONField
 
-from tasks.models.annotation import Annotation
-from tasks.models.item_template import ItemTemplate
+from django.apps import apps
+from django.contrib.postgres.fields import JSONField
+from django.db import models
+
+from modules.aggregation.aggregators import VotingAggregator
 from modules.packages.models.package import Package
 from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
-import modules.aggregation as a
+from tasks.models.annotation import Annotation
 
 
 class Item(models.Model):
@@ -73,15 +74,17 @@ class Item(models.Model):
         if not self.annotations.count():
             return
 
+        ItemAggregation = apps.get_model("aggregation.ItemAggregation")
+
         if self.template.annotations_fields.count():
-            a.models.VotingAggregation(self.task, self).aggregate()
-            aggregation = a.models.ItemAggregation.objects.filter(item=self).first()
+            VotingAggregator(self.task, self).aggregate()
+            aggregation = ItemAggregation.objects.filter(item=self).first()
 
             probability = aggregation.get_probability()
-            support = aggregation.get_probability()
+            support = aggregation.get_support()
 
             if self.status in [NEW, IN_PROGRESS]:
-                if support >= 4 and probability > 0.7:
+                if support >= 4 and probability > 0.5:
                     self.status = FINISHED
                     self.save()
                 elif support >= 7:

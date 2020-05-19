@@ -1,17 +1,16 @@
 import pandas as pd
 from abc import ABC, abstractmethod
 
-from modules.aggregation.models.item_aggregation import ItemAggregation
-from tasks.models import Annotation
+from django.apps import apps
 
 
-class AggregationResult(object):
+class AggregationResult:
     def __init__(self, item_id, data):
         self.item_id = item_id
         self.data = data
 
 
-class BaseAggregation(ABC):
+class BaseAggregator(ABC):
     def __init__(self, task, item=None, exclude_skipped=False):
         self.task = task
         self.item = item
@@ -22,6 +21,7 @@ class BaseAggregation(ABC):
         return []
 
     def _get_annotations_table(self):
+        Annotation = apps.get_model("tasks.Annotation")
         result = []
 
         annotations = Annotation.objects.filter(item__task=self.task).exclude(user=None)
@@ -40,6 +40,7 @@ class BaseAggregation(ABC):
         return pd.DataFrame(result).fillna("<EMPTY>")
 
     def aggregate(self):
+        ItemAggregation = apps.get_model("aggregation.ItemAggregation")
         aggregations = []
         for result in self._logic(self._get_annotations_table()):
             aggregation, _ = ItemAggregation.objects.get_or_create(item_id=result.item_id)

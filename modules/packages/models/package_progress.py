@@ -1,28 +1,48 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
+from typing import Optional
+
+from django.apps import apps
 from django.db import models
 
-from modules.packages.models import Package
 from modules.packages.consts import UserPackageStatus, USER_PACKAGE_STATUSES
-from tasks.models import Annotation
-
+from modules.packages.models.utils import get_reward_token
 from users.models.end_workers import EndWorker
 
 
 class UserPackageProgress(models.Model):
+    """
+    Stores information about current progress of `EndWorker`'s annotation
+    for selected `Package`.
+
+    It generates `reward_token`, which is an unique token that can be used
+    in mturk-like scenarios. If `EndWorker` finish annotations, the code will
+    be available int the `reward` variable.
+    """
     user = models.ForeignKey(EndWorker, on_delete=models.CASCADE)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE,
+    package = models.ForeignKey("Package", on_delete=models.CASCADE,
                                 related_name="progress")
     items_done = models.IntegerField(default=0)
     status = models.CharField(choices=USER_PACKAGE_STATUSES,
                               default=UserPackageStatus.NONE,
                               max_length=32)
 
+    reward_token = models.CharField(max_length=32, default=get_reward_token)
+
     def __str__(self):
         return f"UserPackageProgress({self.user}, {self.package}, {self.status})"
 
     def update(self):
+        """
+        Run after each annotation finished by the EndWorker.
+        Updates `items_done` and `status`.
+
+        :return:
+        """
+        Annotation = apps.get_model("tasks.Annotation")
+
         self.items_done = Annotation.objects.filter(
             annotated=True, rejected=False,
             item__package=self.package, user=self.user
@@ -32,6 +52,13 @@ class UserPackageProgress(models.Model):
         self.save()
 
     def update_status(self, commit=True):
+        """
+        Updates status based on items annotated by the EndWorker.
+
+        :param commit: if True, it will save changes to database
+        :return:
+        """
+
         last_status = self.status
         if self.status == UserPackageStatus.NONE:
             if self.items_done > 0:
@@ -51,3 +78,10 @@ class UserPackageProgress(models.Model):
     @property
     def items_count(self):
         return self.package.items.count()
+
+    @property
+    def reward(self) -> Optional[str]:
+        if self.progress >= 1.0:
+            return self.reward_token
+        return None
+
