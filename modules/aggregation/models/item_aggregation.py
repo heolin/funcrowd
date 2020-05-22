@@ -29,6 +29,7 @@ class ItemAggregation(models.Model):
             )
 
     def get_probability(self):
+        return 0.0
         values = []
         if not self.data:
             return 0
@@ -44,6 +45,7 @@ class ItemAggregation(models.Model):
             return np.average(values)
 
     def get_support(self):
+        return 0.0
         values = []
         if not self.data:
             return 0

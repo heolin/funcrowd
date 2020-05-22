@@ -1,26 +1,46 @@
+from typing import List
+
 import pandas as pd
-from abc import ABC, abstractmethod
 
 from django.apps import apps
 
+from modules.aggregation.aggregators.field_result import FieldResult, ListFieldResult, ValueFieldResult
+from modules.aggregation.aggregators.item_result import ItemResult
+from modules.aggregation.aggregators.utils import decompose_list_column
+from modules.aggregation.consts import EMPTY_VALUE
 
-class AggregationResult:
-    def __init__(self, item_id, data):
-        self.item_id = item_id
-        self.data = data
+MIN_PROBABILITY_THRESHOLD = 0.5
 
 
-class BaseAggregator(ABC):
+class BaseAggregator:
+    """
+    Aggregates annotations and selects final answer for each
+    annotation field in the item.
+
+    Aggregation can be performed for all items in the task at once,
+    or, if item object is passed in the constructor, just a single item.
+    """
+
     def __init__(self, task, item=None, exclude_skipped=False):
         self.task = task
         self.item = item
+
+        if self.item:
+            self.template = self.item.template
+        else:
+            # if aggregation is done for the whole task, it will assume
+            # that all items share the same template
+            self.template = self.task.items.first().template
+
         self.exclude_skipped = exclude_skipped
 
-    @abstractmethod
-    def _logic(self, df) -> [AggregationResult]:
-        return []
+    def _get_annotations_table(self) -> pd.DataFrame:
+        """
+        Generates a data frame with all values for annotations
+        from all fields from all users.
 
-    def _get_annotations_table(self):
+        :return: pd.DataFrame,
+        """
         Annotation = apps.get_model("tasks.Annotation")
         result = []
 
@@ -33,18 +53,92 @@ class BaseAggregator(ABC):
         for data, item, user in annotations.values_list("data", "item", "user__username"):
             data['item'] = item
             data['user'] = user
-            for field in self.item.template.annotations_fields:
+            for field in self.template.annotations_fields:
                 if field.name not in data:
                     data[field.name] = None
             result.append(data)
-        return pd.DataFrame(result).fillna("<EMPTY>")
+        return pd.DataFrame(result).fillna(EMPTY_VALUE)
+
+    def _get_field_result(self, group: pd.DataFrame, field_name: str) -> ValueFieldResult:
+        """
+        Aggregates answers for selected field for one item, selects most frequent
+        answer as the final one. Probability is computed as percentage frequency.
+
+        :param group: pd.DataFrame, contains all answers for one item
+        :param field_name: field for which we want to find the result answer
+        :return: ValueFieldResult
+        """
+        counts = group[field_name].value_counts()
+        answer = str(counts.index[0])
+        support = int(counts.iloc[0])
+        probability = float((support / counts.sum()).round(2))
+        return ValueFieldResult(answer, probability, support)
+
+    def _get_list_field_result(self, group: pd.DataFrame, field_name: str) -> ListFieldResult:
+        """
+        Aggregates answer for selected field containing a list of values.
+        Selects a list of most frequent values as a results.
+        In this implementation all answers with probability value are
+        over MIN_PROBABILITY_THRESHOLD are accepted in the final list.
+
+        :param group: pd.DataFrame, contains all answers for one item
+        :param field_name: field for which we want to find the result answer
+        :return: ListFieldResult
+        """
+
+        df_group = decompose_list_column(group, field_name)
+        df_counts = df_group[field_name].value_counts().to_frame(name="counts")
+        df_counts['probability'] = df_counts['counts'] / len(group)
+
+        # select only answers, which probability is over the threshold
+        df_results = df_counts[df_counts['probability'] >= MIN_PROBABILITY_THRESHOLD]
+        if not len(df_results):
+            df_results = df_counts
+
+        df_results = df_results.sort_index()
+        answers = list(df_results.index)
+        probabilities = list(df_results['probability'].round(2))
+        supports = list(df_results['counts'])
+
+        return ListFieldResult(answers, probabilities, supports)
+
+    def _logic(self, df: pd.DataFrame) -> List[ItemResult]:
+        """
+        Aggregates annotations done for items and selects, one final answer
+
+        :param df: annotation table, result from `_get_annotations_table`
+        :return: a list of ItemResult, one for each item
+        """
+        field_names = [c for c in list(df) if c not in ['user', 'item']]
+
+        item_results = []
+        for item_id, group in df.groupby('item'):
+            item_result = ItemResult(item_id, len(group))
+
+            for field_name in field_names:
+                column_type = self.template.fields.get(name=field_name).type
+                if column_type == 'list':
+                    field_result = self._get_list_field_result(group, field_name)
+                else:
+                    field_result = self._get_field_result(group, field_name)
+                item_result.add_answer(field_name, field_result)
+
+            item_results.append(item_result)
+
+        return item_results
 
     def aggregate(self):
+        """
+        Performs aggregation of answers for selected item/items,
+        and updates ItemAggregation objects with the new values.
+
+        :return: List[ItemAggregation]
+        """
         ItemAggregation = apps.get_model("aggregation.ItemAggregation")
         aggregations = []
         for result in self._logic(self._get_annotations_table()):
             aggregation, _ = ItemAggregation.objects.get_or_create(item_id=result.item_id)
-            aggregation.data = result.data
+            aggregation.data = result.to_json()
             aggregation.type = self.__class__.__name__
             aggregation.save()
             aggregations.append(aggregation)

@@ -6,7 +6,7 @@ from django.apps import apps
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
-from modules.aggregation.aggregators import VotingAggregator
+from modules.aggregation.aggregators import BaseAggregator
 from modules.packages.models.package import Package
 from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
 from tasks.models.annotation import Annotation
@@ -16,7 +16,7 @@ class Item(models.Model):
     data = JSONField()
     task = models.ForeignKey("Task", on_delete=models.CASCADE, related_name="items")
     package = models.ForeignKey(Package, null=True, blank=True,
-                                 on_delete=models.CASCADE, related_name="items")
+                                on_delete=models.CASCADE, related_name="items")
     template = models.ForeignKey("ItemTemplate", on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
     order = models.IntegerField(default=0)
@@ -77,7 +77,7 @@ class Item(models.Model):
         ItemAggregation = apps.get_model("aggregation.ItemAggregation")
 
         if self.template.annotations_fields.count():
-            VotingAggregator(self.task, self).aggregate()
+            BaseAggregator(self.task, self).aggregate()
             aggregation = ItemAggregation.objects.filter(item=self).first()
 
             probability = aggregation.get_probability()

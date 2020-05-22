@@ -49,6 +49,8 @@ def one_task_multiple_items_with_reference_annotation(
             output_field.name: 1,
         })
 
+    return task
+
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -91,3 +93,5 @@ def one_task_multiple_items_with_multiple_annotations_and_reference(
                                user=users[user_index],
                                data={output_field.name: key})
                 user_index += 1
+
+    return task

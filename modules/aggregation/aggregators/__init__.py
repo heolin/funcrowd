@@ -1,1 +1,1 @@
-from .voting import VotingAggregator
+from .base import BaseAggregator
