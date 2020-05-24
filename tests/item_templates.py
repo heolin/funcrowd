@@ -28,6 +28,30 @@ def item_template_one_input_one_output():
 
 @pytest.fixture
 @pytest.mark.django_db
+def item_template_one_input_one_list_output():
+    """
+    ItemTemplate for item with one input field, and one output field.
+    """
+    return ItemTemplate.create_template_from_schema({
+        "name": "template",
+        "fields": [
+            {
+                "name": "data_field",
+                "widget": "TextLabel"
+            },
+            {
+                "name": "list_input_field",
+                "widget": "InputField",
+                "type": "list",
+                "editable": True,
+                "feedback": True
+            }
+        ]
+    })
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def item_template_one_input_one_output_data_source():
     return ItemTemplate.create_template_from_schema({
         """

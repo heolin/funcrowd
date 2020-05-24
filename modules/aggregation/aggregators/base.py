@@ -1,10 +1,10 @@
 from typing import List
 
 import pandas as pd
-
 from django.apps import apps
+from django.db import transaction
 
-from modules.aggregation.aggregators.field_result import FieldResult, ListFieldResult, ValueFieldResult
+from modules.aggregation.aggregators.field_result import ListFieldResult, ValueFieldResult
 from modules.aggregation.aggregators.item_result import ItemResult
 from modules.aggregation.aggregators.utils import decompose_list_column
 from modules.aggregation.consts import EMPTY_VALUE
@@ -68,7 +68,10 @@ class BaseAggregator:
         :param field_name: field for which we want to find the result answer
         :return: ValueFieldResult
         """
-        counts = group[field_name].value_counts()
+        # making sure the index is sorted for values with the same count
+        counts = group[field_name].value_counts().sort_index(
+            ascending=False).sort_values(ascending=False)
+
         answer = str(counts.index[0])
         support = int(counts.iloc[0])
         probability = float((support / counts.sum()).round(2))
@@ -94,8 +97,8 @@ class BaseAggregator:
         df_results = df_counts[df_counts['probability'] >= MIN_PROBABILITY_THRESHOLD]
         if not len(df_results):
             df_results = df_counts
-
         df_results = df_results.sort_index()
+
         answers = list(df_results.index)
         probabilities = list(df_results['probability'].round(2))
         supports = list(df_results['counts'])
@@ -124,9 +127,9 @@ class BaseAggregator:
                 item_result.add_answer(field_name, field_result)
 
             item_results.append(item_result)
-
         return item_results
 
+    @transaction.atomic
     def aggregate(self):
         """
         Performs aggregation of answers for selected item/items,
