@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.db import models
-from django.contrib.postgres.fields import JSONField
 
-from modules.aggregation.consts import SEPARATOR
 import numpy as np
+from django.contrib.postgres.fields import JSONField
+from django.db import models
 
 
 class ItemAggregation(models.Model):
     """
     ItemAggregation stores aggregated information about EndWorkers answers.
-    Data stored in this object are output from Aggregators
+    The `data` field contains an output from the `Aggregator` in a form of
+    sterialized `ItemResult`.
     """
 
     data = JSONField(blank=True, null=True)
@@ -23,38 +23,55 @@ class ItemAggregation(models.Model):
         verbose_name_plural = "ItemAggregations"
 
     def __str__(self):
-        return "{}({})".format(
-            self.__class__.__name__,
-            self.item
-            )
+        return f"{self.__class__.__name__}(#{self.id} - {self.item.id}"
 
-    def get_probability(self):
-        return 0.0
+    def get_probability(self) -> float:
+        """
+        Aggregated value of probabilities for this items.
+        Computed as a average from all its field results' probabilities.
+        For ListFieldResults, all values are counted separately.
+        """
+        item_result = self.data
+        if not item_result:
+            return 0.0
+
         values = []
-        if not self.data:
-            return 0
-        for key, value in self.data.items():
-            if not key.endswith("_prob"):
-                continue
-            if type(value) is str:
-                values.extend(map(float, value.split(SEPARATOR)))
+        for field_name, field_result in item_result['answers'].items():
+            print(field_result)
+            if type(field_result['probability']) is list:
+                values.extend(field_result['probability'])
             else:
-                values.append(value)
-
+                values.append(field_result['probability'])
         if values:
             return np.average(values)
-
-    def get_support(self):
         return 0.0
-        values = []
-        if not self.data:
+
+    def get_support(self) -> int:
+        """
+        Aggregated value of support for this items.
+        Computed as a max from all its field results' support.
+        For ListFieldResults, all values are counted separately.
+        """
+        item_result = self.data
+        if not item_result:
             return 0
-        for key, value in self.data.items():
-            if not key.endswith("_support"):
-                continue
-            if type(value) is str:
-                values.extend(map(int, value.split(SEPARATOR)))
+
+        values = []
+        for field_name, field_result in item_result['answers'].items():
+            if type(field_result['support']) is list:
+                values.extend(field_result['support'])
             else:
-                values.append(value)
+                values.append(field_result['support'])
         if values:
             return np.max(values)
+        return 0
+
+    def get_annotations_count(self) -> int:
+        """
+        Total annotations made
+        """
+        if not self.data:
+            return 0
+
+        return self.data['annotations_count']
+

@@ -6,10 +6,12 @@ class ItemResult:
     Stores information about aggregated answers for all field for one item
     """
 
-    def __init__(self, item_id: int, annotations_count: int):
+    def __init__(self, item_id: int, annotations_count: int, answers=None):
         self.item_id = item_id
         self.annotations_count = annotations_count
-        self.answers = {}
+        if not answers:
+            answers = {}
+        self.answers = answers
 
     def add_answer(self, field_name: str, field_result: FieldResult):
         self.answers[field_name] = field_result

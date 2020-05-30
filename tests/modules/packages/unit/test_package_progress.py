@@ -16,7 +16,7 @@ def test_package_progress(task_with_items, user1):
     assert progress.status == UserPackageStatus.NONE
 
     item = package.items.all()[0]
-    add_annotation(package, item, user1)
+    add_annotation(item, user1)
 
     progress = package.get_user_progress(user1)
     assert progress.items_done == 1
@@ -25,7 +25,7 @@ def test_package_progress(task_with_items, user1):
     assert progress.reward is None
 
     item = package.items.all()[1]
-    add_annotation(package, item, user1)
+    add_annotation(item, user1)
 
     progress = package.get_user_progress(user1)
     assert progress.items_done == 2

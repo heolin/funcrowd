@@ -36,35 +36,43 @@ class Package(models.Model):
     class Meta:
         ordering = ['order']
 
-    def _get_aggregations(self) -> Tuple[float, float]:
+    def _get_aggregations(self) -> Tuple[float, int, int]:
+        """
+        Computes aggregated values of probabilit, support, annotations_count
+        for whole package based on its items' ItemAggregation objects.
+        """
         ItemAggregation = apps.get_model("aggregation.ItemAggregation")
         aggregations = ItemAggregation.objects.filter(item__package=self)
 
         probabilities = [a.get_probability() for a in aggregations]
+        supports = [a.get_support() for a in aggregations]
+        annotations_counts = [a.get_annotations_count() for a in aggregations]
 
-        support = np.max([a.get_support() for a in aggregations])
-        probability = np.min(probability)
-        return np.min(probabilities), np.min(support)
+        # add missing values, for items with no annotations - and no ItemAggregation object
+        for _ in range(self.items.count() - aggregations.count()):
+            probabilities.append(0.0)
+            supports.append(0)
+            annotations_counts.append(0)
+
+        return np.average(probabilities), min(supports), min(annotations_counts)
 
     def update_status(self):
-        print("TO SIE W OGOLE DZIEJE?")
-        print("xxxxxxxxx\n"*5)
+        probability, support, annotations_count = self._get_aggregations()
         max_annotations = self.parent.max_annotations
-        print([a.get_support() for a in aggregations])
 
         if self.status in [NEW, IN_PROGRESS]:
             if max_annotations == 0:
-                if support >= 1:
+                if annotations_count >= 1:
                     self.status = IN_PROGRESS
                     self.save()
             else:
-                if support >= int(max_annotations / 2) and probability > 0.5:
+                if annotations_count >= int(max_annotations / 2) and probability > 0.5:
                     self.status = FINISHED
                     self.save()
-                elif support >= max_annotations:
+                elif annotations_count >= max_annotations:
                     self.status = VERIFICATION
                     self.save()
-                elif support >= 1:
+                elif annotations_count >= 1:
                     self.status = IN_PROGRESS
                     self.save()
 

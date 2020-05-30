@@ -20,8 +20,8 @@ def test_tasks(task_with_items, user1, user2, db_random):
     assert orders == {1, 2, 3, 4}
 
     package = mp.packages.first()
-    add_annotation(package, package.items.all()[0], user1)
-    add_annotation(package, package.items.all()[1], user1)
+    add_annotation(package.items.all()[0], user1)
+    add_annotation(package.items.all()[1], user1)
 
     orders = set()
     for _ in range(30):
@@ -51,8 +51,8 @@ def test_max_annotations(task_with_items, user1, user2, db_random):
     assert orders == {1, 2, 3, 4}
 
     package = mp.packages.first()
-    add_annotation(package, package.items.all()[0], user1)
-    add_annotation(package, package.items.all()[1], user1)
+    add_annotation(package.items.all()[0], user1)
+    add_annotation(package.items.all()[1], user1)
 
     orders = set()
     for _ in range(30):

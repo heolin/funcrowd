@@ -9,6 +9,13 @@ from modules.aggregation.models import ItemAggregation
 # fixtures
 @pytest.fixture
 @pytest.mark.django_db
+def empty_task_aggregator(one_task_items_with_reference_annotation) -> BaseAggregator:
+    task = one_task_items_with_reference_annotation
+    return BaseAggregator(task)
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def task_aggregator(one_task_items_with_annotations_and_reference) -> BaseAggregator:
     task = one_task_items_with_annotations_and_reference
     return BaseAggregator(task)
@@ -25,7 +32,7 @@ def list_task_aggregator(one_task_items_with_list_annotations_and_reference) -> 
 @pytest.mark.django_db
 def test_get_annotations_table_single_item(one_task_items_with_annotations_and_reference):
     """
-    Test computing `annotations_table` only for selected item,
+    Test computing `annotations_table` only for a selected item,
     when item restriction is set on the aggregator.
     """
 
@@ -41,7 +48,7 @@ def test_get_annotations_table_single_item(one_task_items_with_annotations_and_r
 @pytest.mark.django_db
 def test_get_annotations_table_whole_task(task_aggregator: BaseAggregator):
     """
-    Test computing `annotations_table` for whole task
+    Test computing `annotations_table` for the whole task
     """
     aggregator = task_aggregator
     annotations_table = aggregator._get_annotations_table()
@@ -49,6 +56,17 @@ def test_get_annotations_table_whole_task(task_aggregator: BaseAggregator):
     assert len(annotations_table) == 30
     assert len(annotations_table['user'].unique()) == 5
     assert set(annotations_table.columns) == {'input_field', 'item', 'user'}
+
+
+@pytest.mark.django_db
+def test_get_annotations_table_empty_task(empty_task_aggregator: BaseAggregator):
+    """
+    Test computing `annotations_table` for an empty task
+    """
+    aggregator = empty_task_aggregator
+    annotations_table = aggregator._get_annotations_table()
+
+    assert len(annotations_table) == 0
 
 
 @pytest.mark.django_db
@@ -169,3 +187,16 @@ def test_aggregate(task_aggregator: BaseAggregator):
     assert item_aggregation.type == "BaseAggregator"
     assert set(item_aggregation.data.keys()) == \
            {'answers', 'item_id', 'annotations_count'}
+
+
+@pytest.mark.django_db
+def empty_test_aggregate(empty_task_aggregator: BaseAggregator):
+    """
+    Test performing aggregation on an empty task with no annotations
+    """
+    aggregator = empty_task_aggregator
+
+    item_aggregations = aggregator.aggregate()
+
+    assert len(item_aggregations) == 0
+    assert ItemAggregation.objects.count() == 0

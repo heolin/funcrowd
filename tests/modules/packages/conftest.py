@@ -24,7 +24,7 @@ def task_with_items():
     annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel", editable=True)
     template.fields.add(annotation_field)
 
-    packages = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=1)
+    packages = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
     package1 = Package.objects.create(parent=packages, order=1)
     package2 = Package.objects.create(parent=packages, order=2)
     package3 = Package.objects.create(parent=packages, order=3)

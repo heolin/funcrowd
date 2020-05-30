@@ -40,14 +40,15 @@ def one_task_items_with_reference_annotation(
     input_field = template.items_fields.first()
     output_field = template.annotations_fields.first()
 
-    for order in range(3):
+    for index in range(3):
         item = Item.objects.create(task=task,
                                    template=template,
-                                   data={input_field: 1},
-                                   order=order)
-        Annotation.objects.create(item=item, user=None, data={
-            output_field.name: 1,
-        })
+                                   data={input_field.name: 1},
+                                   order=index)
+
+        Annotation.objects.create(item=item,
+                                  user=None,
+                                  data={output_field.name: str(index)})
 
     return task
 
@@ -77,8 +78,10 @@ def one_task_items_with_annotations_and_reference(
         ({'0': 1, '1': 4, '2': 0}, 1),
         ({'0': 1, '1': 2, '2': 2}, 2),
     ]):
-        item = Item.objects.create(task=task, template=template,
-                                   data={input_field.name: index}, order=index)
+        item = Item.objects.create(task=task,
+                                   template=template,
+                                   data={input_field.name: index},
+                                   order=index)
 
         # create a reference annotation
         Annotation.objects.create(item=item,
