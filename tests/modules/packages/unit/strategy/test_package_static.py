@@ -6,7 +6,7 @@ from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_tasks(task_with_items, user1, user2):
+def test_tasks(task_with_items_in_packages, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
@@ -30,7 +30,7 @@ def test_tasks(task_with_items, user1, user2):
 
 
 @pytest.mark.django_db
-def test_annotations(annotations, user1, user2):
+def test_annotations(task_with_annotated_items_in_packages, user1, user2):
     mission = Mission.objects.first()
     mp = mission.packages
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")

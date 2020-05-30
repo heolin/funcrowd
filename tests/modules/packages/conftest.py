@@ -5,24 +5,18 @@ from modules.packages.consts import UserPackageStatus
 from modules.packages.models import Package, MissionPackages
 from tasks.consts import FINISHED, TaskStatus
 from tasks.models import (
-    Mission, Task, Item, ItemTemplate, ItemTemplateField
+    Task, Item
 )
 from tests.conftest import add_annotation
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def task_with_items():
-    Strategy.register_values()
-
-    mission = Mission.objects.create(id=1, name="Test mission")
+def task_with_items_in_packages(one_mission, item_template_one_input_one_output):
+    mission = one_mission
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
-
-    template = ItemTemplate.objects.create(name="task1")
-    field = ItemTemplateField.objects.create(name="value", widget="TextLabel")
-    template.fields.add(field)
-    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel", editable=True)
-    template.fields.add(annotation_field)
+    template = item_template_one_input_one_output
+    field = template.items_fields.first()
 
     packages = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
     package1 = Package.objects.create(parent=packages, order=1)
@@ -56,7 +50,7 @@ def task_with_items():
 
 @pytest.fixture
 @pytest.mark.django_db
-def annotations(task_with_items, user1, user2):
+def task_with_annotated_items_in_packages(task_with_items_in_packages, user1, user2):
     packages = MissionPackages.objects.first()
 
     # package with two annotations in all items
@@ -89,12 +83,12 @@ def annotations(task_with_items, user1, user2):
 
 @pytest.fixture
 @pytest.mark.django_db
-def packages_with_metadata():
-    Strategy.register_values()
-    mission = Mission.objects.create(name="Test mission")
-    strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
-    task = Task.objects.create(mission=mission, name="task1", strategy=strategy)
-    template = ItemTemplate.objects.create(name="task1")
+def packages_with_metadata(one_mission_one_task, item_template_one_input_one_output):
+    template = item_template_one_input_one_output
+    task = one_mission_one_task
+    mission = task.mission
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+
     packages = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=1)
 
     for order, metadata in enumerate([
@@ -112,7 +106,7 @@ def packages_with_metadata():
 
 @pytest.fixture
 @pytest.mark.django_db
-def annotated_packages_with_status(packages_with_metadata, user1, user2):
+def packages_with_metadata_and_statuses(packages_with_metadata, user1, user2):
     # package 1
     package = Package.objects.all()[0]
     package.status = TaskStatus.FINISHED
@@ -134,5 +128,3 @@ def annotated_packages_with_status(packages_with_metadata, user1, user2):
     progress = package.get_user_progress(user1)
     progress.status = UserPackageStatus.FINISHED
     progress.save()
-
-

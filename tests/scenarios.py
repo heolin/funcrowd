@@ -9,12 +9,21 @@ from tests.utils import add_annotation
 
 @pytest.fixture
 @pytest.mark.django_db
-def one_mission_one_task():
+def one_mission():
     Strategy.register_values()
     FeedbackScoreField.register_values()
 
-    # create mission and task
-    mission = Mission.objects.create(id=1, name="Test mission")
+    # create the mission
+    mission = Mission.objects.create(name="Test mission")
+    return mission
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def one_mission_one_task(one_mission):
+    mission = one_mission
+
+    # create the task
     task = Task.objects.create(
         mission=mission,
         name="Add two digits",

@@ -6,7 +6,7 @@ from tasks.models import Mission
 
 
 @pytest.mark.django_db
-def test_package_progress(task_with_items, user1):
+def test_package_progress(task_with_items_in_packages, user1):
     mission = Mission.objects.first()
     mp = mission.packages
     package = mp.packages.all()[0]

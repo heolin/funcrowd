@@ -1,12 +1,11 @@
-import pytest, json
+import pytest
 from django.test import Client
 
 from tasks.models import Mission
-from modules.order_strategy.models.strategy import Strategy
 
 
 @pytest.mark.django_db
-def test_search_stats_packages(annotated_packages_with_status, user1, user2):
+def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2):
     client = Client()
 
     mission = Mission.objects.first()
@@ -128,7 +127,7 @@ def test_search_stats_packages(annotated_packages_with_status, user1, user2):
 
 
 @pytest.mark.django_db
-def test_stats_packages(annotated_packages_with_status, user1):
+def test_stats_packages(packages_with_metadata_and_statuses, user1):
     client = Client()
 
     mission = Mission.objects.first()

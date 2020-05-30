@@ -3,7 +3,7 @@ from users.models import EndWorker
 
 
 def add_annotation(item: Item, user: EndWorker, data=None,
-                   default_field="output", default_value="1",
+                   default_field="input_field", default_value="1",
                    skipped=False, annotated=True) -> Annotation:
     if not data:
         data = {default_field: default_value}

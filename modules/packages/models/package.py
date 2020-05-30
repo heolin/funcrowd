@@ -48,7 +48,7 @@ class Package(models.Model):
         supports = [a.get_support() for a in aggregations]
         annotations_counts = [a.get_annotations_count() for a in aggregations]
 
-        # add missing values, for items with no annotations - and no ItemAggregation object
+        # adds missing values, for items with no annotations - and no ItemAggregation object
         for _ in range(self.items.count() - aggregations.count()):
             probabilities.append(0.0)
             supports.append(0)
@@ -57,6 +57,10 @@ class Package(models.Model):
         return np.average(probabilities), min(supports), min(annotations_counts)
 
     def update_status(self):
+        """
+        Sets the status of the package based on the number of finished annotations
+        and probability of the answers.
+        """
         probability, support, annotations_count = self._get_aggregations()
         max_annotations = self.parent.max_annotations
 

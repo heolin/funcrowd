@@ -38,8 +38,6 @@ class UserPackageProgress(models.Model):
         """
         Run after each annotation finished by the EndWorker.
         Updates `items_done` and `status`.
-
-        :return:
         """
         Annotation = apps.get_model("tasks.Annotation")
 
@@ -56,7 +54,6 @@ class UserPackageProgress(models.Model):
         Updates status based on items annotated by the EndWorker.
 
         :param commit: if True, it will save changes to database
-        :return:
         """
 
         last_status = self.status
@@ -72,6 +69,9 @@ class UserPackageProgress(models.Model):
 
     @property
     def progress(self):
+        """
+        Percentage value of how many items were already annotated by this user
+        """
         if self.items_count:
             return self.items_done / self.items_count
 
@@ -81,6 +81,10 @@ class UserPackageProgress(models.Model):
 
     @property
     def reward(self) -> Optional[str]:
+        """
+        If the user finished annotation for this package, it will return an unique code.
+        This code can be used to award the price in systems like `mturk`.
+        """
         if self.progress >= 1.0:
             return self.reward_token
         return None
