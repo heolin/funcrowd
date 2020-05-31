@@ -2,14 +2,12 @@ import pytest
 
 from modules.packages.models.search.packages_search import PackagesSearch
 from tests.modules.packages.conftest import add_annotation
-from tasks.models import Mission
 from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_tasks_one_user(task_with_items_in_packages, user1):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_tasks_one_user(packages_with_items, user1):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     searcher = PackagesSearch(mp, {})
 
@@ -43,9 +41,8 @@ def test_tasks_one_user(task_with_items_in_packages, user1):
 
 
 @pytest.mark.django_db
-def test_tasks_two_users(task_with_items_in_packages, user1, user2):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_tasks_two_users(packages_with_items, user1, user2):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     searcher = PackagesSearch(mp, {})
 
@@ -76,9 +73,8 @@ def test_tasks_two_users(task_with_items_in_packages, user1, user2):
 
 
 @pytest.mark.django_db
-def test_max_annotations(task_with_items_in_packages, user1, user2):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_max_annotations(packages_with_items, user1, user2):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     mp.max_annotations = 1
     searcher = PackagesSearch(mp, {})
@@ -111,8 +107,7 @@ def test_max_annotations(task_with_items_in_packages, user1, user2):
 
 @pytest.mark.django_db
 def test_search_packages_annotations(packages_with_metadata, user1):
-    mission = Mission.objects.first()
-    mp = mission.packages
+    mp = packages_with_metadata
     mp.strategy = Strategy.objects.get(name="BreadthFirstStrategyLogic")
     mp.max_annotations = 1
 

@@ -37,4 +37,3 @@ def db_random():
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute('''SELECT setseed(0)''')
-

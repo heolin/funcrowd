@@ -39,12 +39,10 @@ class MissionPackages(models.Model):
 
     def close(self):
         """
-        Used to close all existing UserPackageProgress objects,
-        and block creating new UserPackageProgress for this Bounty.
+        Used to close all Packages and stop further annotation of its Packages.
         """
-        UserPackageProgress = apps.get_model("packages.UserPackageProgress")
-        for user_bounty in UserPackageProgress.objects.filter(package__parent=self):
-            user_bounty.close()
+        for package in self.packages.all():
+            package.close()
 
     def create_package(self, size: int):
         """

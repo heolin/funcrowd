@@ -1,14 +1,12 @@
 import pytest
 
 from modules.packages.models.search.packages_search import PackagesSearch
-from tasks.models import Mission
 from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_tasks(task_with_items_in_packages, user1, user2):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_tasks(packages_with_items, user1, user2):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
     searcher = PackagesSearch(mp, {})
 
@@ -30,9 +28,8 @@ def test_tasks(task_with_items_in_packages, user1, user2):
 
 
 @pytest.mark.django_db
-def test_annotations(task_with_annotated_items_in_packages, user1, user2):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_annotations(packages_with_annotated_items, user1, user2):
+    mp = packages_with_annotated_items
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
     searcher = PackagesSearch(mp, {})
 
@@ -47,8 +44,7 @@ def test_annotations(task_with_annotated_items_in_packages, user1, user2):
 
 @pytest.mark.django_db
 def test_search_packages_annotations(packages_with_metadata, user1):
-    mission = Mission.objects.first()
-    mp = mission.packages
+    mp = packages_with_metadata
     mp.strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mp.max_annotations = 1
 

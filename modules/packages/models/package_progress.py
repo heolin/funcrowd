@@ -34,6 +34,21 @@ class UserPackageProgress(models.Model):
     def __str__(self):
         return f"UserPackageProgress({self.user}, {self.package}, {self.status})"
 
+    @property
+    def is_completed(self):
+        """
+        If True, it means annotations for this Package should not be continued.
+        """
+        return self.status in [UserPackageStatus.CLOSED, UserPackageStatus.FINISHED]
+
+    def close(self):
+        """
+        Manually closes the Package for this user, regardless of annotation progress.
+        """
+        if not self.is_completed:
+            self.status = UserPackageStatus.CLOSED
+            self.save()
+
     def update(self):
         """
         Run after each annotation finished by the EndWorker.

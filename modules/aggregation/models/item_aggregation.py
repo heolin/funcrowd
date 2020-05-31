@@ -37,7 +37,6 @@ class ItemAggregation(models.Model):
 
         values = []
         for field_name, field_result in item_result['answers'].items():
-            print(field_result)
             if type(field_result['probability']) is list:
                 values.extend(field_result['probability'])
             else:

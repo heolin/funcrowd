@@ -1,9 +1,8 @@
 import locale
 import pandas as pd
 
-from modules.packages.consts import USER_PACKAGE_STATUSES
+from modules.packages.consts import USER_PACKAGE_STATUSES, PACKAGE_STATUSES
 from modules.packages.models import UserPackageProgress
-from tasks.consts import STATUSES
 from modules.packages.models.search.packages_search import PackagesSearch
 
 
@@ -41,7 +40,7 @@ class PackageSearchStatsAggregator(PackagesSearch):
             f"metadata__{aggregation_field}")['status'].value_counts(
             ).unstack().fillna(0).astype(int)
 
-        for column in STATUSES:
+        for column, _ in PACKAGE_STATUSES:
             if column not in df_package_status:
                 df_package_status[column] = 0
 

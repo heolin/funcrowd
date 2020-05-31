@@ -2,14 +2,12 @@ import pytest
 
 from modules.packages.models.search.packages_search import PackagesSearch
 from tests.modules.packages.conftest import add_annotation
-from tasks.models import Mission
 from modules.order_strategy.models import Strategy
 
 
 @pytest.mark.django_db
-def test_tasks(task_with_items_in_packages, user1, user2, db_random):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_tasks(packages_with_items, user1, user2, db_random):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")
     searcher = PackagesSearch(mp, {})
 
@@ -37,9 +35,8 @@ def test_tasks(task_with_items_in_packages, user1, user2, db_random):
 
 
 @pytest.mark.django_db
-def test_max_annotations(task_with_items_in_packages, user1, user2, db_random):
-    mission = Mission.objects.first()
-    mp = mission.packages
+def test_max_annotations(packages_with_items, user1, user2, db_random):
+    mp = packages_with_items
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")
     mp.max_annotations = 1
     searcher = PackagesSearch(mp, {})
@@ -69,8 +66,7 @@ def test_max_annotations(task_with_items_in_packages, user1, user2, db_random):
 
 @pytest.mark.django_db
 def test_search_packages_annotations(packages_with_metadata, user1):
-    mission = Mission.objects.first()
-    mp = mission.packages
+    mp = packages_with_metadata
     mp.strategy = Strategy.objects.get(name="RandomStrategyLogic")
     mp.max_annotations = 1
 

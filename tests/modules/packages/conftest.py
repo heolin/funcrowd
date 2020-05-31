@@ -12,7 +12,7 @@ from tests.conftest import add_annotation
 
 @pytest.fixture
 @pytest.mark.django_db
-def task_with_items_in_packages(one_mission, item_template_one_input_one_output):
+def packages_with_items(one_mission, item_template_one_input_one_output):
     mission = one_mission
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     template = item_template_one_input_one_output
@@ -46,12 +46,13 @@ def task_with_items_in_packages(one_mission, item_template_one_input_one_output)
                         data={field.name: "task2 item3"}, package=package3)
     Item.objects.create(task=task2, template=template, order=4,
                         data={field.name: "task2 item4"}, package=package4)
+    return packages
 
 
 @pytest.fixture
 @pytest.mark.django_db
-def task_with_annotated_items_in_packages(task_with_items_in_packages, user1, user2):
-    packages = MissionPackages.objects.first()
+def packages_with_annotated_items(packages_with_items, user1, user2):
+    packages = packages_with_items
 
     # package with two annotations in all items
     package = packages.packages.all()[0]
@@ -80,6 +81,8 @@ def task_with_annotated_items_in_packages(task_with_items_in_packages, user1, us
     item = package.items.all()[0]
     add_annotation(item, user1)
 
+    return packages
+
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -102,6 +105,8 @@ def packages_with_metadata(one_mission_one_task, item_template_one_input_one_out
         package = Package.objects.create(parent=packages, order=order, metadata=metadata)
         for index in range(2):
             Item.objects.create(task=task, template=template, order=order, data={}, package=package)
+
+    return packages
 
 
 @pytest.fixture
@@ -128,3 +133,5 @@ def packages_with_metadata_and_statuses(packages_with_metadata, user1, user2):
     progress = package.get_user_progress(user1)
     progress.status = UserPackageStatus.FINISHED
     progress.save()
+
+    return package

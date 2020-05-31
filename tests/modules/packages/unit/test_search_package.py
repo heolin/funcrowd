@@ -6,7 +6,8 @@ from tasks.models import Mission
 
 @pytest.mark.django_db
 def test_setup_tasks(packages_with_metadata):
-    mission = Mission.objects.first()
+    mp = packages_with_metadata
+    mission = mp.mission
     assert mission.packages is not None
 
     mp = mission.packages

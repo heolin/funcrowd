@@ -8,7 +8,7 @@ from django.db import models
 
 from django.contrib.postgres.fields import JSONField
 
-from tasks.consts import STATUSES, NEW, IN_PROGRESS, FINISHED, VERIFICATION
+from modules.packages.consts import PACKAGE_STATUSES, PackageStatus
 from modules.packages.models.mission_packages import MissionPackages
 import numpy as np
 
@@ -27,18 +27,18 @@ class Package(models.Model):
     parent = models.ForeignKey(MissionPackages, on_delete=models.CASCADE, related_name="packages")
     order = models.IntegerField(default=0)
     name = models.CharField(max_length=100, default="")
-    status = models.CharField(max_length=20, choices=[(v, v) for v in STATUSES], default=NEW)
+    status = models.CharField(max_length=20, choices=PACKAGE_STATUSES, default=PackageStatus.NONE)
     metadata = JSONField(blank=True, null=True)
 
     def __str__(self):
-        return "Package(mission={}, name={}, order={})".format(self.parent.mission.id, self.name, self.order)
+        return f"Package(mission={self.parent.mission.id}, name={self.name}, order={self.order})"
 
     class Meta:
         ordering = ['order']
 
     def _get_aggregations(self) -> Tuple[float, int, int]:
         """
-        Computes aggregated values of probabilit, support, annotations_count
+        Computes aggregated values of probability, support, annotations_count
         for whole package based on its items' ItemAggregation objects.
         """
         ItemAggregation = apps.get_model("aggregation.ItemAggregation")
@@ -64,20 +64,20 @@ class Package(models.Model):
         probability, support, annotations_count = self._get_aggregations()
         max_annotations = self.parent.max_annotations
 
-        if self.status in [NEW, IN_PROGRESS]:
+        if self.status in [PackageStatus.NONE, PackageStatus.IN_PROGRESS]:
             if max_annotations == 0:
                 if annotations_count >= 1:
-                    self.status = IN_PROGRESS
+                    self.status = PackageStatus.IN_PROGRESS
                     self.save()
             else:
                 if annotations_count >= int(max_annotations / 2) and probability > 0.5:
-                    self.status = FINISHED
+                    self.status = PackageStatus.FINISHED
                     self.save()
                 elif annotations_count >= max_annotations:
-                    self.status = VERIFICATION
+                    self.status = PackageStatus.VERIFICATION
                     self.save()
                 elif annotations_count >= 1:
-                    self.status = IN_PROGRESS
+                    self.status = PackageStatus.IN_PROGRESS
                     self.save()
 
     def get_user_progress(self, user: EndWorker):
@@ -103,3 +103,25 @@ class Package(models.Model):
             )
         return package_progress
 
+    def close(self):
+        """
+        Used to close all existing UserPackageProgress objects,
+        and block creating new UserPackageProgress for this Package.
+
+        Changes status to `CLOSED` only if Package is not `is_completed` yet.
+        """
+        UserPackageProgress = apps.get_model("packages.UserPackageProgress")
+        for user_bounty in UserPackageProgress.objects.filter(package=self):
+            user_bounty.close()
+
+        if not self.is_completed:
+            self.status = PackageStatus.CLOSED
+            self.save()
+
+    @property
+    def is_completed(self):
+        """
+        If True, it means annotations for this Package should not be continued.
+        """
+        return self.status in \
+               [PackageStatus.CLOSED, PackageStatus.FINISHED, PackageStatus.VERIFICATION]

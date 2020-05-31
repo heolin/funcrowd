@@ -21,8 +21,9 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
-                'NEW': 0,
+                'NONE': 0,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 2
@@ -33,8 +34,9 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -57,13 +59,15 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
-                'NEW': 0,
+                'NONE': 0,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
-                'NONE': 0
+                'NONE': 0,
+                'CLOSED': 0,
             },
             'total': 2
         },
@@ -73,8 +77,9 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -97,13 +102,15 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
-                'NEW': 0,
+                'NONE': 0,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 0,
-                'NONE': 0
+                'NONE': 0,
+                'CLOSED': 0,
             },
             'total': 2
         },
@@ -113,8 +120,9 @@ def test_search_stats_packages(packages_with_metadata_and_statuses, user1, user2
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -143,8 +151,9 @@ def test_stats_packages(packages_with_metadata_and_statuses, user1):
             'package_status': {
                 'FINISHED': 1,
                 'IN_PROGRESS': 1,
-                'NEW': 0,
+                'NONE': 0,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 2
@@ -155,8 +164,9 @@ def test_stats_packages(packages_with_metadata_and_statuses, user1):
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -167,8 +177,9 @@ def test_stats_packages(packages_with_metadata_and_statuses, user1):
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -179,8 +190,9 @@ def test_stats_packages(packages_with_metadata_and_statuses, user1):
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
@@ -191,8 +203,9 @@ def test_stats_packages(packages_with_metadata_and_statuses, user1):
             'package_status': {
                 'FINISHED': 0,
                 'IN_PROGRESS': 0,
-                'NEW': 1,
+                'NONE': 1,
                 'VERIFICATION': 0,
+                'CLOSED': 0,
             },
             'user_status': {},
             'total': 1
