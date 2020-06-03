@@ -1,7 +1,6 @@
 import pytest
 
 from modules.packages.consts import UserPackageStatus, PackageStatus
-from modules.packages.models import UserPackageProgress
 from tests.utils import add_annotation
 
 

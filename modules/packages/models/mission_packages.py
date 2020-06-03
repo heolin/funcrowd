@@ -11,6 +11,7 @@ from modules.order_strategy.models import Strategy
 from tasks.models.mission import Mission
 
 # -*- coding: utf-8 -*-
+from tests.modules.packages.exceptions import InsufficientUnassignedItems
 
 log = logging.getLogger(__name__)
 
@@ -58,21 +59,19 @@ class MissionPackages(models.Model):
         unassigned_items = Item.objects.filter(
             task__mission=self.mission
         ).filter(
-            item__package=None
+            package=None
         ).order_by("?")
 
-        if unassigned_items:
-            if len(unassigned_items) < size:
-                size = len(unassigned_items)
-                log.warning("Insufficient number of unassigned items."
-                            f"Creating a package with {size} items.")
-            package = Package.objects.create(
-                parent=self,
-                order=self.packages.count()
-            )
+        if len(unassigned_items) < size:
+            raise InsufficientUnassignedItems()
 
-            for item in unassigned_items.all()[:size]:
-                item.package = package
-                item.save()
+        package = Package.objects.create(
+            parent=self,
+            order=self.packages.count()
+        )
 
-            return package
+        for item in unassigned_items.all()[:size]:
+            item.package = package
+            item.save()
+
+        return package
