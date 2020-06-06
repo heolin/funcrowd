@@ -147,3 +147,12 @@ def packages_with_unassigned_items(one_task_items_with_reference_annotation):
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
     return mp
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def packages_with_two_tasks_and_unassigned_items(one_mission_two_tasks_with_items):
+    mission = one_mission_two_tasks_with_items
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
+    return mp

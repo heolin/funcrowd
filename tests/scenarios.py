@@ -26,7 +26,7 @@ def one_mission_one_task(one_mission):
     # create the task
     task = Task.objects.create(
         mission=mission,
-        name="Add two digits",
+        name="First task",
         strategy=Strategy.objects.get(name="DepthFirstStrategyLogic")
     )
 
@@ -36,6 +36,31 @@ def one_mission_one_task(one_mission):
         FeedbackScoreField.objects.get(name="ReferenceScore")
     )
     return task
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def one_mission_two_tasks_with_items(
+        one_mission, item_template_one_input_one_output):
+    mission = one_mission
+    template = item_template_one_input_one_output
+    strategy = Strategy.objects.get(name="DepthFirstStrategyLogic")
+    input_field = template.items_fields.first()
+
+    # create the tasks
+    for index in range(2):
+        task = Task.objects.create(
+            mission=mission,
+            name=f"Task {index}",
+            strategy=strategy
+        )
+        # create items
+        for index in range(3):
+            Item.objects.create(task=task,
+                                template=template,
+                                data={input_field.name: 1},
+                                order=index)
+    return mission
 
 
 @pytest.fixture

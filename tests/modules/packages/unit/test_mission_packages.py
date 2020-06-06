@@ -41,3 +41,18 @@ def test_create_package(packages_with_unassigned_items):
     assert package2.order == 1
     assert package2.items.count() == 1
     assert mp.packages.count() == 2
+
+
+@pytest.mark.django_db
+def test_create_package_with_task(packages_with_two_tasks_and_unassigned_items):
+    mp = packages_with_two_tasks_and_unassigned_items
+    task = mp.mission.tasks.first()
+
+    assert mp.packages.count() == 0
+
+    package = mp.create_package(3, task=task)
+    for item in package.items.all():
+        assert item.task == task
+
+    with pytest.raises(InsufficientUnassignedItems):
+        mp.create_package(3, task=task)

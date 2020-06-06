@@ -8,7 +8,7 @@ from django.apps import apps
 from django.db import models
 
 from modules.order_strategy.models import Strategy
-from tasks.models.mission import Mission
+from tasks.models import Mission, Task
 
 # -*- coding: utf-8 -*-
 from modules.packages.exceptions import InsufficientUnassignedItems
@@ -45,7 +45,7 @@ class MissionPackages(models.Model):
         for package in self.packages.all():
             package.close()
 
-    def create_package(self, size: int, metadata: dict = None):
+    def create_package(self, size: int, metadata: dict = None, task: Task = None):
         """
         Creates a new package for this Bounty using a random sample
         of unassigned items (items without a package) of selected size.
@@ -59,11 +59,10 @@ class MissionPackages(models.Model):
 
         metadata = metadata or {}  # sets default value to {}
 
-        unassigned_items = Item.objects.filter(
-            task__mission=self.mission
-        ).filter(
-            package=None
-        ).order_by("?")
+        unassigned_items = Item.objects.filter(task__mission=self.mission)
+        if task:
+            unassigned_items = unassigned_items.filter(task=task)
+        unassigned_items = unassigned_items.filter(package=None).order_by("?")
 
         if len(unassigned_items) < size:
             raise InsufficientUnassignedItems()
