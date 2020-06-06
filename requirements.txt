@@ -28,6 +28,7 @@ raven==6.10.0
 rest-pandas==1.0.0
 tqdm
 xlsxwriter
+jsonschema
 
 # development requirements
 coverage==4.5.1

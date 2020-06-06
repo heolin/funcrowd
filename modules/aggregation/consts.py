@@ -1,2 +1,3 @@
 
+EMPTY_VALUE = "<EMPTY>"
 SEPARATOR = "<NEXT>"
