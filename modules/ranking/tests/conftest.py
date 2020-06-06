@@ -37,7 +37,7 @@ def task_annotations(users):
     item2 = Item.objects.create(task=task, template=template, data={})
     item3 = Item.objects.create(task=task, template=template, data={})
 
-    mp = MissionPackages.objects.create(mission=mission, strategy=strategy)
+    mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=10)
     package1 = Package.objects.create(parent=mp, order=0)
     package1.items.add(item1)
     package1.items.add(item2)

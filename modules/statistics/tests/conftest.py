@@ -41,9 +41,9 @@ def tasks():
     mission2 = Mission.objects.create(name="Test mission 2")
     mission3 = Mission.objects.create(name="Test mission 2")
 
-    mission1_package = MissionPackages.objects.create(mission=mission1, strategy=strategy)
-    mission2_package = MissionPackages.objects.create(mission=mission2, strategy=strategy)
-    mission3_package = MissionPackages.objects.create(mission=mission3, strategy=strategy)
+    mission1_package = MissionPackages.objects.create(mission=mission1, strategy=strategy, max_annotations=10)
+    mission2_package = MissionPackages.objects.create(mission=mission2, strategy=strategy, max_annotations=10)
+    mission3_package = MissionPackages.objects.create(mission=mission3, strategy=strategy, max_annotations=10)
 
     Task.objects.create(mission=mission1, name="Task 1", strategy=strategy)
     Task.objects.create(mission=mission1, name="Task 2", strategy=strategy)
@@ -110,7 +110,7 @@ def tasks_annotations():
     Strategy.register_values()
     strategy = Strategy.objects.get(name="StaticStrategyLogic")
     mission = Mission.objects.create(name="Test mission 4")
-    mission_package = MissionPackages.objects.create(mission=mission, strategy=strategy)
+    mission_package = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=10)
     mission_package.max_annotations = 7
     mission_package.save()
     task = Task.objects.create(mission=mission, name="Task 1", strategy=strategy)

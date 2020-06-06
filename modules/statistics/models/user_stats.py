@@ -32,6 +32,11 @@ class UserStats(models.Model):
         self.annotated_missions = t.models.Annotation.objects.filter(user=self.user).filter(
             skipped=False).values("item__task__mission").distinct().count()
 
+        annotated_items = t.models.Annotation.objects.filter(user=self.user).filter(
+            skipped=False)
+
+        self.annotated_items = annotated_items.values("item").distinct().count()
+
         self.annotated_items = t.models.Annotation.objects.filter(user=self.user).filter(
             skipped=False).values("item").distinct().count()
 
@@ -47,8 +52,11 @@ class UserStats(models.Model):
             score__gte=HIGH_AGREEMENT_THRESHOLD).count()
 
         self.high_agreement_percentage = 0
-        if self.annotated_items:
-            self.high_agreement_percentage = self.high_agreement_count / self.annotated_items
+        annotated_items_feedback = annotated_items.exclude(
+            item__task__feedback=None).count()
+        if annotated_items_feedback:
+            self.high_agreement_percentage = \
+                self.high_agreement_count / annotated_items_feedback
 
         self.save()
 
