@@ -2,7 +2,7 @@ import pytest
 
 from modules.order_strategy.models import Strategy
 from modules.packages.models import MissionPackages
-from tests.modules.packages.exceptions import InsufficientUnassignedItems
+from modules.packages.exceptions import InsufficientUnassignedItems
 
 
 @pytest.mark.django_db
@@ -23,21 +23,21 @@ def test_create_package_no_items_left(packages_with_items):
 
 
 @pytest.mark.django_db
-def test_create_package(one_task_items_with_reference_annotation):
-    task = one_task_items_with_reference_annotation
-    mission = task.mission
-    strategy = Strategy.objects.get(name="StaticStrategyLogic")
-    mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
+def test_create_package(packages_with_unassigned_items):
+    mp = packages_with_unassigned_items
 
     assert mp.packages.count() == 0
 
-    package1 = mp.create_package(2)
-    assert mp.packages.count() == 1
+    package1 = mp.create_package(2, {"number": 10})
+    assert package1.order == 0
+    assert package1.metadata["number"] == 10
     assert package1.items.count() == 2
+    assert mp.packages.count() == 1
 
     with pytest.raises(InsufficientUnassignedItems):
         mp.create_package(2)
 
     package2 = mp.create_package(1)
-    assert mp.packages.count() == 2
+    assert package2.order == 1
     assert package2.items.count() == 1
+    assert mp.packages.count() == 2

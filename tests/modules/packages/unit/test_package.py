@@ -127,3 +127,23 @@ def test_update_status(packages_with_items, user1, user2):
     add_annotation(item, user2)
     package.update_status()
     assert package.status == PackageStatus.FINISHED
+
+
+@pytest.mark.django_db
+def test_get_user_next_item(packages_with_items, user1, user2):
+    mp = packages_with_items
+
+    package = mp.packages.first()
+    item = package.get_user_next_item(user1)
+    assert item.data["data_field"] == "task1 item1"
+    add_annotation(item, user1)
+
+    item = package.get_user_next_item(user1)
+    assert item.data["data_field"] == "task2 item1"
+    add_annotation(item, user1)
+
+    item = package.get_user_next_item(user1)
+    assert item is None
+
+    item = package.get_user_next_item(user2)
+    assert item.data["data_field"] == "task1 item1"

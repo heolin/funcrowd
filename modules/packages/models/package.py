@@ -4,16 +4,15 @@ from __future__ import unicode_literals
 
 from typing import Tuple
 
-from django.db import models
-
+import numpy as np
+from django.apps import apps
 from django.contrib.postgres.fields import JSONField
+from django.db import models
+from django.db.models import Q
 
 from modules.packages.consts import PACKAGE_STATUSES, PackageStatus
 from modules.packages.models.mission_packages import MissionPackages
-import numpy as np
-
 from users.models import EndWorker
-from django.apps import apps
 
 
 class Package(models.Model):
@@ -102,6 +101,13 @@ class Package(models.Model):
                 user=user
             )
         return package_progress
+
+    def get_user_next_item(self, user):
+        items = self.items.all()
+        # exclude items already annotated by this user
+        q = items.filter(Q(annotations__user=user) & Q(annotations__annotated=True))
+        item = items.exclude(id__in=q).first()
+        return item
 
     def close(self):
         """

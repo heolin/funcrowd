@@ -1,7 +1,7 @@
 import pytest
 
 from modules.order_strategy.models import Strategy
-from modules.packages.consts import UserPackageStatus
+from modules.packages.consts import UserPackageStatus, PackageStatus
 from modules.packages.models import Package, MissionPackages
 from tasks.consts import FINISHED, TaskStatus
 from tasks.models import (
@@ -112,9 +112,11 @@ def packages_with_metadata(one_mission_one_task, item_template_one_input_one_out
 @pytest.fixture
 @pytest.mark.django_db
 def packages_with_metadata_and_statuses(packages_with_metadata, user1, user2):
+    mp = packages_with_metadata
+
     # package 1
     package = Package.objects.all()[0]
-    package.status = TaskStatus.FINISHED
+    package.status = PackageStatus.FINISHED
     package.save()
 
     progress = package.get_user_progress(user1)
@@ -127,11 +129,21 @@ def packages_with_metadata_and_statuses(packages_with_metadata, user1, user2):
 
     # package 2
     package = Package.objects.all()[1]
-    package.status = TaskStatus.IN_PROGRESS
+    package.status = PackageStatus.IN_PROGRESS
     package.save()
 
     progress = package.get_user_progress(user1)
     progress.status = UserPackageStatus.FINISHED
     progress.save()
 
-    return package
+    return mp
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def packages_with_unassigned_items(one_task_items_with_reference_annotation):
+    task = one_task_items_with_reference_annotation
+    mission = task.mission
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=4)
+    return mp

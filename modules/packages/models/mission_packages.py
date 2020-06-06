@@ -11,7 +11,7 @@ from modules.order_strategy.models import Strategy
 from tasks.models.mission import Mission
 
 # -*- coding: utf-8 -*-
-from tests.modules.packages.exceptions import InsufficientUnassignedItems
+from modules.packages.exceptions import InsufficientUnassignedItems
 
 log = logging.getLogger(__name__)
 
@@ -45,16 +45,19 @@ class MissionPackages(models.Model):
         for package in self.packages.all():
             package.close()
 
-    def create_package(self, size: int):
+    def create_package(self, size: int, metadata: dict = None):
         """
         Creates a new package for this Bounty using a random sample
         of unassigned items (items without a package) of selected size.
 
         :param size: determines how many items will be put into a new package
+        :param metadata: metadata of the package
         :return package: a new package with a random sample of items
         """
         Package = apps.get_model("packages.Package")
         Item = apps.get_model("tasks.Item")
+
+        metadata = metadata or {}  # sets default value to {}
 
         unassigned_items = Item.objects.filter(
             task__mission=self.mission
@@ -67,7 +70,8 @@ class MissionPackages(models.Model):
 
         package = Package.objects.create(
             parent=self,
-            order=self.packages.count()
+            order=self.packages.count(),
+            metadata=metadata
         )
 
         for item in unassigned_items.all()[:size]:
