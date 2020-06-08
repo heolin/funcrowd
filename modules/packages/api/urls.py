@@ -15,7 +15,7 @@ urlpatterns = [
     path('missions/<int:mission_id>/search/stats/', PackageSearchAggregatedStatsView.as_view(),
          name='search_package_aggregation'),
     path('missions/<int:mission_id>/create_package/', CreatePackageView.as_view(), name='create_package'),
-    path('packages/<int:package_id>/items/next', PackageNextItemView.as_view(), name='package_next_item'),
+    path('packages/<int:package_id>/items/next/', PackageNextItemView.as_view(), name='package_next_item'),
     path('packages/<int:package_id>/', PackageView.as_view(), name='package_details'),
     path('packages/<int:package_id>/status/', PackageProgressView.as_view(), name='package_status'),
     path('packages/status/', PackagesProgressListView.as_view(), name='package_status'),
