@@ -125,7 +125,7 @@ class BaseAggregator:
             item_result = ItemResult(item_id, len(group))
 
             for field_name in field_names:
-                column_type = self.template.fields.get(name=field_name).type
+                column_type = template_fields[field_name].type
                 if column_type == 'list':
                     field_result = self._get_list_field_result(group, field_name)
                 else:
