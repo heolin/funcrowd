@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='annotationfeedback',
             name='feedback',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='feedback.Feedback'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='feedback.Feedback'),
             preserve_default=False,
         ),
     ]

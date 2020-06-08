@@ -9,7 +9,7 @@ from tasks.models.annotation import Annotation
 
 
 class AnnotationFeedback(models.Model):
-    feedback = models.ForeignKey("Feedback", on_delete=models.CASCADE)
+    feedback = models.ForeignKey("Feedback", on_delete=models.CASCADE, null=True)
     annotation = models.OneToOneField(Annotation, on_delete=models.CASCADE, related_name="feedback")
     values = JSONField(default=dict)
     scores = JSONField(default=dict)

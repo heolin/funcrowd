@@ -60,7 +60,7 @@ class Feedback(models.Model):
         values = self.evaluate(annotation)
         score_value = self.aggregate_scores(scores)
 
-        feedback, _ = AnnotationFeedback.objects.get_or_create(annotation=annotation)
+        feedback, _ = AnnotationFeedback.objects.get_or_create(feedback=self, annotation=annotation)
         feedback.scores = scores
         feedback.values = values
         feedback.score = score_value
