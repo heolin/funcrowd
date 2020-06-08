@@ -121,6 +121,10 @@ class BaseAggregator:
         }
 
         item_results = []
+
+        if not len(df):
+            return item_results
+
         for item_id, group in df.groupby('item'):
             item_result = ItemResult(item_id, len(group))
 

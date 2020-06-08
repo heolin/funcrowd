@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 from modules.aggregation.aggregators import (
     BaseAggregator, ValueFieldResult, ListFieldResult
@@ -26,6 +27,11 @@ def task_aggregator(one_task_items_with_annotations_and_reference) -> BaseAggreg
 def list_task_aggregator(one_task_items_with_list_annotations_and_reference) -> BaseAggregator:
     task = one_task_items_with_list_annotations_and_reference
     return BaseAggregator(task)
+
+
+@pytest.fixture
+def empty_annotations_table():
+    return pd.DataFrame()
 
 
 # tests
@@ -145,6 +151,18 @@ def test_logic(task_aggregator: BaseAggregator):
     assert field_result.answer == '0'
     assert field_result.probability == 0.4
     assert field_result.support == 2
+
+
+@pytest.mark.django_db
+def test_logic_empty_table(task_aggregator: BaseAggregator, empty_annotations_table: pd.DataFrame):
+    """
+    Test full aggregation logic for an empty table
+    """
+    aggregator = task_aggregator
+
+    item_results = aggregator._logic(empty_annotations_table)
+
+    assert len(item_results) == 0
 
 
 @pytest.mark.django_db
