@@ -112,7 +112,13 @@ class BaseAggregator:
         :param df: annotation table, result from `_get_annotations_table`
         :return: a list of ItemResult, one for each item
         """
+        ItemTemplateField = apps.get_model("tasks.ItemTemplateField")
+
         field_names = [c for c in list(df) if c not in ['user', 'item']]
+        template_fields = {
+            f.name: f for f in
+            ItemTemplateField.objects.filter(name__in=field_names)
+        }
 
         item_results = []
         for item_id, group in df.groupby('item'):
