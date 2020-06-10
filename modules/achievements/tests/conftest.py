@@ -6,6 +6,7 @@ from tasks.consts import MissionStatus
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField
 )
+from users.consts import ProfileType
 from users.models import EndWorker
 
 from modules.order_strategy.models import Strategy
@@ -14,13 +15,19 @@ from modules.order_strategy.models import Strategy
 @pytest.fixture
 @pytest.mark.django_db
 def user1():
-    return EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1")
+    user.profile = ProfileType.NORMAL
+    user.save()
+    return user
 
 
 @pytest.fixture
 @pytest.mark.django_db
 def user2():
-    return EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
+    user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
+    user.profile = ProfileType.NORMAL
+    user.save()
+    return user
 
 
 @pytest.fixture
