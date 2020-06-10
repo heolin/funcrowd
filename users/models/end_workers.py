@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from funcrowd.settings import events_manager
 from modules.achievements.events import Events
 from modules.statistics.models import UserStats, UserMissionStats
-from users.consts import ProfileType
+from users.consts import ProfileType, ACHIEVEMENTS_PROFILES
 from users.models.manager import EndWorkerManager
 from users.models.storage import Storage
 from users.models.utils.utils import get_group_number
@@ -99,8 +99,9 @@ class EndWorker(AbstractUser):
             package_progress = annotation.item.package.get_user_progress(self)
             package_progress.update()
 
-        events_manager.on_event(self, Events.ON_ITEM_DONE)
-        events_manager.on_event(self, Events.ALWAYS)
+        if self.profile in ACHIEVEMENTS_PROFILES:
+            events_manager.on_event(self, Events.ON_ITEM_DONE)
+            events_manager.on_event(self, Events.ALWAYS)
 
     def add_exp(self, exp):
         self.exp += exp
