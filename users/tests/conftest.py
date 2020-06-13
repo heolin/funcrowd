@@ -3,6 +3,7 @@ import pytest
 from tasks.models import (
     Mission, Task, Item, ItemTemplate, ItemTemplateField, Annotation
 )
+from users.consts import ProfileType
 from users.models import EndWorker
 
 from modules.order_strategy.models import Strategy

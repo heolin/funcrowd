@@ -27,3 +27,4 @@ def test_achievement_register():
     assert Events.ON_ITEM_DONE in event_manager._achievements
     assert len(event_manager._achievements[Events.ON_LOGIN]) == 1
     assert LoginCountAchievement in event_manager._achievements[Events.ON_LOGIN]
+

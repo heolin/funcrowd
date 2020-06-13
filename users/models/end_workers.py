@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from rest_framework.authtoken.models import Token
 
+from django.apps import apps
 from funcrowd.settings import events_manager
 from modules.achievements.events import Events
 from modules.statistics.models import UserStats, UserMissionStats
@@ -16,6 +17,10 @@ import tasks as t
 
 
 class EndWorker(AbstractUser):
+    """
+    Custom user model.
+    """
+
     email = models.EmailField(_('email address'), unique=True)
 
     group = models.IntegerField(default=get_group_number)
@@ -31,6 +36,10 @@ class EndWorker(AbstractUser):
 
     @property
     def token(self):
+        """
+        Gets or create authentication Token.
+        :return: Token
+        """
         result, _ = Token.objects.get_or_create(user=self)
         return result
 
@@ -40,26 +49,47 @@ class EndWorker(AbstractUser):
         return stats
 
     def create_activation_token(self):
-        from users.models import ActivationToken
+        """
+        Creates a new ActivationToken used for activating user's account after registration.
+        If there is any previously created token, then it will disable it.
+        :return: ActivationToken
+        """
+
+        ActivationToken = apps.get_model("users.ActivationToken")
+
         for token in ActivationToken.objects.filter(user=self):
             token.token_used = True
             token.save()
         return ActivationToken.objects.create(user=self)
 
     def create_password_token(self):
-        from users.models import PasswordToken
+        """
+        Creates a new PasswordToken used for resetting the user's password.
+        If there is any previously created token, then it will disable it.
+        :return: PasswordToken
+        """
+        PasswordToken = apps.get_model("users.PasswordToken")
+
         for token in PasswordToken.objects.filter(user=self):
             token.token_used = True
             token.save()
         return PasswordToken.objects.create(user=self)
 
-    def get_storage(self, key):
-        storage = Storage.objects.filter(user=self, key=key).first()
-        if not storage:
-            storage = Storage.objects.create(user=self, key=key)
+    def get_storage(self, key: str):
+        """
+        Get or creates a storage objects for a certain key
+        :param key: str
+        :return: Storage
+        """
+        storage, _ = Storage.objects.get_or_create(user=self, key=key)
         return storage
 
     def set_storage(self, key, data):
+        """
+        Used to set the storage value for a selected key
+        :param key: str
+        :param data: dict
+        """
         storage = self.get_storage(key)
         storage.data = data
         storage.save()
@@ -84,11 +114,22 @@ class EndWorker(AbstractUser):
         return progress
 
     def on_login(self):
+        """
+        Function run after each successful login.
+        Updated total login_count and requests to update all achievements.
+        """
         self.login_count += 1
         self.save()
         events_manager.update_all(self)
 
     def on_annotation(self, annotation):
+        """
+        Run after each annotation. Used to update progress of all objects that
+        keeps track of annotations progress, such as:
+        UserTaskProgress, UserMissionProgress, UserPackageProgress, and updates
+        achievements events.
+        :param annotation: Annotation
+        """
         task_progress = self.get_task_progress(annotation.item.task)
         task_progress.update()
 
@@ -103,7 +144,11 @@ class EndWorker(AbstractUser):
             events_manager.on_event(self, Events.ON_ITEM_DONE)
             events_manager.on_event(self, Events.ALWAYS)
 
-    def add_exp(self, exp):
+    def add_exp(self, exp: int):
+        """
+        Used to accumulate the total experience points of the player.
+        :param exp: int
+        """
         self.exp += exp
         self.save()
 

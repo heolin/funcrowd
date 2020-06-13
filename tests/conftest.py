@@ -1,5 +1,6 @@
 import pytest
 
+from users.consts import ProfileType
 from users.models import EndWorker
 
 from .item_templates import *
@@ -17,6 +18,14 @@ def user1():
 @pytest.mark.django_db
 def user2():
     user = EndWorker.objects.create_superuser("user2@mail.com", "password", username="user2")
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def mturk_user():
+    user = EndWorker.objects.create_superuser(
+        "user2@mail.com", "password", username="user2", profile=ProfileType.MTURK)
     return user
 
 
