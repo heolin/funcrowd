@@ -35,7 +35,8 @@ class MturkRegisterLoginView(GenericAPIView):
             end_worker = EndWorker.objects.filter(username=worker_id).first()
             if not end_worker:
                 password = EndWorker.objects.make_random_password()
-                end_worker = EndWorker.objects.create_user(worker_id, "{}@mturk".format(worker_id), password)
+                end_worker = EndWorker.objects.create_user(
+                    "{}@mturk".format(worker_id), password, username=worker_id)
                 end_worker.profile = ProfileType.MTURK
                 end_worker.save()
             login(request, end_worker)
