@@ -5,7 +5,6 @@ from tasks.models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    feedback = FeedbackSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Task
