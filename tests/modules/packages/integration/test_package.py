@@ -33,7 +33,7 @@ def test_package_next_item(packages_with_items, user1):
     client.force_login(user1)
 
     # get first item
-    response = client.get('/api/v1/packages/{0}/items/next'.format(package.id))
+    response = client.get('/api/v1/packages/{0}/items/next/'.format(package.id))
     assert response.status_code == 200
     assert response.data is not None
 
@@ -49,7 +49,7 @@ def test_package_next_item(packages_with_items, user1):
     assert response.data['is_verified']
 
     # get second item
-    response = client.get('/api/v1/packages/{0}/items/next'.format(package.id))
+    response = client.get('/api/v1/packages/{0}/items/next/'.format(package.id))
     assert response.status_code == 200
     assert response.data is not None
 
@@ -66,6 +66,6 @@ def test_package_next_item(packages_with_items, user1):
     assert response.data['is_verified']
 
     # not items left for annotations
-    response = client.get('/api/v1/packages/{0}/items/next'.format(package.id))
+    response = client.get('/api/v1/packages/{0}/items/next/'.format(package.id))
     assert response.status_code == 204
     assert response.data is None

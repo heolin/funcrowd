@@ -13,7 +13,7 @@ def test_task_list(task, user1):
     assert response.status_code == 200
     assert response.data == [
         {'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None, 'feedback': None}
+         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None}
     ]
 
     # Task empty list
@@ -38,7 +38,7 @@ def test_task_details(task, user1):
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None, 'feedback': None
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': None,
     }
 
     # Task details, task not found
@@ -58,7 +58,7 @@ def test_task_details_with_exp(task_with_items, user1):
     assert response.status_code == 200
     assert response.data == {
         'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
-        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10, 'feedback': None
+        'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 10
     }
 
 
@@ -74,5 +74,4 @@ def test_task_details_with_feedback(task_with_items_with_multiple_annotation_fie
     assert response.data == {
         'id': 1, 'mission': 1, 'name': 'Add two digits', 'description': '', 'achievements_count': 0,
         'instruction': '', 'keywords': '', 'metadata': {}, 'total_exp': 0,
-        'feedback': {'type': "BINARY", 'autoreject': False}
     }

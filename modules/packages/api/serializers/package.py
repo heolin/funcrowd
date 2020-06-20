@@ -8,7 +8,7 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Package
-        fields = ('id', 'order', 'metadata', 'status', 'name')
+        fields = ('id', 'order', 'metadata', 'status', 'name', 'instruction')
 
 
 class PackageItemsSerializer(serializers.ModelSerializer):

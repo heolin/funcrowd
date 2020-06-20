@@ -26,6 +26,7 @@ class Package(models.Model):
     parent = models.ForeignKey(MissionPackages, on_delete=models.CASCADE, related_name="packages")
     order = models.IntegerField(default=0)
     name = models.CharField(max_length=100, default="")
+    instruction = models.TextField(default="", blank=True)
     status = models.CharField(max_length=20, choices=PACKAGE_STATUSES, default=PackageStatus.NONE)
     metadata = JSONField(blank=True, null=True)
 
