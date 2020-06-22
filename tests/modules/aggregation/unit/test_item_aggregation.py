@@ -13,16 +13,25 @@ def item_aggregation(one_task_items_with_annotations_and_reference):
             "item_id": item.id,
             "annotations_count": 5,
             "answers": {
-                "value_input_field": {
-                    "answer": "1a",
-                    "probability": 0.4,
-                    "support": 2
-                },
-                "list_input_field": {
-                    "answer": ["1a", "2a"],
-                    "probability": [0.6, 0.5],
-                    "support": [3, 2]
-                },
+                "value_input_field": [
+                    {
+                        "answer": "1a",
+                        "probability": 0.4,
+                        "support": 2
+                    }
+                ],
+                "list_input_field": [
+                    {
+                        "answer": "1a",
+                        "probability": 0.6,
+                        "support": 3
+                    },
+                    {
+                        "answer": "2a",
+                        "probability": 0.5,
+                        "support": 2
+                    },
+                ],
             }
         },
         type="BaseAggregator"

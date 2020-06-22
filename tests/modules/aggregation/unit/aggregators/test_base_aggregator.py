@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 
 from modules.aggregation.aggregators import (
-    BaseAggregator, ValueFieldResult, ListFieldResult
+    BaseAggregator, FieldResult
 )
 from modules.aggregation.models import ItemAggregation
 
@@ -88,7 +88,7 @@ def test_get_field_result(task_aggregator: BaseAggregator):
     item = items[0]
     group = annotations_table[annotations_table['item'] == item.id]
     field_result = aggregator._get_field_result(group, 'input_field')
-    assert type(field_result) is ValueFieldResult
+    assert type(field_result) is FieldResult
     assert field_result.answer == '0'
     assert field_result.probability == 0.4
     assert field_result.support == 2
@@ -114,19 +114,21 @@ def test_get_list_field_result(list_task_aggregator: BaseAggregator):
     # item_id = 0
     item = items[0]
     group = annotations_table[annotations_table['item'] == item.id]
-    field_result = aggregator._get_list_field_result(group, 'list_input_field')
-    assert type(field_result) is ListFieldResult
-    assert field_result.answer == ['1', '2']
-    assert [round(p, 2) for p in field_result.probability] == [0.8, 0.6]
-    assert field_result.support == [4, 3]
+    field_results = aggregator._get_list_field_result(group, 'list_input_field')
+    assert type(field_results) is list
+    assert type(field_results[0]) is FieldResult
+    assert len(field_results) == 2
+    assert field_results[0].answer == '1'
+    assert round(field_results[0].probability, 2) == 0.8
+    assert field_results[0].support == 4
 
     # item_id = 1
     item = items[1]
     group = annotations_table[annotations_table['item'] == item.id]
-    field_result = aggregator._get_list_field_result(group, 'list_input_field')
-    assert field_result.answer == ['2']
-    assert [round(p, 2) for p in field_result.probability] == [1.0]
-    assert field_result.support == [5]
+    field_results = aggregator._get_list_field_result(group, 'list_input_field')
+    assert field_results[0].answer == '2'
+    assert field_results[0].probability == 1.0
+    assert field_results[0].support == 5
 
 
 @pytest.mark.django_db
@@ -147,10 +149,10 @@ def test_logic(task_aggregator: BaseAggregator):
     assert item_result.annotations_count == 5
     assert len(item_result.answers) == 1
 
-    field_result = item_result.answers['input_field']
-    assert field_result.answer == '0'
-    assert field_result.probability == 0.4
-    assert field_result.support == 2
+    field_results = item_result.answers['input_field']
+    assert field_results[0].answer == '0'
+    assert field_results[0].probability == 0.4
+    assert field_results[0].support == 2
 
 
 @pytest.mark.django_db
@@ -183,10 +185,10 @@ def test_logic_list_task(list_task_aggregator: BaseAggregator):
     assert item_result.annotations_count == 5
     assert len(item_result.answers) == 1
 
-    field_result = item_result.answers['list_input_field']
-    assert field_result.answer == ['1', '2']
-    assert [round(p, 2) for p in field_result.probability] == [0.8, 0.6]
-    assert field_result.support == [4, 3]
+    field_results = item_result.answers['list_input_field']
+    assert field_results[0].answer == '1'
+    assert round(field_results[0].probability, 2) == 0.8
+    assert field_results[0].support == 4
 
 
 @pytest.mark.django_db

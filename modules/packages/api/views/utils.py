@@ -3,7 +3,6 @@ import xlsxwriter
 
 from modules.packages.api.exceptions import SearchGetParamMalformed
 
-SEPARATOR = "<NEXT>"
 EMPTY = "<EMPTY>"
 URL = "https://funcrowd-documents.sprawdzamyjakjest.pl/static/pdf/{}.pdf"
 
@@ -48,12 +47,12 @@ def create_workbook(report):
 
     def write_value(column, row, value, rows=1):
         if rows > 1:
-            worksheet.merge_range('{}{}:{}{}'.format(column, row, column, row + rows - 1),
-                                value, text_format)
+            for row_index in range(rows):
+                worksheet.write("{}{}".format(column, row + row_index), value, text_format)
         else:
             worksheet.write("{}{}".format(column, row), value, text_format)
 
-    def toColumn(col, offset=4):
+    def to_column(col, offset=4):
         LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         """ Convert given row and column number to an Excel-style cell name. """
         result = []
@@ -77,8 +76,8 @@ def create_workbook(report):
     questions = sorted(questions, key=lambda x:int(x.split("_")[0]))
     for order in range(len(questions)):
         name = "Pytanie {}".format(order+1) #order_to_task[order+1]
-        worksheet.write("{}1".format(toColumn(2*order)), name, header_format)
-        worksheet.write("{}1".format(toColumn(2*order+1)), name + "- Pewność", header_format)
+        worksheet.write("{}1".format(to_column(2*order)), name, header_format)
+        worksheet.write("{}1".format(to_column(2*order+1)), name + "- Pewność", header_format)
 
     current_row = 2
 
@@ -101,8 +100,8 @@ def create_workbook(report):
                 max_rows = max(max_rows, len(answers))
                 for answer_row, values in enumerate(zip(answers, probs)):
                     answer, prob = values
-                    write_value(toColumn(question_index*2), current_row + answer_row, answer)
-                    write_value(toColumn(question_index*2+1), current_row + answer_row, float(prob))
+                    write_value(to_column(question_index*2), current_row + answer_row, answer)
+                    write_value(to_column(question_index*2+1), current_row + answer_row, float(prob))
 
             current_row += max_rows
             write_value("B", group_start_row, data_row['index'], current_row-group_start_row)

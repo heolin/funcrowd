@@ -6,6 +6,8 @@ import numpy as np
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
+from modules.aggregation.aggregators import ItemResult
+
 
 class ItemAggregation(models.Model):
     """
@@ -19,8 +21,18 @@ class ItemAggregation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=20, choices=None)
 
+    def __init__(self, *args, **kwargs):
+        super(ItemAggregation, self).__init__(*args, **kwargs)
+        self._item_result = None  # cache field used to store deserialized ItemResult stored in `data`
+
     class Meta:
         verbose_name_plural = "ItemAggregations"
+
+    @property
+    def item_result(self):
+        if not self._item_result:
+            self._item_result = ItemResult.from_json(self.data)
+        return self._item_result
 
     def __str__(self):
         return f"{self.__class__.__name__}(#{self.id} - {self.item.id}"
@@ -31,16 +43,13 @@ class ItemAggregation(models.Model):
         Computed as a average from all its field results' probabilities.
         For ListFieldResults, all values are counted separately.
         """
-        item_result = self.data
-        if not item_result:
+        if not self.item_result:
             return 0.0
 
         values = []
-        for field_name, field_result in item_result['answers'].items():
-            if type(field_result['probability']) is list:
-                values.extend(field_result['probability'])
-            else:
-                values.append(field_result['probability'])
+        for field_name, field_results in self.item_result.answers.items():
+            for field_result in field_results:
+                values.append(field_result.probability)
         if values:
             return np.average(values)
         return 0.0
@@ -51,16 +60,13 @@ class ItemAggregation(models.Model):
         Computed as a max from all its field results' support.
         For ListFieldResults, all values are counted separately.
         """
-        item_result = self.data
-        if not item_result:
+        if not self.item_result:
             return 0
 
         values = []
-        for field_name, field_result in item_result['answers'].items():
-            if type(field_result['support']) is list:
-                values.extend(field_result['support'])
-            else:
-                values.append(field_result['support'])
+        for field_name, field_results in self.item_result.answers.items():
+            for field_result in field_results:
+                values.append(field_result.support)
         if values:
             return np.max(values)
         return 0
@@ -69,8 +75,8 @@ class ItemAggregation(models.Model):
         """
         Total annotations made
         """
-        if not self.data:
+        if not self.item_result:
             return 0
 
-        return self.data['annotations_count']
+        return self.item_result.annotations_count
 

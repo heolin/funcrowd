@@ -1,18 +1,24 @@
 import pytest
 
-from modules.aggregation.aggregators import ValueFieldResult, ListFieldResult, ItemResult
+from modules.aggregation.aggregators import ItemResult, FieldResult
 
 
 @pytest.fixture
 def item_result():
-    return ItemResult(
+    item_result = ItemResult(
         item_id=1,
-        annotations_count=5,
-        answers={
-            "value_input_field": ValueFieldResult(1, 0.5, 2),
-            "list_input_field": ListFieldResult([1], [0.5], [2]),
-        }
+        annotations_count=5
     )
+    item_result.answers = {
+        "single_input_field": [
+            FieldResult(1, 0.5, 2),
+        ],
+        "list_input_field": [
+            FieldResult(1, 0.5, 2),
+            FieldResult(2, 0.5, 1),
+        ]
+    }
+    return item_result
 
 
 @pytest.mark.django_db
@@ -25,8 +31,10 @@ def test_item_result_to_json(item_result):
     assert type(data['annotations_count']) is int
     assert len(data['answers']) == 2
 
-    assert type(data['answers']['value_input_field']) is dict
-    assert type(data['answers']['value_input_field']['probability']) is float
+    assert type(data['answers']['single_input_field']) is list
+    assert type(data['answers']['single_input_field'][0]['probability']) is float
+    assert len(data['answers']['single_input_field']) == 1
 
-    assert type(data['answers']['list_input_field']) is dict
-    assert type(data['answers']['list_input_field']['probability']) is list
+    assert type(data['answers']['list_input_field']) is list
+    assert type(data['answers']['list_input_field'][0]['probability']) is float
+    assert len(data['answers']['list_input_field']) == 2

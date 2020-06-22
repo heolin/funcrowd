@@ -4,7 +4,7 @@ import pandas as pd
 from django.apps import apps
 from django.db import transaction
 
-from modules.aggregation.aggregators.field_result import ListFieldResult, ValueFieldResult
+from modules.aggregation.aggregators.field_result import FieldResult
 from modules.aggregation.aggregators.item_result import ItemResult
 from modules.aggregation.aggregators.utils import decompose_list_column
 from modules.aggregation.consts import EMPTY_VALUE
@@ -59,7 +59,7 @@ class BaseAggregator:
             result.append(data)
         return pd.DataFrame(result).fillna(EMPTY_VALUE)
 
-    def _get_field_result(self, group: pd.DataFrame, field_name: str) -> ValueFieldResult:
+    def _get_field_result(self, group: pd.DataFrame, field_name: str) -> FieldResult:
         """
         Aggregates answers for selected field for one item, selects most frequent
         answer as the final one. Probability is computed as percentage frequency.
@@ -75,9 +75,9 @@ class BaseAggregator:
         answer = str(counts.index[0])
         support = int(counts.iloc[0])
         probability = float((support / counts.sum()).round(2))
-        return ValueFieldResult(answer, probability, support)
+        return FieldResult(answer, probability, support)
 
-    def _get_list_field_result(self, group: pd.DataFrame, field_name: str) -> ListFieldResult:
+    def _get_list_field_result(self, group: pd.DataFrame, field_name: str) -> List[FieldResult]:
         """
         Aggregates answer for selected field containing a list of values.
         Selects a list of most frequent values as a results.
@@ -103,7 +103,24 @@ class BaseAggregator:
         probabilities = list(df_results['probability'].round(2))
         supports = list(df_results['counts'])
 
-        return ListFieldResult(answers, probabilities, supports)
+        return [
+            FieldResult(answer, probability, support)
+            for (answer, probability, support) in
+            zip(answers, probabilities, supports)
+        ]
+
+    def _get_fields_types(self):
+        Item = apps.get_model("tasks.Item")
+
+        fields_types = {}
+        if self.task:
+            _items = Item.objects.filter(task=self.task)
+        else:
+            _items = Item.objects.filter(task=self.item.task)
+        for value in _items.values(
+                'template__fields__name', 'template__fields__type').distinct():
+            fields_types[value['template__fields__name']] = value['template__fields__type']
+        return fields_types
 
     def _logic(self, df: pd.DataFrame) -> List[ItemResult]:
         """
@@ -112,13 +129,8 @@ class BaseAggregator:
         :param df: annotation table, result from `_get_annotations_table`
         :return: a list of ItemResult, one for each item
         """
-        ItemTemplateField = apps.get_model("tasks.ItemTemplateField")
-
-        field_names = [c for c in list(df) if c not in ['user', 'item']]
-        template_fields = {
-            f.name: f for f in
-            ItemTemplateField.objects.filter(name__in=field_names)
-        }
+        fields_names = [c for c in list(df) if c not in ['user', 'item']]
+        fields_types = self._get_fields_types()
 
         item_results = []
 
@@ -128,13 +140,15 @@ class BaseAggregator:
         for item_id, group in df.groupby('item'):
             item_result = ItemResult(item_id, len(group))
 
-            for field_name in field_names:
-                column_type = template_fields[field_name].type
+            for field_name in fields_names:
+                column_type = fields_types[field_name]
                 if column_type == 'list':
-                    field_result = self._get_list_field_result(group, field_name)
+                    field_results = self._get_list_field_result(group, field_name)
+                    for field_result in field_results:
+                        item_result.add_answer(field_name, field_result)
                 else:
                     field_result = self._get_field_result(group, field_name)
-                item_result.add_answer(field_name, field_result)
+                    item_result.add_answer(field_name, field_result)
 
             item_results.append(item_result)
         return item_results

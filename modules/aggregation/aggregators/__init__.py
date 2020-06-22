@@ -1,3 +1,3 @@
 from .base import BaseAggregator
-from .field_result import ValueFieldResult, ListFieldResult
+from .field_result import FieldResult
 from .item_result import ItemResult

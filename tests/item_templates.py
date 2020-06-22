@@ -53,11 +53,11 @@ def item_template_one_input_one_list_output():
 @pytest.fixture
 @pytest.mark.django_db
 def item_template_one_input_one_output_data_source():
+    """
+    ItemTemplate for item with one input field,
+    and one output field, that is using other field as data source.
+    """
     return ItemTemplate.create_template_from_schema({
-        """
-        ItemTemplate for item with one input field,
-        and one output field, that is using other field as data source.
-        """
         "name": "template",
         "fields": [
             {
