@@ -10,6 +10,7 @@ from modules.achievements.events_manager import EventsManager
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = environ.Path(__file__) - 2
+
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(str,),
