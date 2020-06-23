@@ -32,6 +32,7 @@ class MissionPackages(models.Model):
                                    related_name="packages")
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
     max_annotations = models.IntegerField()
+    instruction = models.TextField(default="", blank=True)
     closed = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
 

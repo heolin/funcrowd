@@ -5,6 +5,7 @@ from tasks.api.serializers.item import ItemSerializer
 
 
 class PackageSerializer(serializers.ModelSerializer):
+    instruction = serializers.CharField(source='parent.instruction')
 
     class Meta:
         model = Package
