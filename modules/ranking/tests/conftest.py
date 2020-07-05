@@ -59,3 +59,42 @@ def task_annotations(users):
     for user in users:
         stats = user.get_mission_stats(mission.id)
         stats.update()
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def two_missions_annotations(users, task_annotations):
+    user1, user2, user3, user4 = users
+
+    mission = Mission.objects.create(id=2, name="Test mission 2")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=2, mission=mission, name="Add two digits", strategy=strategy)
+
+    template = ItemTemplate.objects.get(name="Adding two")
+
+    item1 = Item.objects.create(task=task, template=template, data={})
+    item2 = Item.objects.create(task=task, template=template, data={})
+    item3 = Item.objects.create(task=task, template=template, data={})
+
+    mp = MissionPackages.objects.create(mission=mission, strategy=strategy, max_annotations=10)
+    package1 = Package.objects.create(parent=mp, order=0)
+    package1.items.add(item1)
+    package1.items.add(item2)
+    package1.save()
+
+    package2 = Package.objects.create(parent=mp, order=1)
+    package2.items.add(item3)
+    package2.save()
+
+    Annotation.objects.create(user=user4, item=item1, data={}, annotated=True)
+    Annotation.objects.create(user=user4, item=item2, data={}, annotated=True)
+    Annotation.objects.create(user=user4, item=item3, data={}, annotated=True)
+
+    Annotation.objects.create(user=user3, item=item1, data={}, annotated=True)
+    Annotation.objects.create(user=user3, item=item2, data={}, annotated=True)
+
+    Annotation.objects.create(user=user2, item=item1, data={}, annotated=True)
+
+    for user in users:
+        stats = user.get_mission_stats(mission.id)
+        stats.update()

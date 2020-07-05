@@ -65,14 +65,26 @@ def test_ranking_around_view(task_annotations):
 
 
 @pytest.mark.django_db
-def test_mission_ranking_around_list(task_annotations):
+def test_mission_ranking_around_list(two_missions_annotations):
     user2 = EndWorker.objects.get(username="user2")
 
     client = Client()
     client.force_login(user2)
 
+    # get results for both missions
     response = client.get('/api/v1/ranking/mp/all/around/{0}/'.format(user2.id))
-    print(response.data)
-    assert len(response.data) == 1
+    assert len(response.data) == 2
     assert response.data[0]['mission_id'] == 1
     assert len(response.data[0]['rows']) == 1
+    assert response.data[1]['mission_id'] == 2
+
+    # get results for list_size=1
+    response = client.get('/api/v1/ranking/mp/all/around/{0}/?list_size=1'.format(user2.id))
+    assert len(response.data) == 1
+    assert response.data[0]['mission_id'] == 1
+
+    response = client.get('/api/v1/ranking/mp/all/around/{0}/?list_size=1&list_page=1'.format(user2.id))
+    assert response.data[0]['mission_id'] == 1
+
+    response = client.get('/api/v1/ranking/mp/all/around/{0}/?list_size=1&list_page=2'.format(user2.id))
+    assert response.data[0]['mission_id'] == 2

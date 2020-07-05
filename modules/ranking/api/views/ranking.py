@@ -10,6 +10,7 @@ from modules.ranking.api.serializers.ranking import(
 )
 from modules.ranking.models import AnnotationsRanking, ExpRanking
 from modules.ranking.models.mission_packages_ranking import MissionPackagesRanking
+from django.core.paginator import Paginator
 
 
 class RankingTop(GenericAPIView):
@@ -125,10 +126,20 @@ class MissionRankingList(RankingAround):
     def get(self, request, user_id, *args, **kwargs):
         results = []
 
-        for mp in MissionPackages.objects.all():
-            ranking = self.rankingType(mp)
+        list_size = int(request.GET.get('list_size', 0))
+        list_page = int(request.GET.get('list_page', 1))
+        size = int(request.GET.get('size', 0))
 
-            size = int(request.GET.get('size', 0))
+        mission_packages = MissionPackages.objects.all().order_by("mission_id")
+        if list_size > 0:
+            paginator = Paginator(mission_packages, list_size)
+            mission_packages = paginator.get_page(list_page)
+        else:
+            mission_packages = mission_packages
+
+        for mp in mission_packages:
+            ranking = self.rankingType(mp)
+            print(mp)
 
             rows_ranking = ranking.around(user_id, size)
             rows = MPRankingRowSerializer(rows_ranking, many=True).data

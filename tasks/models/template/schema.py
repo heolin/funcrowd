@@ -18,7 +18,7 @@ TEMPLATE_SCHEMA = {
                     "name": {"type": "string"},
                     "label": {"type": "string"},
                     "widget": {"type": "string"},
-                    "editable":{"type": "boolean"},
+                    "editable": {"type": "boolean"},
                     "required": {"type": "boolean"},
                     "feedback": {"type": "boolean"},
                     "validate_data_source": {"type": "boolean"},
