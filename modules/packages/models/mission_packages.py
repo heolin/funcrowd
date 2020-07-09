@@ -46,13 +46,16 @@ class MissionPackages(models.Model):
         for package in self.packages.all():
             package.close()
 
-    def create_package(self, size: int, metadata: dict = None, task: Task = None):
+    def create_package(self, size: int, name: str = None,
+                       metadata: dict = None, task: Task = None):
         """
         Creates a new package for this Bounty using a random sample
         of unassigned items (items without a package) of selected size.
 
         :param size: determines how many items will be put into a new package
         :param metadata: metadata of the package
+        :param name: name of the package
+        :param task: used to filter items only from a selected task
         :return package: a new package with a random sample of items
         """
         Package = apps.get_model("packages.Package")
@@ -69,6 +72,7 @@ class MissionPackages(models.Model):
             raise InsufficientUnassignedItems()
 
         package = Package.objects.create(
+            name=name,
             parent=self,
             order=self.packages.count(),
             metadata=metadata

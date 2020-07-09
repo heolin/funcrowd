@@ -146,7 +146,7 @@ class MissionRankingList(RankingAround):
 
             results.append({
                 "mission_id": mp.mission_id,
-                "rows": rows
+                "rows": rows,
             })
 
         serializer = self.serializer_class(results, many=True)
