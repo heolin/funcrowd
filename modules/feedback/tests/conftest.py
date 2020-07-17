@@ -6,7 +6,7 @@ from tasks.models import (
 from modules.feedback.models.feedback import (
     Feedback, FeedbackScoreField, FeedbackField
 )
-from tasks.field_types import LIST
+from tasks.field_types import LIST, FLOAT
 
 from users.models import EndWorker
 from modules.order_strategy.models import Strategy
@@ -258,3 +258,51 @@ def task_with_items_with_multiple_annotation_fields():
         annotation_field1.name: 1,
         annotation_field2.name: 1
     })
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def task_with_regression_items(users):
+    FeedbackScoreField.register_values()
+    FeedbackField.register_values()
+
+    user1, user2, user3 = users
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    task.save()
+
+    feedback = Feedback.objects.create(task=task)
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="RegressionReferenceScore"))
+
+    template = ItemTemplate.objects.create(name="Adding two")
+    first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
+    template.fields.add(first_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextLabel", type=FLOAT,
+                                                        required=True, editable=True, feedback=True)
+    template.fields.add(annotation_field)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 1}, order=0)
+    add_annotation(item, annotation_field.name, 1.5, user1)
+    add_annotation(item, annotation_field.name, 2, user2)
+    add_annotation(item, annotation_field.name, 2.2, user3)
+    add_annotation(item, annotation_field.name, 2, None)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 2}, order=1)
+    add_annotation(item, annotation_field.name, 2, user1)
+    add_annotation(item, annotation_field.name, 0.2, user2)
+    add_annotation(item, annotation_field.name, 0.1, user3)
+    add_annotation(item, annotation_field.name, 0.1, None)
+
+    item =Item.objects.create(task=task, template=template, data={first_field.name: 3}, order=2)
+    add_annotation(item, annotation_field.name, 10, user1)
+    add_annotation(item, annotation_field.name, 2.5, user2)
+    add_annotation(item, annotation_field.name, 2, user3)
+    add_annotation(item, annotation_field.name, 2.5, None)
+    add_annotation(item, annotation_field.name, 2, None)
+
+    item = Item.objects.create(task=task, template=template, data={first_field.name: 4}, order=3)
+    add_annotation(item, annotation_field.name, 10, user1)
+    add_annotation(item, annotation_field.name, 10, user2)
+    add_annotation(item, annotation_field.name, 9, user3)

@@ -1,5 +1,6 @@
 import pytest
 
+from modules.feedback.models.score_fields.regression_reference_score import RegressionReferenceScore
 from tasks.models import Task
 
 from modules.feedback.models.score_fields import (
@@ -117,3 +118,34 @@ def test_voting_score_list(task_with_items_multiple_choice, users):
     scores = {user1: 0.67, user2: 0.67, user3: 0.33}
     for annotation in item.annotations.exclude(user=None):
         assert round(scorer.score(annotation), 2) == round(scores[annotation.user], 2)
+
+
+@pytest.mark.django_db
+def test_regression_reference_score(task_with_regression_items, users):
+    user1, user2, user3 = users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    scorer = RegressionReferenceScore(annotation_field.name)
+
+    item = task.items.get(order=0)
+    scores = {user1: 0.75, user2: 1.0, user3: 0.9}
+    for annotation in item.annotations.exclude(user=None):
+        assert round(scorer.score(annotation), 2) == scores[annotation.user]
+
+    item = task.items.get(order=1)
+    scores = {user1: 0, user2: 0, user3: 1}
+    for annotation in item.annotations.exclude(user=None):
+        assert round(scorer.score(annotation), 2) == scores[annotation.user]
+
+    item = task.items.get(order=2)
+    scores = {user1: 0, user2: 1, user3: 1}
+    for annotation in item.annotations.exclude(user=None):
+        assert round(scorer.score(annotation), 2) == scores[annotation.user]
+
+    item = task.items.get(order=3)
+    for annotation in item.annotations.exclude(user=None):
+        assert scorer.score(annotation) is None
