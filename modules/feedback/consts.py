@@ -8,6 +8,7 @@ class FeedbackTypes:
     POINTS = "POINTS"
     NER = "NER"
     CLASSIFICATION = "CLASSIFICATION"
+    REGRESSION = "REGRESSION"
 
 
 FEEDBACK_TYPES = (
@@ -18,5 +19,6 @@ FEEDBACK_TYPES = (
     (FeedbackTypes.QUESTIONNAIRE, "Questionnaire"),
     (FeedbackTypes.POINTS, "Points"),
     (FeedbackTypes.NER, "NER"),
-    (FeedbackTypes.CLASSIFICATION, "Classification")
+    (FeedbackTypes.CLASSIFICATION, "Classification"),
+    (FeedbackTypes.REGRESSION, "Regression")
 )
