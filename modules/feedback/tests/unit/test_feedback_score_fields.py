@@ -4,8 +4,8 @@ from modules.feedback.models.score_fields.regression_reference_score import Regr
 from tasks.models import Task
 
 from modules.feedback.models.score_fields import (
-    VotingScore, ReferenceScore
-)
+    VotingScore, ReferenceScore,
+    NERReferenceScore)
 
 
 @pytest.mark.django_db
@@ -149,3 +149,27 @@ def test_regression_reference_score(task_with_regression_items, users):
     item = task.items.get(order=3)
     for annotation in item.annotations.exclude(user=None):
         assert scorer.score(annotation) is None
+
+
+@pytest.mark.django_db
+def test_ner_reference_score(task_with_ner_items, users):
+    user1, _, _ = users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    scorer = NERReferenceScore(annotation_field.name)
+
+    item = task.items.get(order=0)
+    annotation = item.annotations.get(user=user1)
+    assert scorer.score(annotation) == 1.0
+
+    item = task.items.get(order=1)
+    annotation = item.annotations.get(user=user1)
+    assert scorer.score(annotation) == 0.5
+
+    item = task.items.get(order=2)
+    annotation = item.annotations.get(user=user1)
+    assert scorer.score(annotation) == 0.0

@@ -3,8 +3,8 @@ import pytest
 from tasks.models import Task
 
 from modules.feedback.models.fields import (
-    VoteRanking, AnnotationsCount, ReferenceValue
-)
+    VoteRanking, AnnotationsCount, ReferenceValue,
+    NERReferenceValue)
 
 
 @pytest.mark.django_db
@@ -148,3 +148,44 @@ def test_reference_value(task_with_items, users):
     }
     for annotation in item.annotations.exclude(user=None):
         assert set(field.evaluate(annotation)) == votes[annotation.user]
+
+
+@pytest.mark.django_db
+def test_ner_reference_value(task_with_ner_items, users):
+    user1, _, _ = users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    evaluator = NERReferenceValue(annotation_field.name)
+
+    item = task.items.get(order=0)
+    annotation = item.annotations.get(user=user1)
+    result = evaluator.evaluate(annotation)
+    assert type(result) == list
+    assert len(result) == 2
+    correct = 0
+    for row in result:
+        correct += row['is_correct']
+    assert correct == 2
+    assert set(result[0].keys()) == {'annotation', 'is_correct', 'reference', 'text'}
+
+    item = task.items.get(order=1)
+    annotation = item.annotations.get(user=user1)
+    result = evaluator.evaluate(annotation)
+    assert len(result) == 2
+    correct = 0
+    for row in result:
+        correct += row['is_correct']
+    assert correct == 1
+
+    item = task.items.get(order=2)
+    annotation = item.annotations.get(user=user1)
+    result = evaluator.evaluate(annotation)
+    assert len(result) == 2
+    correct = 0
+    for row in result:
+        correct += row['is_correct']
+    assert correct == 0

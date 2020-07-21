@@ -306,3 +306,120 @@ def task_with_regression_items(users):
     add_annotation(item, annotation_field.name, 10, user1)
     add_annotation(item, annotation_field.name, 10, user2)
     add_annotation(item, annotation_field.name, 9, user3)
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def task_with_ner_items(users):
+    FeedbackScoreField.register_values()
+    FeedbackField.register_values()
+
+    user1, user2, user3 = users
+
+    mission = Mission.objects.create(id=1, name="Test mission")
+    strategy = Strategy.objects.get(name="StaticStrategyLogic")
+    task = Task.objects.create(id=1, mission=mission, name="Add two digits", strategy=strategy)
+    task.save()
+
+    feedback = Feedback.objects.create(task=task)
+    feedback.score_fields.add(FeedbackScoreField.objects.get(name="NERReferenceScore"))
+    feedback.fields.add(FeedbackField.objects.get(name="NERReferenceValue"))
+
+    template = ItemTemplate.objects.create(name="Adding two")
+    first_field = ItemTemplateField.objects.create(name="first", widget="TextLabel")
+    template.fields.add(first_field)
+    annotation_field = ItemTemplateField.objects.create(name="output", widget="TextTags",
+                                                        required=True, editable=True, feedback=True)
+    template.fields.add(annotation_field)
+
+    item = Item.objects.create(task=task, template=template,
+                               data="Paris is great in June",
+                               order=0)
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 0,
+            'end': 5,
+            'tag': 'City',
+            'text': 'Paris',
+            'tokens': [0]
+        },
+        {
+            'start': 18,
+            'end': 22,
+            'tag': 'Time',
+            'text': 'June',
+            'tokens': [4]
+        },
+    ], None)
+
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 0,
+            'end': 5,
+            'tag': 'City',
+            'text': 'Paris',
+            'tokens': [0]
+        },
+        {
+            'start': 18,
+            'end': 22,
+            'tag': 'Time',
+            'text': 'June',
+            'tokens': [4]
+        },
+    ], user1)
+
+    item = Item.objects.create(task=task, template=template,
+                               data="This is John , he is from London",
+                               order=1)
+
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 9,
+            'end': 13,
+            'tag': 'Person',
+            'text': 'John',
+            'tokens': [2]
+        },
+        {
+            'start': 28,
+            'end': 34,
+            'tag': 'City',
+            'text': 'London',
+            'tokens': [7]
+        },
+    ], None)
+
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 9,
+            'end': 13,
+            'tag': 'Person',
+            'text': 'John',
+            'tokens': [2]
+        },
+    ], user1)
+
+    item = Item.objects.create(task=task, template=template,
+                               data="Where is John ?",
+                               order=2)
+
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 10,
+            'end': 14,
+            'tag': 'Person',
+            'text': 'John',
+            'tokens': [2]
+        }
+    ], None)
+
+    add_annotation(item, annotation_field.name, [
+        {
+            'start': 0,
+            'end': 5,
+            'tag': 'Person',
+            'text': 'Where',
+            'tokens': [0]
+        },
+    ], user1)
