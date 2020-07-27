@@ -36,5 +36,7 @@ def get_tags_table(annotation, reference, field_name):
 
     df = pd.DataFrame(list(tags.values()))
     df = df.replace({np.nan: None})
+    if 'annotation' not in df:
+        df['annotation'] = None
     df['is_correct'] = df['annotation'] == df['reference']
     return df
