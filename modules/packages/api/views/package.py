@@ -29,6 +29,7 @@ class PackageNextItemView(GenericAPIView):
         package = Package.objects.filter(id=package_id).first()
         if package:
             item = package.get_user_next_item(request.user)
+            item.get_or_create_annotation(request.user)
             if item:
                 serializer = self.serializer_class(item)
                 return Response(serializer.data)

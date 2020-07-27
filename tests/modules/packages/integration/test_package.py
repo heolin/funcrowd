@@ -1,6 +1,9 @@
 import pytest
 import json
+import time
 from django.test import Client
+
+from tasks.models import Item
 
 
 @pytest.mark.django_db
@@ -37,6 +40,9 @@ def test_package_next_item(packages_with_items, user1):
     assert response.status_code == 200
     assert response.data is not None
 
+    # wait
+    time.sleep(1)
+
     # annotate_item
     item_id = response.data['id']
     response = client.post(
@@ -48,24 +54,9 @@ def test_package_next_item(packages_with_items, user1):
     assert response.status_code == 200
     assert response.data['is_verified']
 
-    # get second item
-    response = client.get('/api/v1/packages/{0}/items/next/'.format(package.id))
-    assert response.status_code == 200
-    assert response.data is not None
-
-    # annotate_item
-    assert response.data['id'] != item_id
-    item_id = response.data['id']
-    response = client.post(
-        '/api/v1/items/{0}/annotation/'.format(item_id),
-        {
-            'data': json.dumps({'input_field': '1'}),
-        }
-    )
-    assert response.status_code == 200
-    assert response.data['is_verified']
-
-    # not items left for annotations
-    response = client.get('/api/v1/packages/{0}/items/next/'.format(package.id))
-    assert response.status_code == 204
-    assert response.data is None
+    # verify annotation time
+    item = Item.objects.get(id=item_id)
+    annotation, _ = item.get_or_create_annotation(user1)
+    annotation_time = annotation.updated - annotation.created
+    assert annotation_time.total_seconds() > 1
+    assert annotation.annotated
