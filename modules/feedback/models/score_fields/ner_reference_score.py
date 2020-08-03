@@ -10,6 +10,9 @@ class NERReferenceScore(FeedbackScore):
 
         if reference:
             df = get_tags_table(annotation, reference, self.field)
-            score = df['is_correct'].sum() / df['reference'].notnull().sum()
+            reference_max = df['reference'].notnull().sum()
+            score = 0
+            if reference_max:
+                score = df['is_correct'].sum() / reference_max
             return score
         return None
