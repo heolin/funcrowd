@@ -1,7 +1,7 @@
 from django.urls import path
 
 from tasks.api.views.mission import MissionList, MissionDetail
-from tasks.api.views.mission_progress import UserMissionProgressList, UserMissionProgressDetail
+from tasks.api.views.mission_progress import UserMissionProgressList, UserMissionProgressDetail, AddBonusExpView
 from tasks.api.views.task import TaskDetail, MissionTasksList
 from tasks.api.views.item import TaskNextItem, TaskNextItemWithPrevious
 from tasks.api.views.annotation import AnnotationDetail
@@ -12,6 +12,7 @@ urlpatterns = [
     path('missions/progress/', UserMissionProgressList.as_view(), name='missions_progress'),
     path('missions/<int:mission_id>/', MissionDetail.as_view(), name="mission"),
     path('missions/<int:mission_id>/progress/', UserMissionProgressDetail.as_view(), name='mission_progress'),
+    path('missions/<int:mission_id>/bonus_exp/', AddBonusExpView.as_view(), name='bonus_exp_view'),
     path('missions/<int:mission_id>/tasks/', MissionTasksList.as_view(), name='mission_tasks_list'),
     path('missions/<int:mission_id>/tasks/progress/', UserTaskProgressList.as_view(), name='mission_tasks_progress'),
 

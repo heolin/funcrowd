@@ -74,6 +74,7 @@ class MissionPackagesRankingTop(RankingTop):
         mp = MissionPackages.objects.get(mission_id=mission_id)
         if mp:
             ranking = self.rankingType(mp)
+            print(ranking)
 
             size = int(request.GET.get('size', 10))
             page = int(request.GET.get('page', 0))
@@ -139,7 +140,6 @@ class MissionRankingList(RankingAround):
 
         for mp in mission_packages:
             ranking = self.rankingType(mp)
-            print(mp)
 
             rows_ranking = ranking.around(user_id, size)
             rows = MPRankingRowSerializer(rows_ranking, many=True).data

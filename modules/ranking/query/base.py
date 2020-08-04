@@ -54,11 +54,18 @@ from (
         u.username,
         ums.annotated_documents,
         coalesce(ums.high_agreement_percentage, 0) high_agreement_percentage,
-        ceil((ums.annotated_documents * coalesce(ums.high_agreement_percentage, 0) * 10)) as value
+        ump.bonus_exp bonus_exp,
+        ceil(
+            (ums.annotated_documents * coalesce(ums.high_agreement_percentage, 0) * 10) + 
+            ump.bonus_exp
+        ) as value
     from
         statistics_usermissionstats ums 
     join
         users_endworker u on u.id = ums.user_id
+    join
+        tasks_usermissionprogress ump
+            on ump.mission_id = {0} and ump.user_id = ums.user_id
     where
         ums.mission_id = {0}
 ) acu

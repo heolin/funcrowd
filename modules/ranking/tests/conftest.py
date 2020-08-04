@@ -58,6 +58,7 @@ def task_annotations(users):
 
     for user in users:
         stats = user.get_mission_stats(mission.id)
+        user.get_mission_progress(mission)
         stats.update()
 
 
@@ -97,4 +98,5 @@ def two_missions_annotations(users, task_annotations):
 
     for user in users:
         stats = user.get_mission_stats(mission.id)
+        user.get_mission_progress(mission)
         stats.update()

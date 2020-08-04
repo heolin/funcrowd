@@ -15,12 +15,13 @@ class MPRankingRowSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     username = serializers.CharField(max_length=32)
     annotated_documents = serializers.IntegerField()
+    bonus_exp = serializers.IntegerField()
     high_agreement_percentage = serializers.FloatField()
     value = serializers.FloatField()
     row_number = serializers.IntegerField()
 
     class Meta:
-        fields = ('user_id', 'username', 'annotated_documents',
+        fields = ('user_id', 'username', 'annotated_documents', 'bonus_exp',
                   'high_agreement_percentage', 'value', 'row_number')
 
 

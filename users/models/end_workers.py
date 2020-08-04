@@ -94,11 +94,12 @@ class EndWorker(AbstractUser):
         storage.data = data
         storage.save()
 
-    def get_task_progress(self, task):
+    def get_task_progress(self, task, update=True):
         # move this part to Task
         progress, _ = t.models.task_progress.UserTaskProgress.objects.get_or_create(
             task=task, user=self)
-        progress.update_status()
+        if update:
+            progress.update_status()
         return progress
 
     def get_mission_stats(self, mission_id):
@@ -106,11 +107,12 @@ class EndWorker(AbstractUser):
         stats, _ = UserMissionStats.objects.get_or_create(user=self, mission_id=mission_id)
         return stats
 
-    def get_mission_progress(self, mission):
+    def get_mission_progress(self, mission, update=True):
         # move this part to Mission
         progress, _ = t.models.mission_progress.UserMissionProgress.objects.get_or_create(
             mission=mission, user=self)
-        progress.update_status()
+        if update:
+            progress.update_status()
         return progress
 
     def on_login(self):

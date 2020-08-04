@@ -17,6 +17,7 @@ def test_ranking_top_view(task_annotations):
             'username': 'user1',
             'annotated_documents': 0,
             'high_agreement_percentage': 0,
+            'bonus_exp': 0,
             'value': 0.0,
             'row_number': 1
         },
@@ -24,6 +25,7 @@ def test_ranking_top_view(task_annotations):
             'username': 'user2',
             'annotated_documents': 1,
             'high_agreement_percentage': 0,
+            'bonus_exp': 0,
             'value': 0.0,
             'row_number': 2
         },
@@ -31,6 +33,7 @@ def test_ranking_top_view(task_annotations):
             'username': 'user3',
             'annotated_documents': 1,
             'high_agreement_percentage': 0,
+            'bonus_exp': 0,
             'value': 0.0,
             'row_number': 3
         },
@@ -38,6 +41,7 @@ def test_ranking_top_view(task_annotations):
             'username': 'user4',
             'annotated_documents': 2,
             'high_agreement_percentage': 0,
+            'bonus_exp': 0,
             'value': 0.0,
             'row_number': 4
         },

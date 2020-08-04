@@ -1,7 +1,7 @@
 import pytest
 from django.test import Client
 
-from tasks.models import UserMissionProgress, Task
+from tasks.models import UserMissionProgress, Task, Mission
 
 
 @pytest.mark.django_db
@@ -62,3 +62,29 @@ def test_mission_progress(task, user1):
     response = client.get('/api/v1/missions/{0}/progress/'.format(mission_id))
     assert response.status_code == 404
     assert response.data["detail"].code == "not_found"
+
+
+@pytest.mark.django_db
+def test_mission_progress(task, user1):
+    client = Client()
+    client.force_login(user1)
+
+    mission = Mission.objects.first()
+
+    # Adding bonus exp - empty payload
+    payload = {}
+    response = client.post('/api/v1/missions/{0}/bonus_exp/'.format(mission.id), payload)
+    assert response.status_code == 400
+
+    # Adding bonus exp - missing mission
+    payload = {}
+    response = client.post('/api/v1/missions/{0}/bonus_exp/'.format(9), payload)
+    assert response.status_code == 404
+
+    # Adding bonus exp - correct value
+    payload = {"bonus_exp": 10}
+    response = client.post('/api/v1/missions/{0}/bonus_exp/'.format(mission.id), payload)
+    assert response.status_code == 204
+
+    ump = user1.get_mission_progress(mission)
+    assert ump.bonus_exp == 10
