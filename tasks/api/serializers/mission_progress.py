@@ -12,3 +12,4 @@ class UserMissionProgressSerializer(serializers.ModelSerializer):
 
 class BonusExpSerializer(serializers.Serializer):
     bonus_exp = serializers.IntegerField()
+    user_id = serializers.IntegerField(required=False)

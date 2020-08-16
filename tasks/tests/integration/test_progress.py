@@ -65,7 +65,7 @@ def test_mission_progress(task, user1):
 
 
 @pytest.mark.django_db
-def test_mission_progress(task, user1):
+def test_mission_progress(task, user1, user2):
     client = Client()
     client.force_login(user1)
 
@@ -87,4 +87,12 @@ def test_mission_progress(task, user1):
     assert response.status_code == 204
 
     ump = user1.get_mission_progress(mission)
+    assert ump.bonus_exp == 10
+
+    # Adding bonus exp - to other user
+    payload = {"bonus_exp": 10, 'user_id': user2.id}
+    response = client.post('/api/v1/missions/{0}/bonus_exp/'.format(mission.id), payload)
+    assert response.status_code == 204
+
+    ump = user2.get_mission_progress(mission)
     assert ump.bonus_exp == 10

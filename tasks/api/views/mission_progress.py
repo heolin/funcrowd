@@ -8,6 +8,7 @@ from rest_framework import status
 from tasks.models import UserMissionProgress, Mission
 
 from tasks.api.serializers.mission_progress import UserMissionProgressSerializer, BonusExpSerializer
+from users.models import EndWorker
 
 
 class UserMissionProgressList(GenericAPIView):
@@ -41,7 +42,11 @@ class AddBonusExpView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         if mission:
             if serializer.is_valid():
-                ump = request.user.get_mission_progress(mission)
+                if 'user_id' in serializer.data:
+                    user = EndWorker.objects.get(id=serializer.data['user_id'])
+                else:
+                    user = request.user
+                ump = user.get_mission_progress(mission)
                 bonus_exp = serializer.data['bonus_exp']
                 ump.bonus_exp += bonus_exp
                 ump.save()
