@@ -106,7 +106,7 @@ class Package(models.Model):
         items = self.items.all()
         # exclude items already annotated by this user
         q = items.filter(Q(annotations__user=user) & Q(annotations__annotated=True))
-        item = items.exclude(id__in=q).first()
+        item = items.exclude(id__in=q).order_by("order").first()
         return item
 
     def close(self):
