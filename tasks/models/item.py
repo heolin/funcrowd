@@ -80,19 +80,25 @@ class Item(models.Model):
             BaseAggregator(self.task, self).aggregate()
             aggregation = ItemAggregation.objects.filter(item=self).first()
 
+            max_annotations = self.task.max_annotations
             probability = aggregation.get_probability()
-            support = aggregation.get_support()
+            annotations_count = aggregation.get_support()
 
             if self.status in [NEW, IN_PROGRESS]:
-                if support >= 4 and probability > 0.5:
-                    self.status = FINISHED
-                    self.save()
-                elif support >= 7:
-                    self.status = VERIFICATION
-                    self.save()
-                elif support >= 1:
-                    self.status = IN_PROGRESS
-                    self.save()
+                if max_annotations == 0:
+                    if annotations_count >= 1:
+                        self.status = VERIFICATION
+                        self.save()
+                else:
+                    if annotations_count >= int(max_annotations / 2) and probability > 0.5:
+                        self.status = FINISHED
+                        self.save()
+                    elif annotations_count >= max_annotations:
+                        self.status = VERIFICATION
+                        self.save()
+                    elif annotations_count >= 1:
+                        self.status = IN_PROGRESS
+                        self.save()
 
             if self.package:
                 self.package.update_status()
