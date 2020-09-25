@@ -87,7 +87,7 @@ class Item(models.Model):
             if self.status in [NEW, IN_PROGRESS]:
                 if max_annotations == 0:
                     if annotations_count >= 1:
-                        self.status = VERIFICATION
+                        self.status = IN_PROGRESS
                         self.save()
                 else:
                     if annotations_count >= int(max_annotations / 2) and probability > 0.5:
