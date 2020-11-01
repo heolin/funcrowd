@@ -1,4 +1,5 @@
 import pytest
+import random
 
 from modules.achievements.models import UserAchievement, ProgressAchievement
 from modules.achievements.models.unlock_mission_after_task import UnlockMissionAfterTaskAchievement
@@ -27,6 +28,8 @@ def test_create_object(user1, task_with_items):
 def test_progress_logic(user1, task_with_items):
     assert user1.profile == ProfileType.NORMAL
 
+    random.seed(1)
+
     task = Task.objects.first()
 
     achievement = AssignSpaceCalcGroupAchievement.objects.create(
@@ -53,4 +56,4 @@ def test_progress_logic(user1, task_with_items):
     user_achievement.close()
 
     user1 = EndWorker.objects.get(id=user1.id)
-    assert user1.profile == ProfileType.GAMIFICATION
+    assert user1.profile == ProfileType.ELEARNING
