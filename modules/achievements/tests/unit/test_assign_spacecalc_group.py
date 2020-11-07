@@ -25,8 +25,9 @@ def test_create_object(user1, task_with_items):
 
 
 @pytest.mark.django_db
-def test_progress_logic(user1, task_with_items):
-    assert user1.profile == ProfileType.NORMAL
+def test_progress_logic(user3000, task_with_items):
+    user = user3000
+    assert user.profile == ProfileType.NORMAL
 
     random.seed(1)
 
@@ -35,7 +36,7 @@ def test_progress_logic(user1, task_with_items):
     achievement = AssignSpaceCalcGroupAchievement.objects.create(
         order=0, task=task, exp=0, target=1)
 
-    user_achievement = UserAchievement.objects.create(user=user1, achievement=achievement)
+    user_achievement = UserAchievement.objects.create(user=user, achievement=achievement)
     user_achievement.update()
     assert user_achievement.progress == 0
 
@@ -45,15 +46,55 @@ def test_progress_logic(user1, task_with_items):
             item=item,
             data={"output": 1},
             annotated=True,
-            user=user1
+            user=user
         )
         annotation.save()
-        user1.on_annotation(annotation)
+        user.on_annotation(annotation)
 
     user_achievement.update()
     assert user_achievement.progress == 1
 
     user_achievement.close()
 
-    user1 = EndWorker.objects.get(id=user1.id)
-    assert user1.profile == ProfileType.ELEARNING
+    user = EndWorker.objects.get(id=user.id)
+    assert user.profile == ProfileType.ELEARNING
+
+
+@pytest.mark.django_db
+def test_progress_logic_user_id_under_threshold(user1, task_with_items):
+    """
+    If user id is not above the hardcoded threshold his profile will not change
+    """
+    user = user1
+    assert user.profile == ProfileType.NORMAL
+
+    random.seed(1)
+
+    task = Task.objects.first()
+
+    achievement = AssignSpaceCalcGroupAchievement.objects.create(
+        order=0, task=task, exp=0, target=1)
+
+    user_achievement = UserAchievement.objects.create(user=user, achievement=achievement)
+    user_achievement.update()
+    assert user_achievement.progress == 0
+
+    task = Task.objects.get(id=1)
+    for item in task.items.all():
+        annotation = Annotation.objects.create(
+            item=item,
+            data={"output": 1},
+            annotated=True,
+            user=user
+        )
+        annotation.save()
+        user.on_annotation(annotation)
+
+    user_achievement.update()
+    assert user_achievement.progress == 1
+
+    user_achievement.close()
+
+    user = EndWorker.objects.get(id=user.id)
+    assert user.profile == ProfileType.NORMAL
+

@@ -69,13 +69,15 @@ def _get_base():
 
 def _get_aggregated_data(task):
     return pd.DataFrame(list(Annotation.objects.filter(
-        item__task=task, annotated=True).values(
+        item__task=task, annotated=True, user_id__gte=2568).values(
         "data__met_1_sex", "data__met_2_age", "data__met_4_education", "user__profile", "user_id")
     ))
 
 
 def assign_user_profile(task, user):
     df = _get_aggregated_data(task)
+    if not len(df):
+        return
 
     # map age to smaller groups
     if 'age' in df:

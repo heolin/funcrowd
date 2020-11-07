@@ -34,7 +34,8 @@ select
 from
     users_endworker
 where
-    profile > 0
+    profile > 0 and
+    user_id > 2568
 """
 
 

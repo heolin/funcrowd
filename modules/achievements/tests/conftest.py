@@ -32,6 +32,15 @@ def user2():
 
 @pytest.fixture
 @pytest.mark.django_db
+def user3000():
+    user = EndWorker.objects.create_superuser("user1@mail.com", "password", username="user1", id=3000)
+    user.profile = ProfileType.NORMAL
+    user.save()
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def task_with_items():
     Strategy.register_values()
 
