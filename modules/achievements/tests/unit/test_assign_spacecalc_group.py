@@ -1,11 +1,8 @@
 import pytest
 import random
 
-from modules.achievements.models import UserAchievement, ProgressAchievement
-from modules.achievements.models.unlock_mission_after_task import UnlockMissionAfterTaskAchievement
-from tasks.consts import MissionStatus
-from tasks.models import Item, Task, Annotation
-from datetime import timedelta
+from modules.achievements.models import UserAchievement
+from tasks.models import Task, Annotation
 from modules.achievements.models.assign_spacecalc_group import AssignSpaceCalcGroupAchievement
 
 from users.consts import ProfileType
@@ -44,7 +41,9 @@ def test_progress_logic(user3000, task_with_items):
     for item in task.items.all():
         annotation = Annotation.objects.create(
             item=item,
-            data={"output": 1},
+            data={
+                "met_2_age": 34,
+            },
             annotated=True,
             user=user
         )
@@ -83,7 +82,9 @@ def test_progress_logic_user_id_under_threshold(user1, task_with_items):
     for item in task.items.all():
         annotation = Annotation.objects.create(
             item=item,
-            data={"output": 1},
+            data={
+                "met_2_age": 34,
+            },
             annotated=True,
             user=user
         )

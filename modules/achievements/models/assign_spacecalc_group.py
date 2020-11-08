@@ -1,5 +1,6 @@
 from scipy.stats import entropy
 import pandas as pd
+import numpy as np
 import random
 
 from modules.achievements.events import Events
@@ -8,6 +9,7 @@ from tasks.models import UserTaskProgress
 from tasks.models import Annotation
 
 from users.consts import ProfileType
+from itertools import chain, combinations
 
 
 GENDERS = ['mężczyzna', 'kobieta']
@@ -16,6 +18,12 @@ EDUCATIONS = ['licencjat/inżynierskie', 'wyższe magisterskie',
 
 AGES = ['młody', 'stary', 'dorosły']
 PROFILES = [ProfileType.ELEARNING, ProfileType.GAMIFICATION, ProfileType.SERIOUS_GAME]
+
+
+def _get_powerset(iterable):
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 
 def _get_gender(row):
@@ -41,9 +49,12 @@ def _get_best_profile(df, user_id):
     for profile in PROFILES:
         current_row['profile'] = profile
         _df = df.append(current_row)
-        _probs = _df.groupby(['age', 'edu', 'sex', 'profile']).apply(len) / len(_df)
-        _distance = entropy(_probs, base=len(_probs))
-        values[profile] = _distance
+
+        _distances = []
+        for columns in _get_powerset(['age', 'edu', 'sex']):
+            _probs = list(_df.groupby(list(columns) + ['profile']).apply(len) / len(_df))
+            _distances.append(entropy(_probs, base=len(_probs)))
+        values[profile] = np.mean(_distances)
 
     values = {k: v for (k, v) in values.items() if v == max(values.values())}
     max_profile = random.choice(list(values.keys()))
@@ -73,8 +84,12 @@ def _get_aggregated_data(task):
             item__task=task, annotated=True, user_id__gte=2568).values(
             "data__met_1_sex", "data__met_2_age", "data__met_4_education", "user__profile", "user_id")
         )
-    )
-    df.columns = ['sex', 'age', 'edu', 'profile', 'user_id']
+    ).rename(columns={
+        "data__met_1_sex": "sex",
+        "data__met_2_age": "age",
+        "data__met_4_education": "edu",
+        "user__profile": "profile",
+    })
     return df
 
 
