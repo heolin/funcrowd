@@ -68,10 +68,14 @@ def _get_base():
 
 
 def _get_aggregated_data(task):
-    return pd.DataFrame(list(Annotation.objects.filter(
-        item__task=task, annotated=True, user_id__gte=2568).values(
-        "data__met_1_sex", "data__met_2_age", "data__met_4_education", "user__profile", "user_id")
-    ))
+    df = pd.DataFrame(
+        list(Annotation.objects.filter(
+            item__task=task, annotated=True, user_id__gte=2568).values(
+            "data__met_1_sex", "data__met_2_age", "data__met_4_education", "user__profile", "user_id")
+        )
+    )
+    df.columns = ['sex', 'age', 'edu', 'profile', 'user_id']
+    return df
 
 
 def assign_user_profile(task, user):
