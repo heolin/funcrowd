@@ -81,7 +81,7 @@ def _get_base():
 def _get_aggregated_data(task):
     df = pd.DataFrame(
         list(Annotation.objects.filter(
-            item__task=task, annotated=True, user_id__gte=2568).values(
+            item__task=task, annotated=True, user_id__gte=2570).values(
             "data__met_1_sex", "data__met_2_age", "data__met_4_education", "user__profile", "user_id")
         )
     ).rename(columns={
