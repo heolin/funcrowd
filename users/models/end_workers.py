@@ -34,6 +34,10 @@ class EndWorker(AbstractUser):
     REQUIRED_FIELDS = []
     objects = EndWorkerManager()
 
+    def __str__(self):
+        return f"EndWorker(id={self.id}, username={self.username}, " \
+               f"email={self.email}, profile={self.profile}, exp={self.exp})"
+
     @property
     def token(self):
         """
