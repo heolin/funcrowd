@@ -37,11 +37,11 @@ services:
     env_file:
       - .env
     command: >
-      bash -c "./manage.py shell_plus --notebook"
+        bash -c "./manage.py shell_plus --notebook"
   db:
     ports:
       - "5432:5432"
-    image: postgres:10.0
+    image: postgres:13.0
     restart: always
     container_name: funcrowd-db
     volumes:
