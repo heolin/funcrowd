@@ -1,0 +1,35 @@
+version: '3.5'
+
+networks:
+  default:
+    external:
+      name: funcrowd-network
+
+services:
+  app:
+    build: .
+    container_name: funcrowd-app
+    restart: always
+    ports:
+      - "8888:80"
+      - "8080:8080"
+    volumes:
+      - .:/app
+    env_file:
+      - .env.prod
+    command: >
+      bash -c "gunicorn funcrowd.wsgi --bind 0.0.0.0:80 --workers 2 --worker-class gevent --reload --access-logfile=-"
+  notebook:
+    build: .
+    container_name: funcrowd-notebook
+    restart: always
+    ports:
+      - "8888:80"
+      - "8080:8080"
+    volumes:
+      - .:/app
+    env_file:
+      - .env.prod
+    command: >
+      bash -c "./manage.py shell_plus --notebook"
+
