@@ -1,0 +1,26 @@
+{
+    "name": "example_task-ratio",
+    "fields": [
+        {
+            "name": "item_id",
+            "widget": "Hidden"
+        },
+        {
+            "name": "input",
+            "label": "Input text",
+            "widget": "TextLabel"
+        },
+        {
+            "name": "output",
+            "label": "Rating",
+            "widget": "RadioField",
+            "feedback": true,
+            "editable": true,
+            "data_source": "_output_sources"
+        },
+        {
+            "name": "_output_sources",
+            "widget": "Hidden"
+        }
+    ]
+}

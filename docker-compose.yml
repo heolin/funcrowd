@@ -23,6 +23,7 @@ services:
       bash -c "./bin/wait-for-it.sh -t 360 ${POSTGRES_HOST}:${POSTGRES_PORT}
       && ./manage.py migrate --no-input
       && gunicorn funcrowd.wsgi --bind 0.0.0.0:80 --workers 2 --worker-class gevent --reload --access-logfile=-"
+
   notebook:
     build: .
     container_name: funcrowd-notebook
@@ -38,6 +39,7 @@ services:
       - .env
     command: >
         bash -c "./manage.py shell_plus --notebook"
+
   db:
     ports:
       - "5432:5432"
