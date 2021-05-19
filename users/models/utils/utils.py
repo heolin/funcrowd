@@ -3,7 +3,6 @@ from random import randint
 
 
 def get_group_number():
-    return 7
     return randint(0, 11)
 
 
