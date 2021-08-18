@@ -6,7 +6,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 
 from tasks.models import Item
 
-from tasks.api.serializers.annotation import AnnotationDataSerializer
+from tasks.api.serializers.annotation import AnnotationDataSerializer, AnnotationSerializer
 from tasks.api.serializers.dto.annotation_response import AnnotationResponseSerializer
 from tasks.controllers.annotation_controller import AnnotationController
 
@@ -19,8 +19,7 @@ class AnnotationDetail(GenericAPIView):
         if item:
             # it won't work for multiple annotations
             annotation, created = item.get_or_create_annotation(request.user)
-            response = AnnotationController().process(annotation)
-            serializer = AnnotationResponseSerializer(response)
+            serializer = AnnotationSerializer(annotation)
             return Response(serializer.data)
         raise NotFound("No Item found for given id.")
 
