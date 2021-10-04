@@ -35,8 +35,8 @@ def test_storage_view_with_existing_data(user1, setup_storage_data):
 
     response = client.get('/api/v1/users/storage/')
     assert len(response.data) == 2
-    assert response.data[0]['key'] == 'test2'
-    assert response.data[1]['key'] == 'test1'
+    assert response.data[0]['key'] == 'test1'
+    assert response.data[1]['key'] == 'test2'
 
     payload = [
         {'key': 'test1', "data": "value"},
@@ -45,6 +45,6 @@ def test_storage_view_with_existing_data(user1, setup_storage_data):
     response = client.post('/api/v1/users/storage/',
                            json.dumps(payload), content_type='application/json')
     assert len(response.data) == 3
-    assert response.data[0]['key'] == 'test3'
+    assert response.data[0]['key'] == 'test1'
     assert response.data[1]['key'] == 'test2'
-    assert response.data[2]['key'] == 'test1'
+    assert response.data[2]['key'] == 'test3'

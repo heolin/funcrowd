@@ -42,7 +42,7 @@ def test_feedback_with_multiple_annotation_fields(
                                            })
 
     feedback = task.feedback.create_feedback(annotation)
-    assert feedback.score == 2.0
+    assert feedback.score == 1.0
 
     annotation = Annotation.objects.create(item=item, user=user2,
                                            data={
@@ -50,7 +50,7 @@ def test_feedback_with_multiple_annotation_fields(
                                                "second": 1
                                            })
     feedback = task.feedback.create_feedback(annotation)
-    assert feedback.score == 1.0
+    assert feedback.score == 0.5
 
     annotation = Annotation.objects.create(item=item, user=user3,
                                            data={

@@ -3,10 +3,10 @@ from users.models import EndWorker
 
 
 def add_annotation(item: Item, user: EndWorker, data=None,
-                   default_field="input_field", default_value="1",
+                   field_name="input_field", value="1",
                    skipped=False, annotated=True) -> Annotation:
     if not data:
-        data = {default_field: default_value}
+        data = { field_name: value }
 
     annotation, _ = item.get_or_create_annotation(user)
     annotation.data = data

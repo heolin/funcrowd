@@ -46,7 +46,7 @@ class MissionPackages(models.Model):
         for package in self.packages.all():
             package.close()
 
-    def create_package(self, size: int, name: str = None,
+    def create_package(self, size: int, name: str = "",
                        metadata: dict = None, task: Task = None):
         """
         Creates a new package for this Bounty using a random sample

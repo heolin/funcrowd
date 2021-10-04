@@ -23,6 +23,20 @@ def user2():
 
 @pytest.fixture
 @pytest.mark.django_db
+def user3():
+    user = EndWorker.objects.create_superuser("user3@mail.com", "password", username="user3")
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def user4():
+    user = EndWorker.objects.create_superuser("user4@mail.com", "password", username="user4")
+    return user
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def mturk_user():
     user = EndWorker.objects.create_superuser(
         "user2@mail.com", "password", username="user2", profile=ProfileType.MTURK)

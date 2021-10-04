@@ -53,7 +53,7 @@ class Package(models.Model):
             supports.append(0)
             annotations_counts.append(0)
 
-        return np.average(probabilities), min(supports), min(annotations_counts)
+        return np.min(probabilities), min(supports), min(annotations_counts)
 
     def update_status(self):
         """

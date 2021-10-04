@@ -28,7 +28,7 @@ def test_create_package(packages_with_unassigned_items):
 
     assert mp.packages.count() == 0
 
-    package1 = mp.create_package(2, {"number": 10})
+    package1 = mp.create_package(2, metadata={"number": 10})
     assert package1.order == 0
     assert package1.metadata["number"] == 10
     assert package1.items.count() == 2

@@ -95,7 +95,7 @@ def test_get_aggregations(packages_with_annotated_items):
     # one user started annotation, but not finished
     package = mp.packages.all()[2]
     probability, support, annotations_count = package._get_aggregations()
-    assert probability == 0.5
+    assert probability == 0
     assert support == 0
     assert annotations_count == 0
 
@@ -127,6 +127,34 @@ def test_update_status(packages_with_items, user1, user2):
     add_annotation(item, user2)
     package.update_status()
     assert package.status == PackageStatus.FINISHED
+
+
+@pytest.mark.django_db
+def test_update_status_verification(packages_with_items, user1, user2, user3, user4):
+    mp = packages_with_items
+    mp.max_annotations = 4
+    mp.save()
+
+    # package requires two annotations for two items
+    package = mp.packages.all()[0]
+    package.update_status()
+    assert package.status == PackageStatus.NONE
+
+    # first user
+    item = package.items.all()[0]
+    add_annotation(item, user1, value="1")
+    add_annotation(item, user2, value="2")
+    add_annotation(item, user3, value="3")
+    add_annotation(item, user4, value="4")
+
+    item = package.items.all()[1]
+    add_annotation(item, user1, value="1")
+    add_annotation(item, user2, value="1")
+    add_annotation(item, user3, value="1")
+    add_annotation(item, user4, value="1")
+
+    package.update_status()
+    assert package.status == PackageStatus.VERIFICATION
 
 
 @pytest.mark.django_db

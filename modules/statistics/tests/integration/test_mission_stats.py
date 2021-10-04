@@ -21,5 +21,5 @@ def test_mission_stats_view_tasks_data(tasks_annotations):
         'total_tasks': 1,
         'total_active_users': 14,
         'total_annotations': 140,
-        'agreement_mean': 0.814285714285714
+        'agreement_mean': 0.8142857142857144
     }
