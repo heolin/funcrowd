@@ -20,13 +20,14 @@ def get_votings(annotations, field):
 
     if field.type == LIST:
         s_values = s_values.apply(pd.Series).stack().reset_index(level=-1, drop=True)
+    s_values = s_values.astype(str)
     df_values = s_values.to_frame(field.name)
 
     if field.data_source:
         df_source_values = pd.DataFrame(list(annotations.values("item_id", "item__data").distinct()))\
             .set_index("item_id")
         df_source_values = df_source_values['item__data']\
-            .apply(lambda x: x[field.data_source.name])\
+            .apply(lambda x: x[field.data_source.name]) \
             .to_frame(name=field.data_source.name)
         df_values = df_values.join(df_source_values)
 
