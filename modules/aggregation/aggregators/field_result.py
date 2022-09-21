@@ -1,12 +1,16 @@
+from dataclasses import dataclass
+from typing import Text
 
+
+@dataclass
 class FieldResult:
     """
     Stores information about aggregated answer for field with a single value.
     """
-    def __init__(self, answer: object, probability: object, support: object):
-        self.answer = answer
-        self.probability = probability
-        self.support = support
+
+    answer: Text
+    probability: float
+    support: int
 
     def to_json(self):
         """

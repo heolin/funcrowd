@@ -20,6 +20,7 @@ AGES = ['młody', 'stary', 'dorosły']
 PROFILES = [ProfileType.ELEARNING, ProfileType.GAMIFICATION, ProfileType.SERIOUS_GAME]
 
 
+from itertools import chain, combinations
 def _get_powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)

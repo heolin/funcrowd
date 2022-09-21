@@ -1,17 +1,19 @@
 from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import List
 
 from modules.aggregation.aggregators.field_result import FieldResult
 
 
+@dataclass
 class ItemResult:
     """
     Stores information about aggregated answers for all field for one item
     """
 
-    def __init__(self, item_id: int, annotations_count: int):
-        self.item_id = item_id
-        self.annotations_count = annotations_count
-        self.answers = defaultdict(list)
+    item_id: int
+    annotations_count: int
+    answers: List[FieldResult] = field(default_factory=lambda: defaultdict(list))
 
     def add_answer(self, field_name: str, field_result: FieldResult):
         self.answers[field_name].append(field_result)
