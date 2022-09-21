@@ -130,8 +130,9 @@ class MissionRankingList(RankingAround):
         list_size = int(request.GET.get('list_size', 0))
         list_page = int(request.GET.get('list_page', 1))
         size = int(request.GET.get('size', 0))
+        order = request.GET.get('order', '-mission_id')
 
-        mission_packages = MissionPackages.objects.all().order_by("-mission_id")
+        mission_packages = MissionPackages.objects.all().order_by(order)
         if list_size > 0:
             paginator = Paginator(mission_packages, list_size)
             mission_packages = paginator.get_page(list_page)
