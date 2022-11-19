@@ -57,7 +57,7 @@ class BaseAggregator:
         :return: pd.DataFrame,
         """
         Annotation = apps.get_model("tasks.Annotation")
-        annotations = Annotation.objects.filter(item__task=self.task).exclude(user=None)
+        annotations = Annotation.objects.filter(item__task=self.task).exclude(user=None).exclude(rejected=True)
         if self.item:
             annotations = annotations.filter(item_id=self.item)
         if self.exclude_skipped:
