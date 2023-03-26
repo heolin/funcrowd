@@ -5,7 +5,8 @@ from tasks.models import Task
 
 from modules.feedback.models.score_fields import (
     VotingScore, ReferenceScore,
-    NERReferenceScore)
+    NERReferenceScore, VotingScoreOther
+)
 
 
 @pytest.mark.django_db
@@ -67,6 +68,23 @@ def test_voting_score(task_with_items, users):
 
     item = task.items.get(order=3)
     scores = {user1: 0.67, user2: 0.67, user3: 0.33}
+    for annotation in item.annotations.exclude(user=None):
+        assert round(scorer.score(annotation), 2) == scores[annotation.user]
+
+
+@pytest.mark.django_db
+def test_vote_ranking_other(task_with_items_data_source, users):
+    user1, user2, user3 = users
+
+    task = Task.objects.first()
+
+    item = task.items.first()
+    annotation_field = item.template.annotations_fields.first()
+
+    scorer = VotingScoreOther(annotation_field.name)
+
+    item = task.items.get(order=0)
+    scores = {user1: 0.33, user2: 0.33, user3: 0.33}
     for annotation in item.annotations.exclude(user=None):
         assert round(scorer.score(annotation), 2) == scores[annotation.user]
 
