@@ -5,9 +5,19 @@ from tasks.models import Task
 
 from modules.feedback.models.score_fields import (
     VotingScore, ReferenceScore,
-    NERReferenceScore, VotingScoreOther
+    NERReferenceScore, VotingScoreOther, SCORE_FIELDS
 )
 
+
+def test_feedback_score_fields():
+    assert set(SCORE_FIELDS.keys()) == {
+        "ReferenceScore",
+        "VotingScore",
+        "RegressionReferenceScore",
+        "NERReferenceScore",
+        "VotingScoreOther"
+    }
+    
 
 @pytest.mark.django_db
 def test_reference_score(task_with_items, users):

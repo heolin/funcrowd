@@ -4,8 +4,18 @@ from tasks.models import Task
 
 from modules.feedback.models.fields import (
     VoteRanking, AnnotationsCount, ReferenceValue,
-    NERReferenceValue, VoteRankingOther
+    NERReferenceValue, VoteRankingOther, FIELDS
 )
+
+
+def test_feedback_fields():
+    assert set(FIELDS.keys()) == {
+        "VoteRanking",
+        "AnnotationsCount",
+        "ReferenceValue",
+        "NERReferenceValue",
+        "VoteRankingOther"
+    }
 
 
 @pytest.mark.django_db
